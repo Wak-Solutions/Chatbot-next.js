@@ -43,7 +43,7 @@ export const POST = withAuth(async (request, auth) => {
       'SELECT credential_id FROM webauthn_credentials WHERE agent_id = $1',
       [auth.agentId],
     );
-    const excludeCredentialIds = existing.rows.map((r) => r.credential_id);
+    const excludeCredentialIds = existing.rows.map((r: { credential_id: string }) => r.credential_id);
 
     const rp = deriveRpFromRequest(rpHints(request));
     const options = await buildRegistrationOptions({

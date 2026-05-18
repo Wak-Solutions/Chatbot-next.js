@@ -121,7 +121,7 @@ export const GET = withAdmin<{ params: Promise<{ id: string }> }>(
          GROUP BY sr.agent_id`,
         [id, auth.companyId],
       );
-      const per_agent = agentRes.rows.map((r) => ({
+      const per_agent = agentRes.rows.map((r: { agent_id: number | null; chats_handled: number; avg_rating: string | null }) => ({
         agent_id: r.agent_id,
         agent_name: r.agent_id ? `Agent #${r.agent_id}` : 'Unknown',
         chats_handled: r.chats_handled,

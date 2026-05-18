@@ -81,7 +81,7 @@ export const GET = withAdmin(async (request, auth) => {
     const totalRes = await getPool().query(totalQ, totalParams);
 
     return NextResponse.json({
-      customers: rows.rows.map((r) => ({
+      customers: rows.rows.map((r: { phone: string; name: string | null; source: string | null; first_seen: Date | null; last_seen: Date | null; touchpoints: string | number }) => ({
         phone: r.phone,
         name: r.name || null,
         source: r.source || null,

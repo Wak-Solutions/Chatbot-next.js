@@ -137,8 +137,8 @@ export async function GET(
     ]);
 
     const workHours = await getWorkHours(companyId);
-    const blockedSet = new Set(blockedRes.rows.map((r) => `${r.date}T${r.time}`));
-    const takenMs = new Set(takenRes.rows.map((r) => new Date(r.scheduled_at).getTime()));
+    const blockedSet = new Set(blockedRes.rows.map((r: { date: string; time: string }) => `${r.date}T${r.time}`));
+    const takenMs = new Set(takenRes.rows.map((r: { scheduled_at: Date }) => new Date(r.scheduled_at).getTime()));
 
     const days: { date: string; label: string; slots: string[]; bookedSlots: string[] }[] = [];
 

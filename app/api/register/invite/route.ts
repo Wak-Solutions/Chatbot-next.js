@@ -64,7 +64,7 @@ export const POST = withAdmin(async (request, auth) => {
         [emails],
       );
       if (existingRes.rows.length > 0) {
-        const duplicates = existingRes.rows.map((r) => r.email);
+        const duplicates = existingRes.rows.map((r: { email: string }) => r.email);
         return NextResponse.json(
           { error: 'Some emails are already in use', duplicates },
           { status: 400 },

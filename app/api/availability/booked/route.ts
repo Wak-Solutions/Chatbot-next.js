@@ -43,7 +43,7 @@ export const GET = withAuth(async (request, auth) => {
       [weekStartUtc, weekEndUtc, auth.companyId],
     );
 
-    const rows = result.rows.map((r) => {
+    const rows = result.rows.map((r: { scheduled_at: Date }) => {
       const ksa = new Date(new Date(r.scheduled_at).getTime() + KSA_OFFSET_MS);
       const ksaMidnightUtc = new Date(
         Date.UTC(ksa.getUTCFullYear(), ksa.getUTCMonth(), ksa.getUTCDate()) - KSA_OFFSET_MS,

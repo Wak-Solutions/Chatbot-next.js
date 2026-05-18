@@ -60,7 +60,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
          WHERE lower(a.email) = lower($1) AND a.is_active = true`,
         [bodyEmail],
       );
-      allowCredentialIds = result.rows.map((r) => r.credential_id);
+      allowCredentialIds = result.rows.map((r: { credential_id: string }) => r.credential_id);
     }
 
     const rp = deriveRpFromRequest(rpHints(request));
