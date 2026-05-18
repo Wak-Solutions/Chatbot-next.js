@@ -8,9 +8,10 @@
  *
  * Allowlist policy:
  *
- *   - Webhook paths (no session, callers are Meta / the worker / Python
- *     bot): /api/incoming, /api/human-requested,
- *           /api/meetings/create-token, /api/book/
+ *   - Webhook paths (no session, called by external systems): /api/book/.
+ *     Historical entries /api/incoming, /api/human-requested, and
+ *     /api/meetings/create-token were removed when their routes were
+ *     deleted in PR 13 (worker now owns inbound + token issuance).
  *
  *   - Public auth paths (intentionally accept POST without a CSRF token
  *     because the user has no session yet): login, logout, /api/auth/webauthn,
@@ -32,9 +33,6 @@ export const CSRF_HEADER_NAME = 'x-csrf-token';
 const STATE_CHANGING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 const WEBHOOK_ALLOWLIST = new Set<string>([
-  '/api/incoming',
-  '/api/human-requested',
-  '/api/meetings/create-token',
   '/api/book/',
 ]);
 
