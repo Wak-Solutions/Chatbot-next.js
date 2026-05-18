@@ -48,7 +48,7 @@ export default function DashboardLayout({
   const { lang, toggleLang, t } = useLanguage();
   const isRtl = lang === "ar";
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const { showBanner, showInstallPrompt, enableNotifications, dismissInstallPrompt } = usePushNotifications(isAuthenticated, isAuthLoading);
 
   // Trial badge — only fetch once authenticated. Server returns the canonical
