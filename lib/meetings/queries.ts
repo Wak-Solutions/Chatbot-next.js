@@ -30,6 +30,7 @@ export async function getPendingMeeting(
       `SELECT id, meeting_link, agreed_time, meeting_token, scheduled_at
        FROM meetings
        WHERE customer_phone = $1 AND status = 'pending' AND company_id = $2
+         AND (token_expires_at IS NULL OR token_expires_at > NOW())
        ORDER BY created_at DESC
        LIMIT 1`,
       [customerPhone, companyId],
