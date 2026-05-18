@@ -38,22 +38,16 @@ export default function Login() {
   const handleAcceptTerms = async () => {
     setTermsAccepting(true);
     try {
-      console.log("[login] submitting accept-terms");
       const res = await csrfFetch("/api/agents/accept-terms", { method: "POST", credentials: "include" });
-      console.log("[login] accept-terms response status:", res.status);
       if (res.ok) {
         const data = await res.json().catch(() => ({}));
-        console.log("[login] accept-terms data:", data);
         queryClient.setQueryData([api.auth.me.path], (prev: any) =>
           prev ? { ...prev, termsAcceptedAt: data.termsAcceptedAt ?? new Date().toISOString() } : prev
         );
         setLocation("/dashboard");
-      } else {
-        const body = await res.text().catch(() => "");
-        console.error("[login] accept-terms failed:", res.status, body);
       }
-    } catch (e) {
-      console.error("[login] accept-terms exception:", e);
+    } catch {
+      // accept-terms failures leave the user on the modal; no client-side feedback needed
     }
     setTermsAccepting(false);
   };
@@ -173,7 +167,6 @@ export default function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!password) return;
-    console.log("[login] submitting login, identifier:", identifier.trim());
     login(
       { identifier: identifier.trim(), password },
       {
