@@ -42,6 +42,9 @@ dist/
 *.tsbuildinfo
 .next/
 
+# Claude Code local settings (contains permission allowlist — may include credentials)
+.claude/
+
 # Symbolication related
 app.*.symbols
 

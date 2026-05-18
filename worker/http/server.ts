@@ -39,7 +39,7 @@ export function createWorkerServer({ logger, sema }: CreateWorkerServerInput): W
 
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     const url = req.url ?? '/';
-    if (req.method === 'GET' && url === '/health') {
+    if ((req.method === 'GET' || req.method === 'HEAD') && url === '/health') {
       void handleHealth(req, res);
       return;
     }

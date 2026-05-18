@@ -33,6 +33,21 @@
  *     columns inferred from references. Likely gaps in column types and
  *     untouched columns. Reconcile when scripts/introspect.sh is run.
  *
+ *   • Known column drift between prod and this schema (audited 2026-05-18):
+ *     The following columns exist in production but are NOT modelled here.
+ *     They are legacy fields the new code does not read or write — kept
+ *     for historical data and (in one case) for a Supabase view dependency.
+ *     Running `drizzle-kit generate` would propose DROP statements for
+ *     all of them. Do not apply such a migration without manual review.
+ *
+ *       blocked_slots.blocked_at
+ *       chatbot_config.business_name, .tone, .greeting, .faq,
+ *                     .escalation_rules        (superseded by structured_config)
+ *       companies.whatsapp_waba_id             (read by companies_decrypted view)
+ *       subscriptions.trial_starts_at, .next_billing_date
+ *       survey_answers.answer_choice           (superseded by answer_text/answer_rating)
+ *       survey_questions.options               (superseded by normalized question rows)
+ *
  * JSONB shapes (declared as plain jsonb — typed wrappers arrive later):
  *
  *   agents.webauthn_credential       Legacy single-credential blob or null.

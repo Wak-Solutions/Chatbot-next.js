@@ -11,8 +11,10 @@
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import * as schema from './schema';
+import { createLogger } from '@/lib/logger';
 
 const { Pool } = pg;
+const logger = createLogger('db');
 
 let poolInstance: pg.Pool | null = null;
 let dbInstance: NodePgDatabase<typeof schema> | null = null;
@@ -27,7 +29,7 @@ export function getPool(): pg.Pool {
 
   const pool = new Pool({ connectionString: url });
   pool.on('error', (err) => {
-    console.error('[db] Idle pool client error (non-fatal):', err.message);
+    logger.warn({ err: err.message }, 'Idle pool client error (non-fatal)');
   });
 
   poolInstance = pool;

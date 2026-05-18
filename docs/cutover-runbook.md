@@ -640,3 +640,38 @@ If any of these go bad and the fix isn't obvious within ~10 minutes, **roll back
 - `server/index.ts` — adds the `CRON_ONLY=1` gate (PR 11).
 - `docs/migration-divergences.md` — lists the `CRON_ONLY` flag for PR 15 cleanup.
 - This file — operational checklist. PR 12 and PR 13 sections to be filled in.
+
+## Railway deployment workarounds (intentional, do not remove)
+
+Both Railway services (Next-Dashboard, Next-Chatbot) have two non-obvious
+environment variables that the code does NOT reference directly. They are
+build-environment workarounds for known Nixpacks behavior:
+
+- **`NIXPACKS_NODE_VERSION=20`** — Nixpacks (v1.41.0) defaults to Node 18 on
+  the Ubuntu-1745885067 base image. Several deps require Node 20+:
+  `@peculiar/x509@1.14.3`, `@simplewebauthn/server@13.3.0`, `vite@7.3.2`,
+  `vitest@4.1.4`. Without this var, `npm ci` leaves partial install state
+  and the build fails with
+  `EBUSY: resource busy or locked, rmdir '/app/node_modules/.cache'`.
+
+- **`NPM_CONFIG_PRODUCTION=false`** — `NODE_ENV=production` (set via the
+  env schema) causes npm to omit `devDependencies`. The Next.js build-time
+  toolchain (`autoprefixer`, `postcss`, `tailwindcss`, plus `tsup` for the
+  worker) lives in devDeps. Without this var, `next build` fails with
+  `Cannot find module 'autoprefixer'`.
+
+Both could in principle be replaced by source-tree changes (`.nvmrc`,
+moving build deps to `dependencies`) but the env-var approach keeps
+`package.json` unchanged.
+
+## Meeting reminder cron
+
+The new worker (Next-Chatbot) starts the meeting reminder cron only when
+`CRON_ENABLED=1` is set on the service. The legacy Express `CRON_ONLY=1`
+service has been retired (FAILED, 0 active deploys in the `Wak Chatbot`
+project). Without `CRON_ENABLED=1`, no reminders fire anywhere. Boot log
+to verify: `Meeting reminder cron started ... interval_ms=60000`.
+
+Empty ticks are silent by design (no log when no meetings are due).
+Look for `Reminder sent`, `Reminder send failed`, or `Reminder tick failed`
+to confirm activity.
