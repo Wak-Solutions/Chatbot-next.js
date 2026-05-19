@@ -123,15 +123,11 @@ export async function GET(
         [companyId, blockedWindowStart],
       ),
       getPool().query<{ scheduled_at: Date }>(
-        `SELECT scheduled_at FROM meetings
-         WHERE scheduled_at >= $1 AND scheduled_at < $2
-           AND status NOT IN ('completed', 'cancelled') AND id != $3
-           AND company_id = $4
-         UNION ALL
-         SELECT scheduled_at FROM demo_bookings
-         WHERE $4 = 1
+        `SELECT scheduled_at FROM calendar_events
+         WHERE company_id = $4
            AND scheduled_at >= $1 AND scheduled_at < $2
-           AND status NOT IN ('completed', 'cancelled')`,
+           AND status NOT IN ('completed', 'cancelled')
+           AND NOT (source = 'meeting' AND id = $3::text)`,
         [windowStart, windowEnd, meeting.id, companyId],
       ),
     ]);
@@ -278,15 +274,11 @@ export async function POST(
         .slice(0, 10);
       const [takenRes, blockedRes] = await Promise.all([
         client.query(
-          `SELECT 1 FROM meetings
-           WHERE scheduled_at >= $1 AND scheduled_at < $2
-             AND status NOT IN ('completed', 'cancelled') AND id != $3
-             AND company_id = $4
-           UNION
-           SELECT 1 FROM demo_bookings
-           WHERE $4 = 1
+          `SELECT 1 FROM calendar_events
+           WHERE company_id = $4
              AND scheduled_at >= $1 AND scheduled_at < $2
-             AND status NOT IN ('completed', 'cancelled')`,
+             AND status NOT IN ('completed', 'cancelled')
+             AND NOT (source = 'meeting' AND id = $3::text)`,
           [scheduledUtc, new Date(scheduledUtc.getTime() + 3600000), meeting.id, companyId],
         ),
         client.query(

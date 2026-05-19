@@ -9,7 +9,9 @@
  * the original auth gate is preserved verbatim.
  *
  * Demo slot conflicts span demo_bookings AND meetings for company 1
- * (they share that tenant's calendar). demo_bookings.meeting_token is
+ * (they share that tenant's calendar). The conflict probe reads from
+ * the calendar_events view, which unions both tables and bakes
+ * company_id = 1 into demo rows. demo_bookings.meeting_token is
  * omitted from the INSERT so the schema default `gen_random_uuid()`
  * fires (PR 8 hard req #3).
  */
@@ -75,11 +77,7 @@ export const POST = withCsrf(
         .slice(0, 10);
       const [takenRes, blockedRes] = await Promise.all([
         getPool().query(
-          `SELECT 1 FROM demo_bookings
-           WHERE scheduled_at >= $1 AND scheduled_at < $2
-             AND status NOT IN ('completed', 'cancelled')
-           UNION
-           SELECT 1 FROM meetings
+          `SELECT 1 FROM calendar_events
            WHERE company_id = $3
              AND scheduled_at >= $1 AND scheduled_at < $2
              AND scheduled_at IS NOT NULL

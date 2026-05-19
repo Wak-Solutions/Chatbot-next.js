@@ -9,6 +9,7 @@
  *   call sites should still maskPhone() before logging.
  */
 
+import { createRequire } from 'node:module';
 import pino from 'pino';
 import type { Logger as PinoLogger, LoggerOptions } from 'pino';
 
@@ -48,7 +49,6 @@ const redactPaths = [
 
 function baseOptions(): LoggerOptions {
   const level = process.env.LOG_LEVEL ?? 'info';
-  const isDev = process.env.NODE_ENV !== 'production';
   const opts: LoggerOptions = {
     level,
     redact: {
@@ -59,12 +59,6 @@ function baseOptions(): LoggerOptions {
     base: { service: process.env.SERVICE_NAME ?? 'app' },
     timestamp: pino.stdTimeFunctions.isoTime,
   };
-  if (isDev) {
-    opts.transport = {
-      target: 'pino-pretty',
-      options: { colorize: true, translateTime: 'SYS:HH:MM:ss.l' },
-    };
-  }
   return opts;
 }
 
@@ -72,7 +66,16 @@ let rootLogger: PinoLogger | null = null;
 
 function getRoot(): PinoLogger {
   if (!rootLogger) {
-    rootLogger = pino(baseOptions());
+    const opts = baseOptions();
+    if (process.env.NODE_ENV !== 'production') {
+      // Synchronous pretty stream — avoids pino's worker-thread transport
+      // loader, which can't resolve pino-pretty through Next.js's webpack
+      // runtime in `next dev`. Production path stays workerless too.
+      const pretty = createRequire(import.meta.url)('pino-pretty');
+      rootLogger = pino(opts, pretty({ colorize: true, translateTime: 'SYS:HH:MM:ss.l' }));
+    } else {
+      rootLogger = pino(opts);
+    }
   }
   return rootLogger;
 }

@@ -8,7 +8,8 @@
  * No tenant data is leaked. Flagging.
  *
  * Demo slot conflicts span demo_bookings AND meetings for company 1 —
- * they share the same calendar.
+ * they share the same calendar. The calendar_events view unifies the
+ * two; demo rows surface there with company_id = 1 hardcoded.
  */
 
 import { NextResponse } from 'next/server';
@@ -46,11 +47,7 @@ export async function GET(): Promise<NextResponse> {
         [WAK_COMPANY_ID, blockedWindowStart],
       ),
       getPool().query<{ scheduled_at: Date }>(
-        `SELECT scheduled_at FROM demo_bookings
-         WHERE scheduled_at >= $1 AND scheduled_at < $2
-           AND status NOT IN ('completed', 'cancelled')
-         UNION
-         SELECT scheduled_at FROM meetings
+        `SELECT scheduled_at FROM calendar_events
          WHERE company_id = $3
            AND scheduled_at >= $1 AND scheduled_at < $2
            AND scheduled_at IS NOT NULL

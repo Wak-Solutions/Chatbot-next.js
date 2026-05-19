@@ -4,7 +4,10 @@
  *
  * Returns already-booked slots for the authed company over a 7-day
  * window. Demo bookings are merged in only for company_id = 1
- * (WAK Solutions) since they share that tenant's calendar.
+ * (WAK Solutions) since they share that tenant's calendar — that
+ * merge is now the calendar_events view's responsibility, so the
+ * tenant filter here naturally excludes demos for any company_id != 1
+ * (demos surface in the view with company_id hardcoded to 1).
  *
  * Response: array of `{ date: 'YYYY-MM-DD', time: 'HH:00' }` in KSA-local time.
  */
@@ -29,14 +32,8 @@ export const GET = withAuth(async (request, auth) => {
     const weekEndUtc = new Date(weekStartUtc.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     const result = await getPool().query<{ scheduled_at: Date }>(
-      `SELECT scheduled_at FROM meetings
-       WHERE scheduled_at >= $1 AND scheduled_at < $2
-         AND scheduled_at IS NOT NULL
-         AND status NOT IN ('completed', 'cancelled')
-         AND company_id = $3
-       UNION ALL
-       SELECT scheduled_at FROM demo_bookings
-       WHERE $3 = 1
+      `SELECT scheduled_at FROM calendar_events
+       WHERE company_id = $3
          AND scheduled_at >= $1 AND scheduled_at < $2
          AND scheduled_at IS NOT NULL
          AND status NOT IN ('completed', 'cancelled')`,

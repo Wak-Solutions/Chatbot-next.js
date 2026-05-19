@@ -6,6 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: ['pino', 'pino-pretty'],
   webpack: (config) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = {

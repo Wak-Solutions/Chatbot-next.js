@@ -48,6 +48,16 @@
  *       survey_answers.answer_choice           (superseded by answer_text/answer_rating)
  *       survey_questions.options               (superseded by normalized question rows)
  *
+ *   • Intentionally unmodelled views (audited 2026-05-18):
+ *     The following Postgres views exist in production and are NOT modelled
+ *     in Drizzle. Application code reads from them but never writes through
+ *     Drizzle. Running `drizzle-kit generate` would propose DROP VIEW
+ *     statements. Do not apply such a migration without manual review.
+ *
+ *       companies_decrypted   — decrypts encrypted whatsapp_* columns
+ *       subscription_status   — computes remaining_trial_days from companies.created_at
+ *       calendar_events       — unified meetings + demo_bookings feed for availability
+ *
  * JSONB shapes (declared as plain jsonb — typed wrappers arrive later):
  *
  *   agents.webauthn_credential       Legacy single-credential blob or null.

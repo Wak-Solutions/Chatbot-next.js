@@ -8,6 +8,20 @@
       "when": 1778683064987,
       "tag": "0000_baseline",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779494400000,
+      "tag": "0001_calendar_events_view",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779494460000,
+      "tag": "0002_demo_bookings_scheduled_at_idx",
+      "breakpoints": true
     }
   ]
 }
