@@ -44,11 +44,7 @@ export default function DashboardLayout({
   noPadding?: boolean;
 }) {
   const [location, setLocation] = useLocation();
-  const { isAuthenticated, isLoading: isAuthLoading, isAdmin, agentName, companyId } = useAuth();
-  // The /api/demo-booking/* flow is intentionally gated to WAK Solutions
-  // admins (companyId === 1) — see app/api/demo-booking/book/route.ts:47.
-  // The button stays hidden for other tenants instead of teasing a 403.
-  const canBookDemo = companyId === 1;
+  const { isAuthenticated, isLoading: isAuthLoading, isAdmin, agentName } = useAuth();
   const { mutate: logout } = useLogout();
   const { lang, toggleLang, t } = useLanguage();
   const isRtl = lang === "ar";
@@ -246,13 +242,11 @@ export default function DashboardLayout({
           />
         </Link>
         <div className="flex items-center gap-2">
-          {canBookDemo && (
-            <Link href="/book-demo">
-              <a className="inline-flex items-center gap-1 text-white/80 border border-white/30 hover:border-white/60 text-[10px] font-semibold px-2 py-1 rounded-md transition-colors">
-                <CalendarCheck className="w-3 h-3" /> Demo
-              </a>
-            </Link>
-          )}
+          <Link href="/book-demo">
+            <a className="inline-flex items-center gap-1 text-white/80 border border-white/30 hover:border-white/60 text-[10px] font-semibold px-2 py-1 rounded-md transition-colors">
+              <CalendarCheck className="w-3 h-3" /> Demo
+            </a>
+          </Link>
           <span className="inline-flex items-center gap-1 bg-amber-400/20 text-amber-200 text-[10px] font-semibold px-2 py-1 rounded-full border border-amber-300/30">
             {showUnlimited ? (
               <><Infinity className="w-2.5 h-2.5" /> ∞</>
@@ -340,13 +334,11 @@ export default function DashboardLayout({
               <>{daysRemaining} days remaining</>
             )}
           </span>
-          {canBookDemo && (
-            <Link href="/book-demo">
-              <a className="inline-flex items-center gap-1.5 text-brand-blue border border-brand-blue/40 hover:border-brand-blue hover:bg-brand-blue/5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
-                <CalendarCheck className="w-3.5 h-3.5" /> Book a Demo
-              </a>
-            </Link>
-          )}
+          <Link href="/book-demo">
+            <a className="inline-flex items-center gap-1.5 text-brand-blue border border-brand-blue/40 hover:border-brand-blue hover:bg-brand-blue/5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+              <CalendarCheck className="w-3.5 h-3.5" /> Book a Demo
+            </a>
+          </Link>
         </div>
 
         {/* Banners — wrapped so portrait-mobile CSS can push them below the fixed navbar */}

@@ -1,12 +1,16 @@
 /**
  * POST /api/demo-booking/book — port of server/routes/meetings.routes.ts:775-920.
  *
- * Authenticated WAK Solutions admin flow (companyId === 1). The session
- * provides agent_id, name, and email; body carries only the slot. This
- * is NOT a customer-facing flow — it's how WAK staff seed demo bookings
- * for prospects they've spoken to. Making it public would change the
- * product (real Daily.co cost, no email verification, spam exposure) so
- * the original auth gate is preserved verbatim.
+ * Open to any authenticated tenant admin. The flow lets a prospective
+ * customer (any companyId, signed in) book a demo *with* WAK Solutions
+ * to learn the platform — so the calendar context is always WAK
+ * (companyId = 1) but the booking caller can be on any tenant.
+ *
+ * Session provides agent_id, name, and email; body carries only the
+ * slot. We still require an authenticated session (no public booking)
+ * because every confirmed slot mints a real Daily.co room — keeping
+ * auth in place is the cheap spam guard. Rate-limiting + per-account
+ * caps would be the next layer if abuse appears.
  *
  * Demo slot conflicts span demo_bookings AND meetings for company 1
  * (they share that tenant's calendar). The conflict probe reads from
@@ -46,10 +50,6 @@ export const dynamic = 'force-dynamic';
 
 export const POST = withCsrf(
   withAuth(async (request, auth) => {
-    if (auth.companyId !== WAK_COMPANY_ID) {
-      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
-    }
-
     try {
       const { date, time } = bodySchema.parse(await request.json());
 
