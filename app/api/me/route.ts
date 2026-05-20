@@ -63,6 +63,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     role: session.role || 'admin',
     agentId: session.agentId || null,
     agentName: session.agentName || 'Admin',
+    companyId: session.companyId ?? null,
     termsAcceptedAt: termsAcceptedAt ?? null,
   });
 }

@@ -32,6 +32,7 @@ export function useAuth() {
     role: data?.role ?? 'admin',
     agentId: data?.agentId ?? null,
     agentName: data?.agentName ?? 'Admin',
+    companyId: data?.companyId ?? null,
     isAdmin: (data?.role ?? 'admin') === 'admin',
     termsAcceptedAt: data?.termsAcceptedAt ?? null,
   };
