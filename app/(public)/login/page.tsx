@@ -183,17 +183,17 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 relative overflow-hidden font-sans antialiased" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="min-h-screen flex items-center justify-center bg-white/[0.03] p-4 relative overflow-hidden font-sans antialiased" dir={isRtl ? "rtl" : "ltr"}>
       {/* Terms modal */}
       {showTermsModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh]" dir={isRtl ? "rtl" : "ltr"}>
-            <div className="px-6 pt-6 pb-4 border-b border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900">{t("termsModalTitle")}</h2>
-              <p className="text-sm text-gray-500 mt-1">{t("termsModalSubtitle")}</p>
+          <div className="bg-brand-navy rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh]" dir={isRtl ? "rtl" : "ltr"}>
+            <div className="px-6 pt-6 pb-4 border-b border-white/[0.06]">
+              <h2 className="text-lg font-bold text-white">{t("termsModalTitle")}</h2>
+              <p className="text-sm text-brand-slate mt-1">{t("termsModalSubtitle")}</p>
             </div>
-            <div className="flex-1 overflow-y-auto mx-4 my-4 border border-gray-200 rounded-xl bg-[#F5F2EC] px-5 py-4 text-center min-h-0">
-              <p className="text-sm text-gray-500 mb-3">{t("termsModalSubtitle")}</p>
+            <div className="flex-1 overflow-y-auto mx-4 my-4 border border-white/[0.08] rounded-xl bg-[#F5F2EC] px-5 py-4 text-center min-h-0">
+              <p className="text-sm text-brand-slate mb-3">{t("termsModalSubtitle")}</p>
               <a href="/terms" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-blue underline underline-offset-2 hover:text-brand-cyan transition-colors">
                 {t("termsModalReadLink")}
               </a>
@@ -201,7 +201,7 @@ export default function Login() {
             <div className="px-6 pb-6 pt-2 space-y-4">
               <label className="flex items-start gap-3 cursor-pointer select-none">
                 <input type="checkbox" checked={termsChecked} onChange={e => setTermsChecked(e.target.checked)} className="mt-0.5 w-4 h-4 accent-brand-blue shrink-0" />
-                <span className="text-sm text-gray-700 leading-snug">{t("termsModalCheckbox")}</span>
+                <span className="text-sm text-white/90 leading-snug">{t("termsModalCheckbox")}</span>
               </label>
               <button
                 disabled={!termsChecked || termsAccepting}
@@ -220,18 +220,18 @@ export default function Login() {
       {/* Forgot password modal */}
       {showForgotModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md" dir={isRtl ? "rtl" : "ltr"}>
-            <div className="px-6 pt-6 pb-4 border-b border-gray-100 flex items-start justify-between">
+          <div className="bg-brand-navy rounded-2xl shadow-2xl w-full max-w-md" dir={isRtl ? "rtl" : "ltr"}>
+            <div className="px-6 pt-6 pb-4 border-b border-white/[0.06] flex items-start justify-between">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">Reset your password</h2>
-                <p className="text-sm text-gray-500 mt-1">Enter your email and we'll send you a reset link.</p>
+                <h2 className="text-lg font-bold text-white">Reset your password</h2>
+                <p className="text-sm text-brand-slate mt-1">Enter your email and we'll send you a reset link.</p>
               </div>
-              <button onClick={() => setShowForgotModal(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+              <button onClick={() => setShowForgotModal(false)} className="text-brand-slate/70 hover:text-brand-slate text-2xl leading-none">&times;</button>
             </div>
             <div className="px-6 py-5">
               {forgotStatus === "sent" ? (
                 <div className="text-center py-4">
-                  <p className="text-sm text-gray-700">If an account exists for that email or phone, a reset link has been sent. The link is valid for 30 minutes.</p>
+                  <p className="text-sm text-white/90">If an account exists for that email or phone, a reset link has been sent. The link is valid for 30 minutes.</p>
                   <button
                     onClick={() => setShowForgotModal(false)}
                     className="mt-5 w-full bg-brand-blue text-white py-3 rounded-xl font-semibold text-sm hover:bg-brand-cyan transition-colors"
@@ -242,8 +242,8 @@ export default function Login() {
               ) : (
                 <form onSubmit={handleForgotSubmit} className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1.5">
-                      <Mail className="w-3.5 h-3.5 text-gray-400" />
+                    <label className="text-sm font-medium text-white/90 flex items-center gap-2 mb-1.5">
+                      <Mail className="w-3.5 h-3.5 text-brand-slate/70" />
                       Email or phone
                     </label>
                     <input
@@ -252,10 +252,10 @@ export default function Login() {
                       onChange={e => setForgotIdentifier(e.target.value)}
                       placeholder="email@example.com or +966501234567"
                       autoFocus
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 bg-white"
+                      className="w-full px-4 py-2.5 border border-white/[0.08] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 bg-brand-navy"
                     />
                   </div>
-                  {forgotError && <p className="text-sm text-red-500">{forgotError}</p>}
+                  {forgotError && <p className="text-sm text-red-400">{forgotError}</p>}
                   <button
                     type="submit"
                     disabled={!forgotIdentifier.trim() || forgotStatus === "sending"}
@@ -275,7 +275,7 @@ export default function Login() {
       <div className={`absolute top-4 ${isRtl ? "right-4" : "left-4"} z-10`}>
         <a
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-brand-blue transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-slate hover:text-brand-blue transition-colors"
         >
           <ArrowLeft className={`w-4 h-4 ${isRtl ? "rotate-180" : ""}`} />
           Home
@@ -292,15 +292,15 @@ export default function Login() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <Logo size="lg" priority className="mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">WAK Solutions</h1>
-          <p className="text-sm text-gray-500 mt-1">{t("loginTagline")}</p>
+          <h1 className="text-xl font-bold text-white tracking-tight">WAK Solutions</h1>
+          <p className="text-sm text-brand-slate mt-1">{t("loginTagline")}</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
+        <div className="bg-brand-navy rounded-2xl border border-white/[0.08] shadow-sm p-8">
           <div className="flex flex-col items-center text-center mb-7">
-            <h2 className="text-lg font-semibold text-gray-900">{t("loginTitle")}</h2>
-            <p className="text-sm text-gray-500 mt-1">{t("loginSubtitle")}</p>
+            <h2 className="text-lg font-semibold text-white">{t("loginTitle")}</h2>
+            <p className="text-sm text-brand-slate mt-1">{t("loginSubtitle")}</p>
           </div>
 
           {/* Biometric */}
@@ -317,19 +317,19 @@ export default function Login() {
                   : <><Fingerprint className="w-5 h-5" />{t("loginSignInBiometric")}</>
                 }
               </button>
-              {biometricError && <p className="text-sm text-red-500 mt-2 text-center">{biometricError}</p>}
+              {biometricError && <p className="text-sm text-red-400 mt-2 text-center">{biometricError}</p>}
               <div className="flex items-center gap-3 mt-5 mb-1">
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400">{t("loginDivider")}</span>
-                <div className="flex-1 h-px bg-gray-200" />
+                <div className="flex-1 h-px bg-white/[0.08]" />
+                <span className="text-xs text-brand-slate/70">{t("loginDivider")}</span>
+                <div className="flex-1 h-px bg-white/[0.08]" />
               </div>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-gray-400" />
+              <label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                <Mail className="w-3.5 h-3.5 text-brand-slate/70" />
                 Email or Mobile Number
               </label>
               <input
@@ -339,12 +339,12 @@ export default function Login() {
                 onChange={e => setIdentifier(e.target.value)}
                 disabled={isPending}
                 autoComplete="username"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 disabled:opacity-50 bg-white"
+                className="w-full px-4 py-2.5 border border-white/[0.08] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 disabled:opacity-50 bg-brand-navy"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Lock className="w-3.5 h-3.5 text-gray-400" />
+              <label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                <Lock className="w-3.5 h-3.5 text-brand-slate/70" />
                 {t("loginPassword")}
               </label>
               <input
@@ -355,10 +355,10 @@ export default function Login() {
                 onChange={e => setPassword(e.target.value)}
                 disabled={isPending}
                 autoFocus={!identifier}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 disabled:opacity-50 bg-white"
+                className="w-full px-4 py-2.5 border border-white/[0.08] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 disabled:opacity-50 bg-brand-navy"
               />
               {error && (
-                <p data-testid="text-error" className="text-sm text-red-500 pt-1">
+                <p data-testid="text-error" className="text-sm text-red-400 pt-1">
                   {error.message || t("loginErrorCredentials")}
                 </p>
               )}
@@ -389,14 +389,14 @@ export default function Login() {
           </form>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-5">
+        <p className="text-center text-sm text-brand-slate mt-5">
           Don't have an account?{" "}
           <a href="/register" className="font-medium text-brand-blue hover:text-brand-cyan transition-colors">
             Start free trial
           </a>
         </p>
 
-        <p className="text-center text-xs text-gray-400 mt-4">
+        <p className="text-center text-xs text-brand-slate/70 mt-4">
           {t("loginCopyright")} &copy; {new Date().getFullYear()}
         </p>
       </div>

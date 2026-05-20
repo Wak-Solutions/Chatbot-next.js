@@ -23,10 +23,10 @@ interface Contact {
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+      <div className="bg-brand-navy rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-900 p-1 rounded-lg hover:bg-gray-100 transition-colors">
+          <h3 className="text-base font-semibold text-white">{title}</h3>
+          <button onClick={onClose} className="text-brand-slate hover:text-white p-1 rounded-lg hover:bg-white/[0.05] transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -38,12 +38,12 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
 
 function SourceBadge({ source }: { source: string }) {
   const colors: Record<string, string> = {
-    manual: "bg-blue-100 text-blue-700",
-    imported: "bg-purple-100 text-purple-700",
-    whatsapp: "bg-green-100 text-green-700",
+    manual: "bg-brand-blue/15 text-brand-cyan",
+    imported: "bg-brand-violet/15 text-brand-violet",
+    whatsapp: "bg-brand-emerald/15 text-brand-emerald",
   };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${colors[source] ?? "bg-gray-100 text-gray-500"}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${colors[source] ?? "bg-white/[0.05] text-brand-slate"}`}>
       {source}
     </span>
   );
@@ -138,7 +138,7 @@ export default function ContactsPage() {
 
   if (isAuthLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-brand-navy">
         <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
@@ -292,8 +292,8 @@ export default function ContactsPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <BookUser className="w-5 h-5 text-brand-blue" />
-              <h1 className="text-2xl font-bold text-gray-900">{t("contactsTitle")}</h1>
-              <span className="text-sm text-gray-500 ml-1">
+              <h1 className="text-2xl font-bold text-white">{t("contactsTitle")}</h1>
+              <span className="text-sm text-brand-slate ml-1">
                 {contacts.length} {t("contactsTotal")}
               </span>
             </div>
@@ -310,7 +310,7 @@ export default function ContactsPage() {
               )}
               <button
                 onClick={() => { setShowImport(true); setCsvData(null); setImportResult(null); }}
-                className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 border border-white/[0.08] text-white/90 rounded-lg text-sm font-semibold hover:bg-white/[0.03] transition-colors"
               >
                 <Upload className="w-4 h-4" />
                 {t("contactsImport")}
@@ -327,18 +327,18 @@ export default function ContactsPage() {
 
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-slate pointer-events-none" />
             <input
               type="text"
               placeholder={t("contactsSearch")}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-brand-blue transition-colors"
+              className="w-full pl-9 pr-4 py-2 text-sm border border-white/[0.08] rounded-xl bg-brand-navy focus:outline-none focus:border-brand-blue transition-colors"
             />
           </div>
 
           {/* Table */}
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div className="bg-brand-navy border border-white/[0.08] rounded-xl overflow-hidden">
             {loading ? (
               <div className="flex items-center justify-center py-16">
                 <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
@@ -347,26 +347,26 @@ export default function ContactsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50/50">
+                    <tr className="border-b border-white/[0.08] bg-white/[0.03]/50">
                       <th className="w-10 px-3 py-3">
                         <input
                           type="checkbox"
                           checked={allSelected}
                           onChange={toggleSelectAll}
-                          className="rounded border-gray-200 cursor-pointer"
+                          className="rounded border-white/[0.08] cursor-pointer"
                           aria-label={t("contactsSelectAll")}
                         />
                       </th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("contactsColName")}</th>
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("contactsColPhone")}</th>
-                      <th className="hidden sm:table-cell text-left px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("contactsColSource")}</th>
-                      <th className="hidden md:table-cell text-left px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("contactsColAdded")}</th>
-                      <th className="text-right px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("contactsColActions")}</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("contactsColName")}</th>
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("contactsColPhone")}</th>
+                      <th className="hidden sm:table-cell text-left px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("contactsColSource")}</th>
+                      <th className="hidden md:table-cell text-left px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("contactsColAdded")}</th>
+                      <th className="text-right px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("contactsColActions")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {filtered.map(contact => (
-                      <tr key={contact.id} className="hover:bg-gray-50/50 transition-colors">
+                      <tr key={contact.id} className="hover:bg-white/[0.03]/50 transition-colors">
                         <td className="px-3 py-3">
                           <input
                             type="checkbox"
@@ -376,31 +376,31 @@ export default function ContactsPage() {
                               n.has(contact.id) ? n.delete(contact.id) : n.add(contact.id);
                               return n;
                             })}
-                            className="rounded border-gray-200 cursor-pointer"
+                            className="rounded border-white/[0.08] cursor-pointer"
                           />
                         </td>
-                        <td className="px-3 py-3 font-medium text-gray-900">
-                          {contact.name || <span className="text-gray-500 italic text-xs">{t("contactsUnknown")}</span>}
+                        <td className="px-3 py-3 font-medium text-white">
+                          {contact.name || <span className="text-brand-slate italic text-xs">{t("contactsUnknown")}</span>}
                         </td>
-                        <td className="px-3 py-3 font-mono text-sm text-gray-900">{contact.phone_number}</td>
+                        <td className="px-3 py-3 font-mono text-sm text-white">{contact.phone_number}</td>
                         <td className="hidden sm:table-cell px-3 py-3">
                           <SourceBadge source={contact.source} />
                         </td>
-                        <td className="hidden md:table-cell px-3 py-3 text-gray-500 text-xs whitespace-nowrap">
+                        <td className="hidden md:table-cell px-3 py-3 text-brand-slate text-xs whitespace-nowrap">
                           {format(new Date(contact.created_at), "MMM d, yyyy")}
                         </td>
                         <td className="px-3 py-3">
                           <div className="flex items-center justify-end gap-1">
                             <button
                               onClick={() => { setEditContact(contact); setEditName(contact.name ?? ""); setEditError(""); }}
-                              className="p-1.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                              className="p-1.5 rounded-lg text-brand-slate hover:text-white hover:bg-white/[0.05] transition-colors"
                               title="Edit name"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleDelete(contact.id)}
-                              className="p-1.5 rounded-lg text-gray-500 hover:text-red-500 hover:bg-red-50 transition-colors"
+                              className="p-1.5 rounded-lg text-brand-slate hover:text-red-400 hover:bg-red-500/10 transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -411,7 +411,7 @@ export default function ContactsPage() {
                     ))}
                     {filtered.length === 0 && (
                       <tr>
-                        <td colSpan={6} className="px-4 py-12 text-center text-gray-500 text-sm">
+                        <td colSpan={6} className="px-4 py-12 text-center text-brand-slate text-sm">
                           {search ? t("contactsNoResults") : t("contactsNoContacts")}
                         </td>
                       </tr>
@@ -429,18 +429,18 @@ export default function ContactsPage() {
         <Modal title={t("contactsModalAddTitle")} onClose={() => setShowAdd(false)}>
           <form onSubmit={handleAdd} className="space-y-4">
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-900">{t("contactsFormName")}</label>
+              <label className="text-sm font-medium text-white">{t("contactsFormName")}</label>
               <input
                 type="text"
                 placeholder="Jane Smith"
                 value={addForm.name}
                 onChange={e => setAddForm(p => ({ ...p, name: e.target.value }))}
-                className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${nameError(addForm.name) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
+                className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${nameError(addForm.name) ? "border-red-300 focus:border-red-400" : "border-white/[0.08]"}`}
               />
-              {nameError(addForm.name) && <p className="text-xs text-red-500 mt-1">{nameError(addForm.name)}</p>}
+              {nameError(addForm.name) && <p className="text-xs text-red-400 mt-1">{nameError(addForm.name)}</p>}
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-900">{t("contactsFormPhone")}</label>
+              <label className="text-sm font-medium text-white">{t("contactsFormPhone")}</label>
               <input
                 type="tel"
                 required
@@ -448,10 +448,10 @@ export default function ContactsPage() {
                 placeholder={t("contactsFormPhonePlaceholder")}
                 value={addForm.phone}
                 onChange={e => setAddForm(p => ({ ...p, phone: e.target.value }))}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-brand-blue"
+                className="w-full border border-white/[0.08] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-brand-blue"
               />
             </div>
-            {addError && <p className="text-sm text-red-600">{addError}</p>}
+            {addError && <p className="text-sm text-red-400">{addError}</p>}
             <button
               type="submit"
               disabled={addSaving}
@@ -468,22 +468,22 @@ export default function ContactsPage() {
         <Modal title={t("contactsModalEditTitle")} onClose={() => setEditContact(null)}>
           <form onSubmit={handleEdit} className="space-y-4">
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-900">{t("contactsColPhone")}</label>
-              <p className="text-sm font-mono text-gray-500 bg-gray-100 px-3 py-2 rounded-xl">{editContact.phone_number}</p>
+              <label className="text-sm font-medium text-white">{t("contactsColPhone")}</label>
+              <p className="text-sm font-mono text-brand-slate bg-white/[0.05] px-3 py-2 rounded-xl">{editContact.phone_number}</p>
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-900">{t("contactsFormName")}</label>
+              <label className="text-sm font-medium text-white">{t("contactsFormName")}</label>
               <input
                 type="text"
                 autoFocus
                 placeholder="Jane Smith"
                 value={editName}
                 onChange={e => setEditName(e.target.value)}
-                className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${nameError(editName) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
+                className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${nameError(editName) ? "border-red-300 focus:border-red-400" : "border-white/[0.08]"}`}
               />
-              {nameError(editName) && <p className="text-xs text-red-500 mt-1">{nameError(editName)}</p>}
+              {nameError(editName) && <p className="text-xs text-red-400 mt-1">{nameError(editName)}</p>}
             </div>
-            {editError && <p className="text-sm text-red-600">{editError}</p>}
+            {editError && <p className="text-sm text-red-400">{editError}</p>}
             <button
               type="submit"
               disabled={editSaving}
@@ -511,18 +511,18 @@ export default function ContactsPage() {
               /* Step 1: pick file */
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-gray-200 rounded-xl py-10 flex flex-col items-center gap-2 text-gray-500 hover:border-brand-blue/50 hover:text-brand-blue transition-colors"
+                className="w-full border-2 border-dashed border-white/[0.08] rounded-xl py-10 flex flex-col items-center gap-2 text-brand-slate hover:border-brand-blue/50 hover:text-brand-blue transition-colors"
               >
                 <Upload className="w-7 h-7" />
                 <span className="text-sm font-medium">{t("contactsImportDrop")}</span>
-                <span className="text-xs text-gray-500">Name and Phone columns</span>
+                <span className="text-xs text-brand-slate">Name and Phone columns</span>
               </button>
             ) : importResult ? (
               /* Step 3: summary */
               <div className="space-y-3">
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                  <p className="text-sm font-semibold text-green-800 mb-2">Import complete</p>
-                  <p className="text-sm text-green-700">
+                <div className="bg-brand-emerald/10 border border-brand-emerald/30 rounded-xl p-4">
+                  <p className="text-sm font-semibold text-brand-emerald mb-2">Import complete</p>
+                  <p className="text-sm text-brand-emerald">
                     {t("contactsImportSummary")
                       .replace("{added}", String(importResult.added))
                       .replace("{dupes}", String(importResult.duplicates))
@@ -539,11 +539,11 @@ export default function ContactsPage() {
                 {/* Column mapping */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("contactsImportColPhone")} *</label>
+                    <label className="text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("contactsImportColPhone")} *</label>
                     <select
                       value={phoneColIdx ?? ""}
                       onChange={e => setPhoneColIdx(e.target.value === "" ? null : Number(e.target.value))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-blue"
+                      className="w-full border border-white/[0.08] rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-blue"
                     >
                       <option value="">— select —</option>
                       {csvData.headers.map((h, i) => (
@@ -552,11 +552,11 @@ export default function ContactsPage() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("contactsImportColName")}</label>
+                    <label className="text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("contactsImportColName")}</label>
                     <select
                       value={nameColIdx ?? ""}
                       onChange={e => setNameColIdx(e.target.value === "" ? null : Number(e.target.value))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-blue"
+                      className="w-full border border-white/[0.08] rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-blue"
                     >
                       <option value="">— optional —</option>
                       {csvData.headers.map((h, i) => (
@@ -568,18 +568,18 @@ export default function ContactsPage() {
 
                 {/* Preview table */}
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                  <p className="text-xs font-semibold text-brand-slate uppercase tracking-wide mb-2">
                     {t("contactsImportPreview")}
                   </p>
-                  <div className="overflow-x-auto rounded-lg border border-gray-200">
+                  <div className="overflow-x-auto rounded-lg border border-white/[0.08]">
                     <table className="w-full text-xs">
-                      <thead className="bg-gray-50/50 border-b border-gray-200">
+                      <thead className="bg-white/[0.03]/50 border-b border-white/[0.08]">
                         <tr>
                           {csvData.headers.map((h, i) => (
                             <th
                               key={i}
                               className={`text-left px-2 py-1.5 font-semibold whitespace-nowrap ${
-                                i === phoneColIdx ? "text-brand-blue" : i === nameColIdx ? "text-blue-600" : "text-gray-500"
+                                i === phoneColIdx ? "text-brand-blue" : i === nameColIdx ? "text-brand-cyan" : "text-brand-slate"
                               }`}
                             >
                               {h || `Col ${i + 1}`}
@@ -591,22 +591,22 @@ export default function ContactsPage() {
                       </thead>
                       <tbody>
                         {csvData.rows.slice(0, 5).map((row, ri) => (
-                          <tr key={ri} className="border-b border-gray-200/50 last:border-0">
+                          <tr key={ri} className="border-b border-white/[0.08]/50 last:border-0">
                             {row.map((cell, ci) => (
-                              <td key={ci} className="px-2 py-1.5 text-gray-900/80 font-mono max-w-[120px] truncate">{cell}</td>
+                              <td key={ci} className="px-2 py-1.5 text-white/80 font-mono max-w-[120px] truncate">{cell}</td>
                             ))}
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1.5">{csvData.rows.length} rows total</p>
+                  <p className="text-xs text-brand-slate mt-1.5">{csvData.rows.length} rows total</p>
                 </div>
 
                 <div className="flex gap-2">
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex-1 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="flex-1 py-2 border border-white/[0.08] rounded-lg text-sm font-medium text-white/90 hover:bg-white/[0.03] transition-colors"
                   >
                     Change file
                   </button>

@@ -51,15 +51,15 @@ export default function MeetingPage() {
   if (state === "invalid") {
     return (
       <div className="min-h-screen bg-[#F5F2EC] flex flex-col items-center justify-center px-4">
-        <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-sm border border-gray-100">
+        <div className="bg-brand-navy rounded-2xl p-8 max-w-md w-full text-center shadow-sm border border-white/[0.06]">
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <p className="text-lg font-semibold text-gray-800 mb-1 leading-snug" dir="rtl">
+          <p className="text-lg font-semibold text-white mb-1 leading-snug" dir="rtl">
             هذا الرابط غير صالح.
           </p>
-          <p className="text-lg font-semibold text-gray-800 mb-4">
+          <p className="text-lg font-semibold text-white mb-4">
             This meeting link is not valid.
           </p>
-          {errorMsg && <p className="text-sm text-gray-400">{errorMsg}</p>}
+          {errorMsg && <p className="text-sm text-brand-slate/70">{errorMsg}</p>}
         </div>
       </div>
     );
@@ -69,7 +69,7 @@ export default function MeetingPage() {
   return (
     <div className="min-h-screen bg-[#F5F2EC] flex flex-col items-center justify-center px-4">
       <div className="w-10 h-10 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin mb-4" />
-      <p className="text-sm text-gray-600">Opening your meeting…</p>
+      <p className="text-sm text-brand-slate">Opening your meeting…</p>
     </div>
   );
 }

@@ -26,7 +26,7 @@ function BrandingWarning() {
 
   if (!show) return null;
   return (
-    <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center gap-2">
+    <div className="bg-brand-amber/15 border-b border-brand-amber/30 px-4 py-2 text-sm text-amber-800 flex items-center gap-2">
       <span>⚠</span>
       <span>
         Please set your Brand Name in{" "}
@@ -64,13 +64,13 @@ export default function Dashboard() {
         {/* Conversation list */}
         <div className={`${selectedPhone ? "hidden md:flex" : "flex w-full md:w-80"} md:w-80 h-full shrink-0`}>
           {isEscalationsLoading ? (
-            <div className="w-full h-full border-e border-gray-200 bg-white flex flex-col">
+            <div className="w-full h-full border-e border-white/[0.08] bg-brand-navy flex flex-col">
               {[1, 2, 3].map(i => (
-                <div key={i} className="p-4 border-b border-gray-100 animate-pulse flex gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 shrink-0" />
+                <div key={i} className="p-4 border-b border-white/[0.06] animate-pulse flex gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/[0.05] shrink-0" />
                   <div className="flex-1 space-y-2 py-1">
-                    <div className="h-3 bg-gray-100 rounded w-1/2" />
-                    <div className="h-2 bg-gray-100 rounded w-3/4" />
+                    <div className="h-3 bg-white/[0.05] rounded w-1/2" />
+                    <div className="h-2 bg-white/[0.05] rounded w-3/4" />
                   </div>
                 </div>
               ))}

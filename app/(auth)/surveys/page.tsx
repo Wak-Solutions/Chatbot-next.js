@@ -120,7 +120,7 @@ export default function SurveysTab() {
 
   if (isAuthLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-brand-navy">
         <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
@@ -269,86 +269,86 @@ export default function SurveysTab() {
   const renderList = () => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">{t("surveysTitle")}</h1>
+        <h1 className="text-2xl font-bold text-white">{t("surveysTitle")}</h1>
         <button onClick={openNew} className="flex items-center gap-1.5 bg-brand-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-cyan transition-colors">
           <Plus className="w-4 h-4" /> {t("surveysNewSurvey")}
         </button>
       </div>
 
-      {listError && <p className="text-sm text-red-600">{listError}</p>}
+      {listError && <p className="text-sm text-red-400">{listError}</p>}
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
           <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
         </div>
       ) : surveys.length === 0 ? (
-        <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
-          <ClipboardList className="w-10 h-10 text-gray-500 mx-auto mb-3" />
-          <p className="text-sm text-gray-500">{t("surveysEmpty")}</p>
+        <div className="bg-brand-navy border border-white/[0.08] rounded-xl p-12 text-center">
+          <ClipboardList className="w-10 h-10 text-brand-slate mx-auto mb-3" />
+          <p className="text-sm text-brand-slate">{t("surveysEmpty")}</p>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="bg-brand-navy border border-white/[0.08] rounded-xl overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50/50">
-              <tr className="border-b border-gray-200">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysColTitle")}</th>
-                <th className="text-center px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysColQs")}</th>
-                <th className="text-center px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysColSent")}</th>
-                <th className="text-center px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysColSubmitted")}</th>
-                <th className="text-center px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysColRate")}</th>
-                <th className="text-center px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysColStatus")}</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysColActions")}</th>
+            <thead className="bg-white/[0.03]/50">
+              <tr className="border-b border-white/[0.08]">
+                <th className="text-left px-4 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysColTitle")}</th>
+                <th className="text-center px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysColQs")}</th>
+                <th className="text-center px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysColSent")}</th>
+                <th className="text-center px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysColSubmitted")}</th>
+                <th className="text-center px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysColRate")}</th>
+                <th className="text-center px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysColStatus")}</th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysColActions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {surveys.map((s) => {
                 const rate = s.response_count > 0 ? Math.round((s.submitted_count / s.response_count) * 100) : 0;
                 return (
-                  <tr key={s.id} className="hover:bg-gray-50/50 transition-colors">
+                  <tr key={s.id} className="hover:bg-white/[0.03]/50 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium text-gray-900">{s.title}</span>
+                        <span className="font-medium text-white">{s.title}</span>
                         {s.is_default && (
-                          <span className="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">{t("surveysStatusDefault")}</span>
+                          <span className="px-1.5 py-0.5 rounded-full bg-brand-blue/15 text-brand-cyan text-xs font-medium">{t("surveysStatusDefault")}</span>
                         )}
                       </div>
                     </td>
-                    <td className="px-3 py-3 text-center text-gray-500">{s.question_count}</td>
-                    <td className="px-3 py-3 text-center text-gray-500">{s.response_count}</td>
-                    <td className="px-3 py-3 text-center text-gray-500">{s.submitted_count}</td>
-                    <td className="px-3 py-3 text-center text-gray-500">{s.response_count > 0 ? `${rate}%` : "—"}</td>
+                    <td className="px-3 py-3 text-center text-brand-slate">{s.question_count}</td>
+                    <td className="px-3 py-3 text-center text-brand-slate">{s.response_count}</td>
+                    <td className="px-3 py-3 text-center text-brand-slate">{s.submitted_count}</td>
+                    <td className="px-3 py-3 text-center text-brand-slate">{s.response_count > 0 ? `${rate}%` : "—"}</td>
                     <td className="px-3 py-3 text-center">
                       {s.is_active ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> {t("surveysStatusActive")}
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-emerald/15 text-brand-emerald text-xs font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-brand-emerald animate-pulse" /> {t("surveysStatusActive")}
                         </span>
                       ) : (
-                        <span className="text-xs text-gray-500">{t("surveysStatusInactive")}</span>
+                        <span className="text-xs text-brand-slate">{t("surveysStatusInactive")}</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => openEdit(s.id)} title="Edit" className="p-1.5 rounded hover:bg-gray-50 transition-colors text-gray-500 hover:text-gray-900">
+                        <button onClick={() => openEdit(s.id)} title="Edit" className="p-1.5 rounded hover:bg-white/[0.03] transition-colors text-brand-slate hover:text-white">
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
-                        <button onClick={() => openResults(s.id, s.title)} title="Results" className="p-1.5 rounded hover:bg-gray-50 transition-colors text-gray-500 hover:text-gray-900">
+                        <button onClick={() => openResults(s.id, s.title)} title="Results" className="p-1.5 rounded hover:bg-white/[0.03] transition-colors text-brand-slate hover:text-white">
                           <BarChart2 className="w-3.5 h-3.5" />
                         </button>
                         {s.is_active ? (
-                          <button onClick={() => deactivate(s.id)} title="Deactivate" className="p-1.5 rounded hover:bg-gray-50 transition-colors text-gray-500 hover:text-gray-900">
+                          <button onClick={() => deactivate(s.id)} title="Deactivate" className="p-1.5 rounded hover:bg-white/[0.03] transition-colors text-brand-slate hover:text-white">
                             <XCircle className="w-3.5 h-3.5" />
                           </button>
                         ) : (
-                          <button onClick={() => activate(s.id)} title="Activate" className="p-1.5 rounded hover:bg-gray-50 transition-colors text-gray-500 hover:text-gray-900">
+                          <button onClick={() => activate(s.id)} title="Activate" className="p-1.5 rounded hover:bg-white/[0.03] transition-colors text-brand-slate hover:text-white">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                           </button>
                         )}
                         {s.is_default ? (
                           <span title={t("surveysDefaultCannotDelete")} className="p-1.5 rounded cursor-not-allowed opacity-30">
-                            <Trash2 className="w-3.5 h-3.5 text-gray-500" />
+                            <Trash2 className="w-3.5 h-3.5 text-brand-slate" />
                           </span>
                         ) : (
-                          <button onClick={() => deleteSurvey(s.id, s.title)} title="Delete" className="p-1.5 rounded hover:bg-red-50 transition-colors text-gray-500 hover:text-red-600">
+                          <button onClick={() => deleteSurvey(s.id, s.title)} title="Delete" className="p-1.5 rounded hover:bg-red-500/10 transition-colors text-brand-slate hover:text-red-400">
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         )}
@@ -377,68 +377,68 @@ export default function SurveysTab() {
     return (
       <div className="space-y-5">
         <div className="flex items-center gap-3">
-          <button onClick={() => setView("list")} className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+          <button onClick={() => setView("list")} className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-white/[0.03] transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">{draft.id ? t("surveysEditSurvey") : t("surveysNewSurvey")}</h1>
+          <h1 className="text-2xl font-bold text-white">{draft.id ? t("surveysEditSurvey") : t("surveysNewSurvey")}</h1>
         </div>
 
         {/* Default survey warning */}
         {draft.is_default && (
-          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+          <div className="flex items-start gap-2 bg-brand-amber/15 border border-brand-amber/30 rounded-xl px-4 py-3 text-sm text-amber-800">
             <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <span>{t("surveysDefaultWarning")}</span>
           </div>
         )}
 
         {/* Survey details */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+        <div className="bg-brand-navy border border-white/[0.08] rounded-xl p-5 space-y-4">
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysFormTitle")}</label>
+            <label className="text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysFormTitle")}</label>
             <input
               type="text"
               value={draft.title}
               onChange={(e) => setDraft({ ...draft, title: e.target.value })}
               placeholder={t("surveysFormTitlePlaceholder")}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue"
+              className="w-full border border-white/[0.08] rounded-lg px-3 py-2 text-sm bg-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-blue"
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysFormDescription")}</label>
+            <label className="text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysFormDescription")}</label>
             <textarea
               rows={2}
               value={draft.description}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })}
               placeholder={t("surveysFormDescPlaceholder")}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue resize-none"
+              className="w-full border border-white/[0.08] rounded-lg px-3 py-2 text-sm bg-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-blue resize-none"
             />
           </div>
         </div>
 
         {/* Questions */}
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-900">{t("surveysFormQuestions")} ({draft.questions.length})</h2>
+          <h2 className="text-sm font-semibold text-white">{t("surveysFormQuestions")} ({draft.questions.length})</h2>
 
           {draft.questions.length === 0 && (
-            <div className="bg-white border border-dashed border-gray-200 rounded-xl p-8 text-center text-sm text-gray-500">
+            <div className="bg-brand-navy border border-dashed border-white/[0.08] rounded-xl p-8 text-center text-sm text-brand-slate">
               {t("surveysFormNoQuestions")}
             </div>
           )}
 
           {draft.questions.map((q, idx) => (
-            <div key={q._key} className="bg-white border border-gray-200 rounded-xl p-4">
+            <div key={q._key} className="bg-brand-navy border border-white/[0.08] rounded-xl p-4">
               <div className="flex items-start gap-2">
-                <span className="text-xs font-mono text-gray-500 mt-2.5 w-5 flex-shrink-0 text-right">{idx + 1}.</span>
+                <span className="text-xs font-mono text-brand-slate mt-2.5 w-5 flex-shrink-0 text-right">{idx + 1}.</span>
                 <div className="flex-1 space-y-2">
                   <input
                     type="text"
                     value={q.question_text}
                     onChange={(e) => updateQ(q._key, { question_text: e.target.value })}
                     placeholder={t("surveysQuestionPlaceholder")}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                    className="w-full border border-white/[0.08] rounded-lg px-3 py-2 text-sm bg-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-blue"
                   />
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs text-gray-500">{t("surveysQuestionTypeLabel")}</span>
+                    <span className="text-xs text-brand-slate">{t("surveysQuestionTypeLabel")}</span>
                     {(Object.keys(TYPE_LABELS) as QuestionType[]).map((t) => (
                       <button
                         key={t}
@@ -446,7 +446,7 @@ export default function SurveysTab() {
                         className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                           q.question_type === t
                             ? "bg-brand-blue text-white border-brand-blue"
-                            : "border-gray-200 text-gray-500 hover:border-brand-blue"
+                            : "border-white/[0.08] text-brand-slate hover:border-brand-blue"
                         }`}
                       >
                         {TYPE_LABELS[t]}
@@ -455,13 +455,13 @@ export default function SurveysTab() {
                   </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <button onClick={() => moveQ(q._key, -1)} disabled={idx === 0} className="p-1 rounded hover:bg-gray-50 text-gray-500 disabled:opacity-30 transition-colors">
+                  <button onClick={() => moveQ(q._key, -1)} disabled={idx === 0} className="p-1 rounded hover:bg-white/[0.03] text-brand-slate disabled:opacity-30 transition-colors">
                     <ChevronUp className="w-3.5 h-3.5" />
                   </button>
-                  <button onClick={() => moveQ(q._key, 1)} disabled={idx === draft.questions.length - 1} className="p-1 rounded hover:bg-gray-50 text-gray-500 disabled:opacity-30 transition-colors">
+                  <button onClick={() => moveQ(q._key, 1)} disabled={idx === draft.questions.length - 1} className="p-1 rounded hover:bg-white/[0.03] text-brand-slate disabled:opacity-30 transition-colors">
                     <ChevronDown className="w-3.5 h-3.5" />
                   </button>
-                  <button onClick={() => removeQ(q._key)} className="p-1 rounded hover:bg-red-50 text-gray-500 hover:text-red-500 transition-colors">
+                  <button onClick={() => removeQ(q._key)} className="p-1 rounded hover:bg-red-500/10 text-brand-slate hover:text-red-400 transition-colors">
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -477,10 +477,10 @@ export default function SurveysTab() {
           </button>
         </div>
 
-        {saveError && <p className="text-sm text-red-600">{saveError}</p>}
+        {saveError && <p className="text-sm text-red-400">{saveError}</p>}
 
         <div className="flex gap-3 pb-8">
-          <button onClick={() => setView("list")} className="px-5 py-2.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+          <button onClick={() => setView("list")} className="px-5 py-2.5 rounded-lg border border-white/[0.08] text-sm font-medium text-brand-slate hover:bg-white/[0.03] transition-colors">
             {t("surveysBtnCancel")}
           </button>
           <button
@@ -500,10 +500,10 @@ export default function SurveysTab() {
   const renderResults = () => (
     <div className="space-y-5 pb-10">
       <div className="flex items-center gap-3">
-        <button onClick={() => setView("list")} className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+        <button onClick={() => setView("list")} className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-white/[0.03] transition-colors">
           <ArrowLeft className="w-4 h-4" />
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-white">
           {t("surveysResults")} {resultSurveyTitle}
         </h1>
       </div>
@@ -523,26 +523,26 @@ export default function SurveysTab() {
               { label: t("surveysResultsTotalSubmitted"), value: results.total_submitted },
               { label: t("surveysResultsResponseRate"), value: `${results.response_rate}%` },
             ].map((c) => (
-              <div key={c.label} className="bg-white border border-gray-200 rounded-xl p-4 text-center">
-                <p className="text-2xl font-bold text-gray-900">{c.value}</p>
-                <p className="text-xs text-gray-500 mt-1">{c.label}</p>
+              <div key={c.label} className="bg-brand-navy border border-white/[0.08] rounded-xl p-4 text-center">
+                <p className="text-2xl font-bold text-white">{c.value}</p>
+                <p className="text-xs text-brand-slate mt-1">{c.label}</p>
               </div>
             ))}
           </div>
 
           {/* Per-question */}
           {results.questions.map((q: any, idx: number) => (
-            <div key={q.question_id} className="bg-white border border-gray-200 rounded-xl p-5 space-y-3">
-              <p className="text-sm font-semibold text-gray-900">
+            <div key={q.question_id} className="bg-brand-navy border border-white/[0.08] rounded-xl p-5 space-y-3">
+              <p className="text-sm font-semibold text-white">
                 <span className="text-brand-blue mr-1">{idx + 1}.</span>
                 {q.question_text}
               </p>
 
               {q.question_type === "rating" && (
                 <div className="space-y-2">
-                  <p className="text-xs text-gray-500">
-                    {t("surveysResultsAverage")} <span className="text-gray-900 font-bold text-lg">{q.avg_score ?? "—"}</span>
-                    <span className="text-gray-500"> / 5</span>
+                  <p className="text-xs text-brand-slate">
+                    {t("surveysResultsAverage")} <span className="text-white font-bold text-lg">{q.avg_score ?? "—"}</span>
+                    <span className="text-brand-slate"> / 5</span>
                   </p>
                   {[5, 4, 3, 2, 1].map((n) => {
                     const count = q.distribution?.[String(n)] ?? 0;
@@ -550,11 +550,11 @@ export default function SurveysTab() {
                     const pct = total > 0 ? Math.round((count / total) * 100) : 0;
                     return (
                       <div key={n} className="flex items-center gap-2 text-xs">
-                        <span className="w-3 text-right text-gray-500 font-mono">{n}</span>
-                        <div className="flex-1 h-4 bg-gray-100 rounded-full overflow-hidden">
+                        <span className="w-3 text-right text-brand-slate font-mono">{n}</span>
+                        <div className="flex-1 h-4 bg-white/[0.05] rounded-full overflow-hidden">
                           <div className="h-full bg-brand-blue rounded-full transition-all" style={{ width: `${pct}%` }} />
                         </div>
-                        <span className="w-12 text-gray-500 text-right">{count} ({pct}%)</span>
+                        <span className="w-12 text-brand-slate text-right">{count} ({pct}%)</span>
                       </div>
                     );
                   })}
@@ -574,11 +574,11 @@ export default function SurveysTab() {
                       { label: "No / لا",   count: no,  pct: noPct,  color: "bg-red-500" },
                     ].map((row) => (
                       <div key={row.label} className="space-y-1">
-                        <div className="flex justify-between text-xs text-gray-500">
+                        <div className="flex justify-between text-xs text-brand-slate">
                           <span className="font-medium">{row.label}</span>
                           <span>{row.count} ({row.pct}%)</span>
                         </div>
-                        <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-4 bg-white/[0.05] rounded-full overflow-hidden">
                           <div className={`h-full ${row.color} rounded-full transition-all`} style={{ width: `${row.pct}%` }} />
                         </div>
                       </div>
@@ -590,10 +590,10 @@ export default function SurveysTab() {
               {q.question_type === "free_text" && (
                 <div className="max-h-52 overflow-y-auto space-y-2">
                   {(q.answers ?? []).length === 0 ? (
-                    <p className="text-xs text-gray-500">{t("surveysResultsNoResponses")}</p>
+                    <p className="text-xs text-brand-slate">{t("surveysResultsNoResponses")}</p>
                   ) : (
                     (q.answers as string[]).map((a, i) => (
-                      <p key={i} className="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 leading-snug">"{a}"</p>
+                      <p key={i} className="text-sm text-white bg-white/[0.03] rounded-lg px-3 py-2 leading-snug">"{a}"</p>
                     ))
                   )}
                 </div>
@@ -603,24 +603,24 @@ export default function SurveysTab() {
 
           {/* Per-agent */}
           {results.per_agent.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-              <div className="px-5 py-3 border-b border-gray-200 bg-gray-50">
-                <h3 className="text-sm font-semibold text-gray-900">{t("surveysResultsAgentSatisfaction")}</h3>
+            <div className="bg-brand-navy border border-white/[0.08] rounded-xl overflow-hidden">
+              <div className="px-5 py-3 border-b border-white/[0.08] bg-white/[0.03]">
+                <h3 className="text-sm font-semibold text-white">{t("surveysResultsAgentSatisfaction")}</h3>
               </div>
               <table className="w-full text-sm">
-                <thead className="bg-gray-50/50">
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left px-5 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("agentsColAgentName")}</th>
-                    <th className="text-center px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysResultsChatsHandled")}</th>
-                    <th className="text-center px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("surveysResultsAvgRating")}</th>
+                <thead className="bg-white/[0.03]/50">
+                  <tr className="border-b border-white/[0.08]">
+                    <th className="text-left px-5 py-2.5 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("agentsColAgentName")}</th>
+                    <th className="text-center px-4 py-2.5 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysResultsChatsHandled")}</th>
+                    <th className="text-center px-4 py-2.5 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("surveysResultsAvgRating")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {results.per_agent.map((row, i) => (
                     <tr key={i}>
-                      <td className="px-5 py-3 text-gray-900">{row.agent_name}</td>
-                      <td className="px-4 py-3 text-center text-gray-500">{row.chats_handled}</td>
-                      <td className="px-4 py-3 text-center font-semibold text-gray-900">
+                      <td className="px-5 py-3 text-white">{row.agent_name}</td>
+                      <td className="px-4 py-3 text-center text-brand-slate">{row.chats_handled}</td>
+                      <td className="px-4 py-3 text-center font-semibold text-white">
                         {row.avg_rating != null ? `${row.avg_rating} / 5` : "—"}
                       </td>
                     </tr>

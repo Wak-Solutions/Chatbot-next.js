@@ -79,26 +79,26 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
   const chatMessages = msgs.map((m, i) => (
     <div key={i} className={`flex ${m.from === "customer" ? "justify-start" : "justify-end"}`}>
       <div className={`max-w-[75%] rounded-xl px-3 py-2 shadow-sm ${
-        m.from === "customer" ? "bg-white text-gray-800" :
-        m.from === "bot" ? "bg-gray-100 text-gray-800 border border-gray-200" :
-        "bg-[#DCF8C6] text-gray-800"
+        m.from === "customer" ? "bg-brand-navy text-white" :
+        m.from === "bot" ? "bg-white/[0.05] text-white border border-white/[0.08]" :
+        "bg-gradient-primary text-white"
       }`}>
         {m.label && (
-          <div className={`text-[10px] font-semibold mb-0.5 ${m.from === "bot" ? "text-brand-cyan" : "text-blue-600"}`}>
+          <div className={`text-[10px] font-semibold mb-0.5 ${m.from === "bot" ? "text-brand-cyan" : "text-white"}`}>
             {m.from === "bot" && <Bot className="w-3 h-3 inline mr-0.5 -mt-0.5" />}
             {m.label}
           </div>
         )}
         {m.voice ? (
           <div>
-            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2 mb-1.5">
+            <div className="flex items-center gap-2 bg-white/[0.03] rounded-lg px-3 py-2 mb-1.5">
               <Mic className="w-4 h-4 text-brand-blue shrink-0" />
-              <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div className="flex-1 h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
                 <div className="h-full w-[70%] bg-brand-blue rounded-full" />
               </div>
-              <span className="text-[10px] text-gray-500">0:12</span>
+              <span className="text-[10px] text-brand-slate">0:12</span>
             </div>
-            <div className="text-[10px] text-gray-500 italic bg-gray-50 rounded px-2 py-1">
+            <div className="text-[10px] text-brand-slate italic bg-white/[0.03] rounded px-2 py-1">
               <FileText className="w-3 h-3 inline mr-0.5 -mt-0.5" /> Transcription: {m.transcription}
             </div>
           </div>
@@ -106,16 +106,16 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
           <p className="text-[13px] leading-relaxed">{m.text}</p>
         )}
         <div className="flex items-center justify-end gap-1 mt-0.5">
-          <span className="text-[10px] text-gray-400">{m.time}</span>
-          {m.from !== "customer" && <CheckCheck className="w-3 h-3 text-blue-400" />}
+          <span className="text-[10px] text-brand-slate/70">{m.time}</span>
+          {m.from !== "customer" && <CheckCheck className="w-3 h-3 text-brand-cyan/70" />}
         </div>
       </div>
     </div>
   ));
 
   const chatInput = (
-    <div className="bg-white border-t border-gray-200 px-4 py-2 flex items-center gap-2">
-      <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-xs text-gray-400">Type a message...</div>
+    <div className="bg-brand-navy border-t border-white/[0.08] px-4 py-2 flex items-center gap-2">
+      <div className="flex-1 bg-white/[0.05] rounded-full px-4 py-2 text-xs text-brand-slate/70">Type a message...</div>
       <div className="w-8 h-8 bg-brand-blue rounded-full flex items-center justify-center">
         <Send className="w-3.5 h-3.5 text-white" />
       </div>
@@ -127,7 +127,7 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
     if (chatOpen) {
       return (
         <div className="flex flex-col h-full bg-[#F0EDE8]">
-          <div className="px-4 py-3 bg-white border-b border-gray-200 flex items-center gap-3">
+          <div className="px-4 py-3 bg-brand-navy border-b border-white/[0.08] flex items-center gap-3">
             <button
               onClick={() => setChatOpen(false)}
               className="w-11 h-11 flex items-center justify-center -ms-2 text-brand-blue"
@@ -138,8 +138,8 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
               <span className="text-xs font-bold text-brand-blue">{inboxConvos[selected]?.name?.charAt(0)}</span>
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-800">{inboxConvos[selected]?.name}</div>
-              <div className="text-[10px] text-gray-400">{inboxConvos[selected]?.phone}</div>
+              <div className="text-sm font-semibold text-white">{inboxConvos[selected]?.name}</div>
+              <div className="text-[10px] text-brand-slate/70">{inboxConvos[selected]?.phone}</div>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">{chatMessages}</div>
@@ -149,10 +149,10 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
     }
 
     return (
-      <div className="flex flex-col h-full bg-white">
-        <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/80">
-          <div className="text-sm font-semibold text-gray-800">
-            Inbox <span className="text-gray-400 font-normal">· 6 active conversations</span>
+      <div className="flex flex-col h-full bg-brand-navy">
+        <div className="px-4 py-3 border-b border-white/[0.06] bg-white/[0.03]/80">
+          <div className="text-sm font-semibold text-white">
+            Inbox <span className="text-brand-slate/70 font-normal">· 6 active conversations</span>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto">
@@ -160,17 +160,17 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
             <button
               key={i}
               onClick={() => { setSelected(Math.min(i, 1)); setChatOpen(true); }}
-              className="w-full text-start px-4 py-4 border-b border-gray-50 hover:bg-gray-50 transition-colors active:bg-gray-100"
+              className="w-full text-start px-4 py-4 border-b border-white/[0.04] hover:bg-white/[0.03] transition-colors active:bg-white/[0.05]"
             >
               <div className="flex items-center justify-between mb-0.5">
-                <span className="text-sm font-medium text-gray-900 truncate">{c.name}</span>
+                <span className="text-sm font-medium text-white truncate">{c.name}</span>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[10px] text-gray-400">{c.time}</span>
+                  <span className="text-[10px] text-brand-slate/70">{c.time}</span>
                   {c.unread > 0 && <Badge>{c.unread}</Badge>}
                 </div>
               </div>
-              <div className="text-xs text-gray-500 truncate">{c.last}</div>
-              <div className="text-[10px] text-gray-400 mt-0.5">{c.phone}</div>
+              <div className="text-xs text-brand-slate truncate">{c.last}</div>
+              <div className="text-[10px] text-brand-slate/70 mt-0.5">{c.phone}</div>
             </button>
           ))}
         </div>
@@ -182,41 +182,41 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
   return (
     <div className="flex h-full">
       {/* Conversation list */}
-      <div className="w-[280px] border-e border-gray-200 flex flex-col bg-white shrink-0">
-        <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/80">
-          <div className="text-sm font-semibold text-gray-800">Inbox <span className="text-gray-400 font-normal">· 6 active conversations</span></div>
+      <div className="w-[280px] border-e border-white/[0.08] flex flex-col bg-brand-navy shrink-0">
+        <div className="px-4 py-3 border-b border-white/[0.06] bg-white/[0.03]/80">
+          <div className="text-sm font-semibold text-white">Inbox <span className="text-brand-slate/70 font-normal">· 6 active conversations</span></div>
         </div>
         <div className="flex-1 overflow-y-auto">
           {inboxConvos.map((c, i) => (
             <button
               key={i}
               onClick={() => setSelected(Math.min(i, 1))}
-              className={`w-full text-start px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+              className={`w-full text-start px-4 py-3 border-b border-white/[0.04] hover:bg-white/[0.03] transition-colors ${
                 (i === selected) ? "bg-brand-blue/5 border-s-2 border-s-brand-blue" : ""
               }`}
             >
               <div className="flex items-center justify-between mb-0.5">
-                <span className="text-sm font-medium text-gray-900 truncate">{c.name}</span>
+                <span className="text-sm font-medium text-white truncate">{c.name}</span>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[10px] text-gray-400">{c.time}</span>
+                  <span className="text-[10px] text-brand-slate/70">{c.time}</span>
                   {c.unread > 0 && <Badge>{c.unread}</Badge>}
                 </div>
               </div>
-              <div className="text-xs text-gray-500 truncate">{c.last}</div>
-              <div className="text-[10px] text-gray-400 mt-0.5">{c.phone}</div>
+              <div className="text-xs text-brand-slate truncate">{c.last}</div>
+              <div className="text-[10px] text-brand-slate/70 mt-0.5">{c.phone}</div>
             </button>
           ))}
         </div>
       </div>
       {/* Chat panel */}
       <div className="flex-1 flex flex-col bg-[#F0EDE8] min-w-0">
-        <div className="px-4 py-3 bg-white border-b border-gray-200 flex items-center gap-3">
+        <div className="px-4 py-3 bg-brand-navy border-b border-white/[0.08] flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-brand-blue/10 flex items-center justify-center">
             <span className="text-xs font-bold text-brand-blue">{inboxConvos[selected]?.name?.charAt(0)}</span>
           </div>
           <div>
-            <div className="text-sm font-semibold text-gray-800">{inboxConvos[selected]?.name}</div>
-            <div className="text-[10px] text-gray-400">{inboxConvos[selected]?.phone}</div>
+            <div className="text-sm font-semibold text-white">{inboxConvos[selected]?.name}</div>
+            <div className="text-[10px] text-brand-slate/70">{inboxConvos[selected]?.phone}</div>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">{chatMessages}</div>
@@ -237,42 +237,42 @@ function ScreenLiveChat() {
 
   return (
     <div className="flex h-full">
-      <div className="w-[280px] border-e border-gray-200 flex flex-col bg-white shrink-0">
-        <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/80">
-          <div className="text-sm font-semibold text-gray-800">Inbox <span className="text-gray-400 font-normal">· 3 bot-active</span></div>
+      <div className="w-[280px] border-e border-white/[0.08] flex flex-col bg-brand-navy shrink-0">
+        <div className="px-4 py-3 border-b border-white/[0.06] bg-white/[0.03]/80">
+          <div className="text-sm font-semibold text-white">Inbox <span className="text-brand-slate/70 font-normal">· 3 bot-active</span></div>
         </div>
         <div className="flex-1 overflow-y-auto">
           {liveConvos.map((c, i) => (
             <button
               key={i}
               onClick={() => setSel(i)}
-              className={`w-full text-start px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+              className={`w-full text-start px-4 py-3 border-b border-white/[0.04] hover:bg-white/[0.03] transition-colors ${
                 i === sel ? "bg-brand-blue/5 border-s-2 border-s-brand-blue" : ""
               }`}
             >
               <div className="flex items-center justify-between mb-0.5">
-                <span className="text-sm font-medium text-gray-900 truncate">{c.name}</span>
+                <span className="text-sm font-medium text-white truncate">{c.name}</span>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[10px] text-gray-400">{c.time}</span>
+                  <span className="text-[10px] text-brand-slate/70">{c.time}</span>
                   {c.unread > 0 && <Badge>{c.unread}</Badge>}
                 </div>
               </div>
-              <div className="text-xs text-gray-500 truncate">{c.last}</div>
-              <div className="text-[10px] text-gray-400 mt-0.5">{c.phone}</div>
+              <div className="text-xs text-brand-slate truncate">{c.last}</div>
+              <div className="text-[10px] text-brand-slate/70 mt-0.5">{c.phone}</div>
             </button>
           ))}
         </div>
       </div>
       <div className="flex-1 flex flex-col bg-[#F0EDE8] min-w-0">
-        <div className="px-4 py-3 bg-white border-b border-gray-200 flex items-center gap-3">
+        <div className="px-4 py-3 bg-brand-navy border-b border-white/[0.08] flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-brand-blue/10 flex items-center justify-center">
             <span className="text-xs font-bold text-brand-blue">O</span>
           </div>
           <div>
-            <div className="text-sm font-semibold text-gray-800">Omar Saleh</div>
-            <div className="text-[10px] text-gray-400">+966 5** ***2288</div>
+            <div className="text-sm font-semibold text-white">Omar Saleh</div>
+            <div className="text-[10px] text-brand-slate/70">+966 5** ***2288</div>
           </div>
-          <div className="ms-auto flex items-center gap-1 text-[10px] text-brand-cyan bg-green-50 px-2 py-1 rounded-full">
+          <div className="ms-auto flex items-center gap-1 text-[10px] text-brand-cyan bg-brand-emerald/10 px-2 py-1 rounded-full">
             <Bot className="w-3 h-3" /> AI handling
           </div>
         </div>
@@ -287,7 +287,7 @@ function ScreenLiveChat() {
           ].map((m, i) => (
             <div key={i} className={`flex ${m.from === "customer" ? "justify-start" : "justify-end"}`}>
               <div className={`max-w-[75%] rounded-xl px-3 py-2 shadow-sm ${
-                m.from === "customer" ? "bg-white text-gray-800" : "bg-gray-100 text-gray-800 border border-gray-200"
+                m.from === "customer" ? "bg-brand-navy text-white" : "bg-white/[0.05] text-white border border-white/[0.08]"
               }`}>
                 {m.label && (
                   <div className="text-[10px] font-semibold text-brand-cyan mb-0.5">
@@ -296,22 +296,22 @@ function ScreenLiveChat() {
                 )}
                 <p className="text-[13px] leading-relaxed">{m.text}</p>
                 {m.hasLink && (
-                  <div className="mt-1.5 bg-white rounded-lg border border-brand-blue/20 px-3 py-2 flex items-center gap-2">
+                  <div className="mt-1.5 bg-brand-navy rounded-lg border border-brand-blue/20 px-3 py-2 flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-brand-blue" />
                     <div>
                       <div className="text-xs font-medium text-brand-blue">Book a meeting</div>
-                      <div className="text-[10px] text-gray-400">Sunday, 10:00 AM — Agent Nora</div>
+                      <div className="text-[10px] text-brand-slate/70">Sunday, 10:00 AM — Agent Nora</div>
                     </div>
-                    <ChevronRight className="w-3 h-3 text-gray-400 ms-auto" />
+                    <ChevronRight className="w-3 h-3 text-brand-slate/70 ms-auto" />
                   </div>
                 )}
-                <span className="block text-[10px] text-gray-400 text-end mt-0.5">{m.time}</span>
+                <span className="block text-[10px] text-brand-slate/70 text-end mt-0.5">{m.time}</span>
               </div>
             </div>
           ))}
         </div>
-        <div className="bg-white border-t border-gray-200 px-4 py-2 flex items-center gap-2">
-          <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-xs text-gray-400">Type a message...</div>
+        <div className="bg-brand-navy border-t border-white/[0.08] px-4 py-2 flex items-center gap-2">
+          <div className="flex-1 bg-white/[0.05] rounded-full px-4 py-2 text-xs text-brand-slate/70">Type a message...</div>
           <div className="w-8 h-8 bg-brand-blue rounded-full flex items-center justify-center">
             <Send className="w-3.5 h-3.5 text-white" />
           </div>
@@ -324,52 +324,52 @@ function ScreenLiveChat() {
 /* ─── Screen 3: Meetings ──────────────────────────────────────── */
 function ScreenMeetings() {
   const rows = [
-    { name: "Ahmed Al-Rashid", phone: "****4821", date: "Apr 6, 2026", time: "10:00 AM", status: "Scheduled", agent: "Nora", color: "bg-blue-100 text-blue-700" },
-    { name: "Sara Mohammed", phone: "****7734", date: "Apr 6, 2026", time: "02:00 PM", status: "In Progress", agent: "Fahad", color: "bg-yellow-100 text-yellow-700" },
-    { name: "Omar Saleh", phone: "****2288", date: "Apr 7, 2026", time: "11:00 AM", status: "Scheduled", agent: "Nora", color: "bg-blue-100 text-blue-700" },
-    { name: "Khalid Omar", phone: "****9102", date: "Apr 5, 2026", time: "09:00 AM", status: "Completed", agent: "Maha", color: "bg-green-100 text-green-700" },
+    { name: "Ahmed Al-Rashid", phone: "****4821", date: "Apr 6, 2026", time: "10:00 AM", status: "Scheduled", agent: "Nora", color: "bg-brand-blue/15 text-brand-cyan" },
+    { name: "Sara Mohammed", phone: "****7734", date: "Apr 6, 2026", time: "02:00 PM", status: "In Progress", agent: "Fahad", color: "bg-brand-amber/15 text-brand-amber" },
+    { name: "Omar Saleh", phone: "****2288", date: "Apr 7, 2026", time: "11:00 AM", status: "Scheduled", agent: "Nora", color: "bg-brand-blue/15 text-brand-cyan" },
+    { name: "Khalid Omar", phone: "****9102", date: "Apr 5, 2026", time: "09:00 AM", status: "Completed", agent: "Maha", color: "bg-brand-emerald/15 text-brand-emerald" },
   ];
 
   return (
-    <div className="h-full bg-gray-50 overflow-y-auto p-6">
+    <div className="h-full bg-white/[0.03] overflow-y-auto p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Meetings</h2>
-          <p className="text-sm text-gray-500">Upcoming and past meetings with customers</p>
+          <h2 className="text-lg font-semibold text-white">Meetings</h2>
+          <p className="text-sm text-brand-slate">Upcoming and past meetings with customers</p>
         </div>
         <button className="bg-brand-blue text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-1.5">
           <Plus className="w-3.5 h-3.5" /> New Meeting
         </button>
       </div>
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-brand-navy rounded-xl border border-white/[0.08] overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Agent</th>
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+            <tr className="border-b border-white/[0.06] bg-white/[0.03]/50">
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider">Customer</th>
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider">Date</th>
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider">Time</th>
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider">Status</th>
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider">Agent</th>
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider"></th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r, i) => (
-              <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+              <tr key={i} className="border-b border-white/[0.04] hover:bg-white/[0.03]/50 transition-colors">
                 <td className="px-4 py-3">
-                  <div className="font-medium text-gray-800">{r.name}</div>
-                  <div className="text-[10px] text-gray-400">{r.phone}</div>
+                  <div className="font-medium text-white">{r.name}</div>
+                  <div className="text-[10px] text-brand-slate/70">{r.phone}</div>
                 </td>
-                <td className="px-4 py-3 text-gray-600">{r.date}</td>
-                <td className="px-4 py-3 text-gray-600">{r.time}</td>
+                <td className="px-4 py-3 text-brand-slate">{r.date}</td>
+                <td className="px-4 py-3 text-brand-slate">{r.time}</td>
                 <td className="px-4 py-3">
                   <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${r.color}`}>{r.status}</span>
                 </td>
-                <td className="px-4 py-3 text-gray-600">{r.agent}</td>
+                <td className="px-4 py-3 text-brand-slate">{r.agent}</td>
                 <td className="px-4 py-3">
                   {r.status !== "Completed" && (
                     <button className={`text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1 ${
-                      r.status === "In Progress" ? "bg-brand-blue text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      r.status === "In Progress" ? "bg-brand-blue text-white" : "bg-white/[0.05] text-white/90 hover:bg-white/[0.08]"
                     }`}>
                       <Video className="w-3 h-3" /> Join
                     </button>
@@ -396,69 +396,69 @@ function ScreenJourney() {
 
   const journeys = [
     [
-      { label: "First contact via WhatsApp", time: "Mar 28, 10:02 AM", color: "bg-blue-500", icon: <MessageCircle className="w-3 h-3 text-white" /> },
-      { label: "AI bot handled initial inquiry", time: "Mar 28, 10:02 AM", color: "bg-gray-400", icon: <Bot className="w-3 h-3 text-white" /> },
-      { label: "Follow-up conversation", time: "Mar 30, 02:15 PM", color: "bg-gray-400", icon: <Bot className="w-3 h-3 text-white" /> },
-      { label: "Escalated to Agent Nora", time: "Mar 30, 02:20 PM", color: "bg-orange-500", icon: <AlertCircle className="w-3 h-3 text-white" /> },
+      { label: "First contact via WhatsApp", time: "Mar 28, 10:02 AM", color: "bg-brand-blue", icon: <MessageCircle className="w-3 h-3 text-white" /> },
+      { label: "AI bot handled initial inquiry", time: "Mar 28, 10:02 AM", color: "bg-brand-slate", icon: <Bot className="w-3 h-3 text-white" /> },
+      { label: "Follow-up conversation", time: "Mar 30, 02:15 PM", color: "bg-brand-slate", icon: <Bot className="w-3 h-3 text-white" /> },
+      { label: "Escalated to Agent Nora", time: "Mar 30, 02:20 PM", color: "bg-brand-amber", icon: <AlertCircle className="w-3 h-3 text-white" /> },
       { label: "Meeting booked — Apr 6, 10 AM", time: "Mar 30, 02:25 PM", color: "bg-teal-500", icon: <Calendar className="w-3 h-3 text-white" /> },
-      { label: "Survey submitted — 5/5 stars", time: "Apr 6, 11:00 AM", color: "bg-green-500", icon: <Star className="w-3 h-3 text-white" /> },
+      { label: "Survey submitted — 5/5 stars", time: "Apr 6, 11:00 AM", color: "bg-brand-emerald", icon: <Star className="w-3 h-3 text-white" /> },
     ],
     [
-      { label: "First contact via WhatsApp", time: "Apr 1, 10:14 AM", color: "bg-blue-500", icon: <MessageCircle className="w-3 h-3 text-white" /> },
-      { label: "AI bot handled pricing question", time: "Apr 1, 10:14 AM", color: "bg-gray-400", icon: <Bot className="w-3 h-3 text-white" /> },
+      { label: "First contact via WhatsApp", time: "Apr 1, 10:14 AM", color: "bg-brand-blue", icon: <MessageCircle className="w-3 h-3 text-white" /> },
+      { label: "AI bot handled pricing question", time: "Apr 1, 10:14 AM", color: "bg-brand-slate", icon: <Bot className="w-3 h-3 text-white" /> },
       { label: "Voice note transcribed", time: "Apr 1, 10:15 AM", color: "bg-purple-500", icon: <Mic className="w-3 h-3 text-white" /> },
-      { label: "Sent pricing details", time: "Apr 1, 10:15 AM", color: "bg-gray-400", icon: <Bot className="w-3 h-3 text-white" /> },
+      { label: "Sent pricing details", time: "Apr 1, 10:15 AM", color: "bg-brand-slate", icon: <Bot className="w-3 h-3 text-white" /> },
     ],
     [
-      { label: "First contact via WhatsApp", time: "Mar 25, 09:30 AM", color: "bg-blue-500", icon: <MessageCircle className="w-3 h-3 text-white" /> },
-      { label: "AI bot handled inquiry", time: "Mar 25, 09:30 AM", color: "bg-gray-400", icon: <Bot className="w-3 h-3 text-white" /> },
-      { label: "Rescheduled appointment", time: "Apr 2, 11:00 AM", color: "bg-orange-500", icon: <AlertCircle className="w-3 h-3 text-white" /> },
+      { label: "First contact via WhatsApp", time: "Mar 25, 09:30 AM", color: "bg-brand-blue", icon: <MessageCircle className="w-3 h-3 text-white" /> },
+      { label: "AI bot handled inquiry", time: "Mar 25, 09:30 AM", color: "bg-brand-slate", icon: <Bot className="w-3 h-3 text-white" /> },
+      { label: "Rescheduled appointment", time: "Apr 2, 11:00 AM", color: "bg-brand-amber", icon: <AlertCircle className="w-3 h-3 text-white" /> },
       { label: "Meeting booked — Apr 8, 09 AM", time: "Apr 2, 11:05 AM", color: "bg-teal-500", icon: <Calendar className="w-3 h-3 text-white" /> },
-      { label: "Awaiting meeting", time: "", color: "bg-gray-300", icon: <Clock className="w-3 h-3 text-white" /> },
+      { label: "Awaiting meeting", time: "", color: "bg-white/[0.10]", icon: <Clock className="w-3 h-3 text-white" /> },
     ],
     [
-      { label: "First contact via WhatsApp", time: "Apr 3, 03:00 PM", color: "bg-blue-500", icon: <MessageCircle className="w-3 h-3 text-white" /> },
-      { label: "AI bot greeting sent", time: "Apr 3, 03:00 PM", color: "bg-gray-400", icon: <Bot className="w-3 h-3 text-white" /> },
+      { label: "First contact via WhatsApp", time: "Apr 3, 03:00 PM", color: "bg-brand-blue", icon: <MessageCircle className="w-3 h-3 text-white" /> },
+      { label: "AI bot greeting sent", time: "Apr 3, 03:00 PM", color: "bg-brand-slate", icon: <Bot className="w-3 h-3 text-white" /> },
     ],
   ];
 
   return (
     <div className="flex h-full">
-      <div className="w-[240px] border-e border-gray-200 bg-white flex flex-col shrink-0">
-        <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/80">
-          <div className="text-sm font-semibold text-gray-800">Customers</div>
+      <div className="w-[240px] border-e border-white/[0.08] bg-brand-navy flex flex-col shrink-0">
+        <div className="px-4 py-3 border-b border-white/[0.06] bg-white/[0.03]/80">
+          <div className="text-sm font-semibold text-white">Customers</div>
         </div>
         <div className="flex-1 overflow-y-auto">
           {customers.map((c, i) => (
             <button
               key={i}
               onClick={() => setSel(i)}
-              className={`w-full text-start px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+              className={`w-full text-start px-4 py-3 border-b border-white/[0.04] hover:bg-white/[0.03] transition-colors ${
                 i === sel ? "bg-brand-blue/5 border-s-2 border-s-brand-blue" : ""
               }`}
             >
-              <div className="text-sm font-medium text-gray-900">{c.name}</div>
-              <div className="text-[10px] text-gray-400">{c.phone} · {c.touchpoints} touchpoints</div>
+              <div className="text-sm font-medium text-white">{c.name}</div>
+              <div className="text-[10px] text-brand-slate/70">{c.phone} · {c.touchpoints} touchpoints</div>
             </button>
           ))}
         </div>
       </div>
-      <div className="flex-1 bg-gray-50 overflow-y-auto p-6">
+      <div className="flex-1 bg-white/[0.03] overflow-y-auto p-6">
         <div className="mb-5">
-          <h3 className="text-base font-semibold text-gray-900">{customers[sel].name}</h3>
-          <p className="text-xs text-gray-500">Customer journey — {customers[sel].touchpoints} touchpoints</p>
+          <h3 className="text-base font-semibold text-white">{customers[sel].name}</h3>
+          <p className="text-xs text-brand-slate">Customer journey — {customers[sel].touchpoints} touchpoints</p>
         </div>
         <div className="relative ms-4">
-          <div className="absolute start-[11px] top-3 bottom-3 w-0.5 bg-gray-200" />
+          <div className="absolute start-[11px] top-3 bottom-3 w-0.5 bg-white/[0.08]" />
           <div className="space-y-5">
             {(journeys[sel] ?? []).map((j, i) => (
               <div key={i} className="flex items-start gap-4 relative">
                 <div className={`w-6 h-6 rounded-full ${j.color} flex items-center justify-center z-10 shrink-0 shadow-sm`}>
                   {j.icon}
                 </div>
-                <div className="bg-white rounded-lg border border-gray-100 px-4 py-2.5 shadow-sm flex-1">
-                  <div className="text-sm font-medium text-gray-800">{j.label}</div>
-                  {j.time && <div className="text-[10px] text-gray-400 mt-0.5">{j.time}</div>}
+                <div className="bg-brand-navy rounded-lg border border-white/[0.06] px-4 py-2.5 shadow-sm flex-1">
+                  <div className="text-sm font-medium text-white">{j.label}</div>
+                  {j.time && <div className="text-[10px] text-brand-slate/70 mt-0.5">{j.time}</div>}
                 </div>
               </div>
             ))}
@@ -494,55 +494,55 @@ function ScreenStats({ portrait = false }: { portrait?: boolean }) {
   ];
 
   return (
-    <div className="h-full bg-gray-50 overflow-y-auto p-6">
+    <div className="h-full bg-white/[0.03] overflow-y-auto p-6">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Statistics</h2>
-        <p className="text-sm text-gray-500">Last 30 days performance overview</p>
+        <h2 className="text-lg font-semibold text-white">Statistics</h2>
+        <p className="text-sm text-brand-slate">Last 30 days performance overview</p>
       </div>
       {/* Metric cards */}
       <div className={`grid gap-4 mb-6 ${portrait ? "grid-cols-2" : "grid-cols-4"}`}>
         {metrics.map((m, i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="text-xs text-gray-500 mb-1">{m.label}</div>
-            <div className="text-2xl font-bold text-gray-900">{m.value}</div>
-            <div className={`text-xs font-medium mt-1 ${m.up ? "text-green-600" : "text-red-600"}`}>{m.change} this month</div>
+          <div key={i} className="bg-brand-navy rounded-xl border border-white/[0.08] p-4">
+            <div className="text-xs text-brand-slate mb-1">{m.label}</div>
+            <div className="text-2xl font-bold text-white">{m.value}</div>
+            <div className={`text-xs font-medium mt-1 ${m.up ? "text-brand-emerald" : "text-red-400"}`}>{m.change} this month</div>
           </div>
         ))}
       </div>
       {/* Bar chart */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
-        <div className="text-sm font-semibold text-gray-800 mb-4">Conversations per day (this week)</div>
+      <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-4 mb-6">
+        <div className="text-sm font-semibold text-white mb-4">Conversations per day (this week)</div>
         <div className="flex items-end gap-3 h-36">
           {days.map((d, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-[10px] text-gray-500 font-medium">{d.val}</span>
+              <span className="text-[10px] text-brand-slate font-medium">{d.val}</span>
               <div className="w-full rounded-t-md bg-brand-blue/80 transition-all" style={{ height: `${(d.val / maxVal) * 100}%` }} />
-              <span className="text-[10px] text-gray-400">{d.label}</span>
+              <span className="text-[10px] text-brand-slate/70">{d.label}</span>
             </div>
           ))}
         </div>
       </div>
       {/* Agent table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-4 py-3 border-b border-gray-100">
-          <div className="text-sm font-semibold text-gray-800">Agent Performance</div>
+      <div className="bg-brand-navy rounded-xl border border-white/[0.08] overflow-hidden">
+        <div className="px-4 py-3 border-b border-white/[0.06]">
+          <div className="text-sm font-semibold text-white">Agent Performance</div>
         </div>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="text-start px-4 py-2.5 text-xs font-medium text-gray-500">Agent</th>
-              <th className="text-start px-4 py-2.5 text-xs font-medium text-gray-500">Conversations</th>
-              <th className="text-start px-4 py-2.5 text-xs font-medium text-gray-500">Resolved</th>
-              <th className="text-start px-4 py-2.5 text-xs font-medium text-gray-500">Avg Time</th>
+            <tr className="border-b border-white/[0.06] bg-white/[0.03]/50">
+              <th className="text-start px-4 py-2.5 text-xs font-medium text-brand-slate">Agent</th>
+              <th className="text-start px-4 py-2.5 text-xs font-medium text-brand-slate">Conversations</th>
+              <th className="text-start px-4 py-2.5 text-xs font-medium text-brand-slate">Resolved</th>
+              <th className="text-start px-4 py-2.5 text-xs font-medium text-brand-slate">Avg Time</th>
             </tr>
           </thead>
           <tbody>
             {agents.map((a, i) => (
-              <tr key={i} className="border-b border-gray-50">
-                <td className="px-4 py-2.5 font-medium text-gray-800">{a.name}</td>
-                <td className="px-4 py-2.5 text-gray-600">{a.convos}</td>
-                <td className="px-4 py-2.5 text-gray-600">{a.resolved}</td>
-                <td className="px-4 py-2.5 text-gray-600">{a.time}</td>
+              <tr key={i} className="border-b border-white/[0.04]">
+                <td className="px-4 py-2.5 font-medium text-white">{a.name}</td>
+                <td className="px-4 py-2.5 text-brand-slate">{a.convos}</td>
+                <td className="px-4 py-2.5 text-brand-slate">{a.resolved}</td>
+                <td className="px-4 py-2.5 text-brand-slate">{a.time}</td>
               </tr>
             ))}
           </tbody>
@@ -555,73 +555,74 @@ function ScreenStats({ portrait = false }: { portrait?: boolean }) {
 /* ─── Screen 6: Chatbot Config ────────────────────────────────── */
 function ScreenChatbot() {
   return (
-    <div className="h-full bg-gray-50 overflow-y-auto p-6">
+    <div className="h-full bg-white/[0.03] overflow-y-auto p-6">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Chatbot Configuration</h2>
-        <p className="text-sm text-gray-500">Customize your AI assistant's behavior and responses</p>
+        <h2 className="text-lg font-semibold text-white">Chatbot Configuration</h2>
+        <p className="text-sm text-brand-slate">Customize your AI assistant's behavior and responses</p>
       </div>
       <div className="flex gap-6">
         {/* Config form */}
         <div className="flex-1 space-y-5">
-          <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+          <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5 space-y-4">
             <div>
-              <label className="text-xs font-medium text-gray-700 block mb-1.5">Business Name</label>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">WAK Solutions</div>
+              <label className="text-xs font-medium text-white/90 block mb-1.5">Business Name</label>
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white">WAK Solutions</div>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-700 block mb-1.5">Greeting Message</label>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 leading-relaxed">
+              <label className="text-xs font-medium text-white/90 block mb-1.5">Greeting Message</label>
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white leading-relaxed">
                 Hello! Welcome to WAK Solutions. I'm your AI assistant. How can I help you today?
               </div>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-700 block mb-1.5">Tone</label>
+              <label className="text-xs font-medium text-white/90 block mb-1.5">Tone</label>
               <div className="flex gap-2">
                 {["Casual", "Professional", "Formal"].map((t, i) => (
                   <div key={t} className={`text-xs px-3 py-1.5 rounded-lg border cursor-pointer ${
-                    i === 1 ? "bg-brand-blue text-white border-brand-blue" : "bg-white text-gray-600 border-gray-200"
+                    i === 1 ? "bg-brand-blue text-white border-brand-blue" : "bg-brand-navy text-brand-slate border-white/[0.08]"
                   }`}>{t}</div>
                 ))}
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="text-sm font-semibold text-gray-800 mb-3">FAQ Pairs</div>
+          <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5">
+            <div className="text-sm font-semibold text-white mb-3">FAQ Pairs</div>
             <div className="space-y-3">
               {[
                 { q: "What are your working hours?", a: "We're available Sun–Thu, 8 AM to 5 PM (Saudi time)." },
                 { q: "How do I book an appointment?", a: "Just say 'I want to book a meeting' and I'll send you a booking link." },
                 { q: "Do you offer home service?", a: "Yes! We offer home visits in Riyadh and Jeddah." },
               ].map((f, i) => (
-                <div key={i} className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                  <div className="text-xs font-medium text-gray-700 mb-1">Q: {f.q}</div>
-                  <div className="text-xs text-gray-500">A: {f.a}</div>
+                <div key={i} className="bg-white/[0.03] rounded-lg p-3 border border-white/[0.06]">
+                  <div className="text-xs font-medium text-white/90 mb-1">Q: {f.q}</div>
+                  <div className="text-xs text-brand-slate">A: {f.a}</div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="text-sm font-semibold text-gray-800 mb-3">Escalation Rules</div>
-            <div className="space-y-2 text-xs text-gray-600">
-              <div className="flex items-center gap-2"><StatusDot color="bg-orange-400" /> Escalate if customer asks for a human agent</div>
-              <div className="flex items-center gap-2"><StatusDot color="bg-orange-400" /> Escalate if sentiment is negative for 3+ messages</div>
-              <div className="flex items-center gap-2"><StatusDot color="bg-orange-400" /> Escalate if bot confidence is below 60%</div>
+          <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5">
+            <div className="text-sm font-semibold text-white mb-3">Escalation Rules</div>
+            <div className="space-y-2 text-xs text-brand-slate">
+              <div className="flex items-center gap-2"><StatusDot color="bg-brand-amber" /> Escalate if customer asks for a human agent</div>
+              <div className="flex items-center gap-2"><StatusDot color="bg-brand-amber" /> Escalate if sentiment is negative for 3+ messages</div>
+              <div className="flex items-center gap-2"><StatusDot color="bg-brand-amber" /> Escalate if bot confidence is below 60%</div>
             </div>
           </div>
           <button className="bg-brand-blue text-white text-sm font-medium px-6 py-2.5 rounded-lg">Save configuration</button>
         </div>
         {/* Preview */}
         <div className="w-[220px] shrink-0">
-          <div className="text-xs font-medium text-gray-500 mb-2">WhatsApp Preview</div>
-          <div className="bg-[#ECE5DD] rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+          <div className="text-xs font-medium text-brand-slate mb-2">WhatsApp Preview</div>
+          {/* Customer's actual WhatsApp view — colors stay WhatsApp-native. */}
+          <div className="bg-[#ECE5DD] rounded-2xl overflow-hidden border border-white/[0.08] shadow-sm">
             <div className="bg-[#075E54] text-white px-3 py-2 flex items-center gap-2">
               <div className="w-7 h-7 rounded-full bg-[#128C7E] flex items-center justify-center text-[10px] font-bold">W</div>
               <div className="text-xs font-medium">WAK Solutions</div>
             </div>
             <div className="px-2 py-3 space-y-1.5">
               <div className="bg-white rounded-lg px-2.5 py-1.5 shadow-sm max-w-[90%]">
-                <div className="text-[10px] text-brand-cyan font-semibold mb-0.5">AI Assistant</div>
-                <p className="text-[10px] text-gray-700 leading-relaxed">Hello! Welcome to WAK Solutions. I'm your AI assistant. How can I help you today?</p>
+                <div className="text-[10px] text-[#1FA855] font-semibold mb-0.5">AI Assistant</div>
+                <p className="text-[10px] text-[#111b21] leading-relaxed">Hello! Welcome to WAK Solutions. I&apos;m your AI assistant. How can I help you today?</p>
               </div>
             </div>
           </div>
@@ -643,28 +644,28 @@ function ScreenContacts() {
     { name: "Majed Turki", phone: "+966 531 456 8847", source: "WhatsApp", date: "Apr 4, 2026" },
   ];
   const srcColor: Record<string, string> = {
-    WhatsApp: "bg-green-100 text-green-700",
-    "CSV Import": "bg-purple-100 text-purple-700",
-    Manual: "bg-gray-100 text-gray-700",
+    WhatsApp: "bg-brand-emerald/15 text-brand-emerald",
+    "CSV Import": "bg-brand-violet/15 text-brand-violet",
+    Manual: "bg-white/[0.05] text-white/90",
   };
 
   return (
-    <div className="h-full bg-gray-50 overflow-y-auto p-6">
+    <div className="h-full bg-white/[0.03] overflow-y-auto p-6">
       {/* Import banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
-        <FileText className="w-4 h-4 text-blue-500 shrink-0" />
-        <div className="text-xs text-blue-700">
+      <div className="bg-brand-blue/10 border border-brand-cyan/30 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
+        <FileText className="w-4 h-4 text-brand-cyan shrink-0" />
+        <div className="text-xs text-brand-cyan">
           <span className="font-medium">Last import:</span> 47 added, 3 skipped, 2 duplicates
-          <span className="text-blue-400 ms-1">· Mar 20, 2026</span>
+          <span className="text-brand-cyan/70 ms-1">· Mar 20, 2026</span>
         </div>
       </div>
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Contacts</h2>
-          <p className="text-sm text-gray-500">{contacts.length} contacts in database</p>
+          <h2 className="text-lg font-semibold text-white">Contacts</h2>
+          <p className="text-sm text-brand-slate">{contacts.length} contacts in database</p>
         </div>
         <div className="flex gap-2">
-          <button className="bg-white border border-gray-200 text-gray-700 text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-1.5 hover:bg-gray-50">
+          <button className="bg-brand-navy border border-white/[0.08] text-white/90 text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-1.5 hover:bg-white/[0.03]">
             <Upload className="w-3.5 h-3.5" /> Upload CSV
           </button>
           <button className="bg-brand-blue text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-1.5">
@@ -672,25 +673,25 @@ function ScreenContacts() {
           </button>
         </div>
       </div>
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-brand-navy rounded-xl border border-white/[0.08] overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
-              <th className="text-start px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date Added</th>
+            <tr className="border-b border-white/[0.06] bg-white/[0.03]/50">
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider">Name</th>
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider">Phone</th>
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider">Source</th>
+              <th className="text-start px-4 py-3 text-xs font-medium text-brand-slate uppercase tracking-wider">Date Added</th>
             </tr>
           </thead>
           <tbody>
             {contacts.map((c, i) => (
-              <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                <td className="px-4 py-3 font-medium text-gray-800">{c.name}</td>
-                <td className="px-4 py-3 text-gray-600 font-mono text-xs">{c.phone}</td>
+              <tr key={i} className="border-b border-white/[0.04] hover:bg-white/[0.03]/50 transition-colors">
+                <td className="px-4 py-3 font-medium text-white">{c.name}</td>
+                <td className="px-4 py-3 text-brand-slate font-mono text-xs">{c.phone}</td>
                 <td className="px-4 py-3">
                   <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${srcColor[c.source]}`}>{c.source}</span>
                 </td>
-                <td className="px-4 py-3 text-gray-500">{c.date}</td>
+                <td className="px-4 py-3 text-brand-slate">{c.date}</td>
               </tr>
             ))}
           </tbody>
@@ -789,17 +790,17 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
       <button
         onClick={() => goTo(Math.max(current - 1, 0))}
         disabled={current === 0}
-        className="w-11 h-11 flex items-center justify-center rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="w-11 h-11 flex items-center justify-center rounded-lg text-brand-slate hover:text-white hover:bg-white/[0.05] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
       </button>
-      <span className="text-xs text-gray-400 font-mono tabular-nums min-w-[36px] text-center">
+      <span className="text-xs text-brand-slate/70 font-mono tabular-nums min-w-[36px] text-center">
         {current + 1} / {visibleScreens.length}
       </span>
       <button
         onClick={() => goTo(Math.min(current + 1, maxIdx))}
         disabled={current === maxIdx}
-        className="w-11 h-11 flex items-center justify-center rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="w-11 h-11 flex items-center justify-center rounded-lg text-brand-slate hover:text-white hover:bg-white/[0.05] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
       >
         <ArrowRight className="w-4 h-4" />
       </button>
@@ -814,7 +815,7 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
       <div className="fixed inset-0 z-[100]">
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
         <div
-          className="relative w-full h-full flex flex-col bg-gray-100 animate-in fade-in duration-200"
+          className="relative w-full h-full flex flex-col bg-white/[0.05] animate-in fade-in duration-200"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -834,11 +835,11 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
           </div>
 
           {/* Slimmed bottom bar */}
-          <div className="bg-white border-t border-gray-200 px-3 py-1.5 flex items-center gap-2 shrink-0">
+          <div className="bg-brand-navy border-t border-white/[0.08] px-3 py-1.5 flex items-center gap-2 shrink-0">
             {navArrows}
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-semibold text-gray-800 truncate">{screen.title}</div>
-              <div className="text-[10px] text-gray-400 flex items-center gap-1">
+              <div className="text-sm font-semibold text-white truncate">{screen.title}</div>
+              <div className="text-[10px] text-brand-slate/70 flex items-center gap-1">
                 <Monitor className="w-3 h-3" /> View full demo on desktop
               </div>
             </div>
@@ -856,23 +857,23 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
       <div className="fixed inset-0 z-[100]">
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
         <div
-          className="relative w-full h-full flex flex-col bg-gray-100 animate-in fade-in duration-200"
+          className="relative w-full h-full flex flex-col bg-white/[0.05] animate-in fade-in duration-200"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
           {/* Compact browser chrome */}
-          <div className="bg-[#E8E6E3] px-3 py-1 flex items-center gap-3 shrink-0 border-b border-gray-300">
+          <div className="bg-[#E8E6E3] px-3 py-1 flex items-center gap-3 shrink-0 border-b border-white/[0.10]">
             <div className="flex gap-1.5">
               <button onClick={onClose} className="w-3 h-3 rounded-full bg-[#FF5F57] hover:brightness-90 transition-all" title="Close" />
               <div className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
               <div className="w-3 h-3 rounded-full bg-[#28C840]" />
             </div>
-            <div className="flex-1 max-w-xs mx-auto bg-white/80 rounded px-3 py-0.5 text-[10px] text-gray-500 text-center font-mono">
+            <div className="flex-1 max-w-xs mx-auto bg-brand-navy/80 rounded px-3 py-0.5 text-[10px] text-brand-slate text-center font-mono">
               app.waksolutions.com/{screen.id}
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+              className="w-8 h-8 flex items-center justify-center text-brand-slate/70 hover:text-brand-slate transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -886,9 +887,9 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
           </div>
 
           {/* Bottom bar */}
-          <div className="bg-white border-t border-gray-200 px-3 py-1 flex items-center gap-2 shrink-0">
+          <div className="bg-brand-navy border-t border-white/[0.08] px-3 py-1 flex items-center gap-2 shrink-0">
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-semibold text-gray-800 truncate">{screen.title}</div>
+              <div className="text-sm font-semibold text-white truncate">{screen.title}</div>
             </div>
             {navArrows}
           </div>
@@ -909,19 +910,19 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
       {/* Modal */}
-      <div className="relative w-full max-w-6xl h-[calc(100vh-24px)] sm:h-[calc(100vh-48px)] max-h-[800px] flex flex-col rounded-2xl overflow-hidden shadow-2xl bg-gray-100 animate-in fade-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-6xl h-[calc(100vh-24px)] sm:h-[calc(100vh-48px)] max-h-[800px] flex flex-col rounded-2xl overflow-hidden shadow-2xl bg-white/[0.05] animate-in fade-in zoom-in-95 duration-300">
 
         {/* ── Browser chrome ── */}
-        <div className="bg-[#E8E6E3] px-4 py-2.5 flex items-center gap-3 shrink-0 border-b border-gray-300">
+        <div className="bg-[#E8E6E3] px-4 py-2.5 flex items-center gap-3 shrink-0 border-b border-white/[0.10]">
           <div className="flex gap-1.5">
             <button onClick={onClose} className="w-3 h-3 rounded-full bg-[#FF5F57] hover:brightness-90 transition-all" title="Close" />
             <div className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
             <div className="w-3 h-3 rounded-full bg-[#28C840]" />
           </div>
-          <div className="flex-1 max-w-md mx-auto bg-white/80 rounded-md px-3 py-1 text-xs text-gray-500 text-center font-mono">
+          <div className="flex-1 max-w-md mx-auto bg-brand-navy/80 rounded-md px-3 py-1 text-xs text-brand-slate text-center font-mono">
             app.waksolutions.com/{screen.id}
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors" title="Close">
+          <button onClick={onClose} className="text-brand-slate/70 hover:text-brand-slate transition-colors" title="Close">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -932,7 +933,7 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
           {/* Sidebar nav */}
           <div className="hidden md:flex flex-col w-[200px] bg-brand-blue shrink-0">
             <div className="px-4 py-4 flex items-center gap-2 border-b border-white/10">
-              <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center text-white font-bold text-sm">W</div>
+              <div className="w-7 h-7 bg-brand-navy/20 rounded-lg flex items-center justify-center text-white font-bold text-sm">W</div>
               <span className="text-white/90 font-semibold text-sm">WAK Solutions</span>
             </div>
             <nav className="flex-1 py-2 space-y-0.5 px-2 overflow-y-auto">
@@ -942,8 +943,8 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
                   onClick={() => goTo(i)}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                     i === current
-                      ? "bg-white/20 text-white"
-                      : "text-white/60 hover:text-white/90 hover:bg-white/10"
+                      ? "bg-brand-navy/20 text-white"
+                      : "text-white/60 hover:text-white/90 hover:bg-brand-navy/10"
                   }`}
                 >
                   {s.icon}
@@ -964,27 +965,27 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
         </div>
 
         {/* ── Bottom bar ── */}
-        <div className="bg-white border-t border-gray-200 px-4 py-2.5 flex items-center gap-3 shrink-0">
+        <div className="bg-brand-navy border-t border-white/[0.08] px-4 py-2.5 flex items-center gap-3 shrink-0">
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold text-gray-800 truncate">{screen.title}</div>
-            <div className="text-[11px] text-gray-500 truncate">{screen.desc}</div>
+            <div className="text-sm font-semibold text-white truncate">{screen.title}</div>
+            <div className="text-[11px] text-brand-slate truncate">{screen.desc}</div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => goTo(Math.max(current - 1, 0))}
               disabled={current === 0}
-              className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-1 text-xs text-brand-slate hover:text-white disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg hover:bg-white/[0.05] transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Previous
             </button>
-            <span className="text-xs text-gray-400 font-mono tabular-nums min-w-[36px] text-center">
+            <span className="text-xs text-brand-slate/70 font-mono tabular-nums min-w-[36px] text-center">
               {current + 1} / {visibleScreens.length}
             </span>
             <button
               onClick={() => goTo(Math.min(current + 1, maxIdx))}
               disabled={current === maxIdx}
-              className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-1 text-xs text-brand-slate hover:text-white disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg hover:bg-white/[0.05] transition-colors"
             >
               Next <ArrowRight className="w-3.5 h-3.5" />
             </button>

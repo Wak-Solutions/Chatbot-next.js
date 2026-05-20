@@ -251,18 +251,18 @@ function WhatsAppMockup(_props: { t: (typeof copy)[Lang]; isRtl: boolean }) {
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-gray-200 last:border-0">
+    <div className="border-b border-white/[0.06] last:border-0">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-5 text-start gap-4 group"
       >
-        <span className="text-base font-medium text-gray-900 group-hover:text-brand-blue transition-colors">{question}</span>
-        <ChevronDown className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+        <span className="text-base font-medium text-white group-hover:text-brand-cyan transition-colors">{question}</span>
+        <ChevronDown className={`w-5 h-5 text-brand-slate shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
       </button>
       <div
         className={`overflow-hidden transition-all duration-300 ${open ? "max-h-60 pb-5" : "max-h-0"}`}
       >
-        <p className="text-sm text-gray-600 leading-relaxed">{answer}</p>
+        <p className="text-sm text-brand-slate leading-relaxed">{answer}</p>
       </div>
     </div>
   );
@@ -276,13 +276,13 @@ function PricingCard({
   features: string[]; cta: string; highlighted?: boolean; badge?: string; ctaHref?: string;
 }) {
   return (
-    <div className={`relative rounded-2xl p-8 flex flex-col ${
+    <div className={`relative rounded-2xl p-8 flex flex-col transition-all ${
       highlighted
-        ? "bg-brand-blue text-white shadow-2xl shadow-brand-blue/30 scale-[1.02] lg:scale-105 z-10"
-        : "bg-white text-gray-900 shadow-sm border border-gray-200"
+        ? "bg-gradient-primary text-white border border-transparent shadow-2xl shadow-brand-blue/40 scale-[1.02] lg:scale-105 z-10"
+        : "bg-brand-navy text-white border border-white/[0.06] hover:shadow-glow-cyan"
     }`}>
       {badge && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-cyan text-white text-xs font-semibold px-4 py-1 rounded-full">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-cyan text-brand-ink text-xs font-semibold px-4 py-1 rounded-full">
           {badge}
         </span>
       )}
@@ -292,25 +292,25 @@ function PricingCard({
           <span className="text-3xl font-bold">{price}</span>
         ) : (
           <>
-            <span className={`text-sm ${highlighted ? "text-white/70" : "text-gray-500"}`}>{currency} </span>
+            <span className={`text-sm ${highlighted ? "text-white/70" : "text-brand-slate"}`}>{currency} </span>
             <span className="text-4xl font-bold">{price}</span>
-            <span className={`text-sm ${highlighted ? "text-white/70" : "text-gray-500"}`}>{period}</span>
+            <span className={`text-sm ${highlighted ? "text-white/70" : "text-brand-slate"}`}>{period}</span>
           </>
         )}
       </div>
       <ul className="space-y-3 flex-1">
         {features.map((f, i) => (
           <li key={i} className="flex items-start gap-2.5 text-sm">
-            <Check className={`w-4 h-4 shrink-0 mt-0.5 ${highlighted ? "text-green-300" : "text-brand-cyan"}`} />
-            <span className={highlighted ? "text-white/90" : "text-gray-600"}>{f}</span>
+            <Check className={`w-4 h-4 shrink-0 mt-0.5 ${highlighted ? "text-white" : "text-brand-cyan"}`} />
+            <span className={highlighted ? "text-white" : "text-white/90"}>{f}</span>
           </li>
         ))}
       </ul>
       {ctaHref ? (
         <a href={ctaHref} target="_blank" rel="noopener noreferrer" className={`mt-8 block text-center py-3 rounded-xl font-semibold text-sm transition-all ${
           highlighted
-            ? "bg-white text-brand-blue hover:bg-gray-100"
-            : "bg-brand-blue text-white hover:bg-[#0d440d]"
+            ? "bg-white text-brand-blue hover:brightness-95"
+            : "border border-brand-cyan text-brand-cyan hover:bg-brand-cyan/10"
         }`}>
           {cta}
         </a>
@@ -318,8 +318,8 @@ function PricingCard({
         <Link href="/register">
           <a className={`mt-8 block text-center py-3 rounded-xl font-semibold text-sm transition-all ${
             highlighted
-              ? "bg-white text-brand-blue hover:bg-gray-100"
-              : "bg-brand-blue text-white hover:bg-[#0d440d]"
+              ? "bg-white text-brand-blue hover:brightness-95"
+              : "border border-brand-cyan text-brand-cyan hover:bg-brand-cyan/10"
           }`}>
             {cta}
           </a>
@@ -397,33 +397,33 @@ export default function LandingPage() {
   ];
 
   return (
-    <div dir={isRtl ? "rtl" : "ltr"} className="min-h-screen bg-white font-sans text-gray-900 antialiased overflow-x-hidden">
+    <div dir={isRtl ? "rtl" : "ltr"} className="min-h-screen bg-brand-ink font-sans text-white antialiased overflow-x-hidden">
 
       {/* ─── NAV ──────────────────────────────────────────────── */}
       <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white/90 backdrop-blur-xl shadow-sm" : "bg-transparent"
+        scrolled ? "bg-brand-ink/85 backdrop-blur-xl border-b border-white/[0.06]" : "bg-transparent"
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2.5">
               <Logo size="md" priority />
-              <span className="font-bold text-lg text-brand-blue hidden sm:inline">WAK Solutions</span>
+              <span className="font-bold text-lg text-white hidden sm:inline">WAK Solutions</span>
             </button>
 
             {/* Desktop links */}
             <div className="hidden lg:flex items-center gap-8">
               {navLinks.map(l => (
-                <button key={l.id} onClick={() => scrollTo(l.id)} className="text-sm text-gray-600 hover:text-brand-blue transition-colors font-medium">
+                <button key={l.id} onClick={() => scrollTo(l.id)} className="text-sm text-white/80 hover:text-brand-cyan transition-colors font-medium">
                   {l.label}
                 </button>
               ))}
-              <button onClick={toggleLang} className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-blue transition-colors">
-                <Globe className="w-4 h-4" />
+              <button onClick={toggleLang} className="flex items-center gap-1.5 text-sm font-medium text-white/80 hover:text-brand-cyan transition-colors">
+                <Globe className="w-4 h-4 text-brand-cyan" />
                 {t.switchLang}
               </button>
               <Link href="/login">
-                <a className="text-sm font-medium text-brand-blue border border-brand-blue/40 px-4 py-2 rounded-lg hover:border-brand-blue hover:bg-brand-blue/5 transition-colors">
+                <a className="text-sm font-medium text-brand-cyan border border-brand-cyan/60 px-4 py-2 rounded-lg hover:bg-brand-cyan/10 transition-colors">
                   {t.login}
                 </a>
               </Link>
@@ -432,11 +432,11 @@ export default function LandingPage() {
             {/* Mobile: Login + hamburger */}
             <div className="lg:hidden flex items-center gap-2">
               <Link href="/login">
-                <a className="text-sm font-medium text-brand-blue border border-brand-blue/40 px-3 py-1.5 rounded-lg hover:bg-brand-blue/5 transition-colors">
+                <a className="text-sm font-medium text-brand-cyan border border-brand-cyan/60 px-3 py-1.5 rounded-lg hover:bg-brand-cyan/10 transition-colors">
                   {t.login}
                 </a>
               </Link>
-              <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 text-gray-700">
+              <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 text-white/80">
                 {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
@@ -445,16 +445,16 @@ export default function LandingPage() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg">
+          <div className="lg:hidden bg-brand-ink border-t border-white/[0.06] shadow-lg">
             <div className="px-4 py-4 space-y-1">
               {navLinks.map(l => (
-                <button key={l.id} onClick={() => scrollTo(l.id)} className="block w-full text-start px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+                <button key={l.id} onClick={() => scrollTo(l.id)} className="block w-full text-start px-4 py-3 text-sm text-white/80 hover:bg-white/[0.05] hover:text-brand-cyan rounded-lg font-medium">
                   {l.label}
                 </button>
               ))}
-              <div className="pt-3 border-t border-gray-100">
-                <button onClick={toggleLang} className="flex items-center gap-2 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
-                  <Globe className="w-4 h-4 text-brand-blue" />
+              <div className="pt-3 border-t border-white/[0.06]">
+                <button onClick={toggleLang} className="flex items-center gap-2 w-full px-4 py-3 text-sm text-white/80 hover:bg-white/[0.05] hover:text-brand-cyan rounded-lg font-medium">
+                  <Globe className="w-4 h-4 text-brand-cyan" />
                   {t.switchLang}
                 </button>
               </div>
@@ -464,36 +464,39 @@ export default function LandingPage() {
       </nav>
 
       {/* ─── HERO ─────────────────────────────────────────────── */}
-      <section className="relative pt-28 lg:pt-36 pb-16 lg:pb-24 overflow-hidden">
-
+      <section className="relative pt-28 lg:pt-36 pb-16 lg:pb-24 overflow-hidden bg-brand-aurora">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
             {/* Text */}
             <div className="flex-1 text-center lg:text-start max-w-2xl">
               <Reveal>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] text-gray-900">
-                  {t.heroTitle}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.1] text-white">
+                  <span className="text-gradient-primary">{isRtl ? "واتساب بالذكاء الاصطناعي" : "AI-powered WhatsApp"}</span>
+                  {isRtl ? " " : " "}
+                  <span className="text-white">
+                    {t.heroTitle.replace(isRtl ? "واتساب بالذكاء الاصطناعي" : "AI-powered WhatsApp", "").trimStart()}
+                  </span>
                 </h1>
               </Reveal>
               <Reveal delay={100}>
-                <p className="mt-6 text-lg text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                <p className="mt-6 text-lg text-white/70 leading-relaxed max-w-xl mx-auto lg:mx-0">
                   {t.heroSub}
                 </p>
               </Reveal>
               <Reveal delay={200}>
                 <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
                   <Link href="/register">
-                    <a className="inline-flex items-center gap-2 bg-brand-blue text-white font-semibold px-7 py-3.5 rounded-xl hover:bg-[#0d440d] transition-colors shadow-lg shadow-brand-blue/20 text-sm">
-                      {t.startTrial} <ArrowRight className="w-4 h-4" />
+                    <a className="inline-flex items-center gap-2 bg-gradient-primary text-white font-semibold px-7 py-3.5 rounded-xl hover:brightness-110 transition-all shadow-glow-cyan text-sm">
+                      {t.startTrial} <ArrowRight className="w-4 h-4 icon-directional" />
                     </a>
                   </Link>
-                  <button onClick={() => setDemoOpen(true)} className="inline-flex items-center gap-2 text-brand-blue font-semibold px-4 py-3.5 rounded-xl hover:bg-brand-blue/5 transition-colors text-sm">
-                    <Play className="w-4 h-4" /> {t.seeDemo}
+                  <button onClick={() => setDemoOpen(true)} className="inline-flex items-center gap-2 text-brand-cyan font-semibold px-4 py-3.5 rounded-xl hover:bg-brand-cyan/10 transition-colors text-sm">
+                    <Play className="w-4 h-4 text-brand-cyan" /> {t.seeDemo}
                   </button>
                 </div>
               </Reveal>
               <Reveal delay={300}>
-                <p className="mt-8 text-sm text-gray-500">{t.heroProof}</p>
+                <p className="mt-8 text-sm text-brand-slate">{t.heroProof}</p>
               </Reveal>
             </div>
 
@@ -506,15 +509,15 @@ export default function LandingPage() {
       </section>
 
       {/* ─── LOGOS BAR ────────────────────────────────────────── */}
-      <section className="py-14 bg-[#F5F2EC]">
+      <section className="py-14 bg-brand-ink border-y border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Reveal>
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-8">
+            <p className="text-sm font-medium text-brand-slate uppercase tracking-wider mb-8">
               {t.logosTitle} {t.logosSaudi}
             </p>
             <div className="flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
               {[1, 2, 3, 4, 5].map(i => (
-                <div key={i} className="w-28 h-10 bg-gray-300/40 rounded-lg" />
+                <div key={i} className="w-28 h-10 bg-white/[0.05] border border-white/[0.06] rounded-lg" />
               ))}
             </div>
           </Reveal>
@@ -522,12 +525,12 @@ export default function LandingPage() {
       </section>
 
       {/* ─── HOW IT WORKS ─────────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 lg:py-28">
+      <section id="how-it-works" className="py-20 lg:py-28 bg-brand-ink">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{t.howTitle}</h2>
-              <p className="mt-4 text-gray-600 text-lg">{t.howSub}</p>
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white">{t.howTitle}</h2>
+              <p className="mt-4 text-brand-slate text-lg">{t.howSub}</p>
             </div>
           </Reveal>
 
@@ -535,16 +538,15 @@ export default function LandingPage() {
             {steps.map((s, i) => (
               <Reveal key={i} delay={i * 120}>
                 <div className="relative text-center lg:text-start">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-blue/10 mb-5">
-                    <s.icon className="w-6 h-6 text-brand-blue" />
+                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-blue/15 border border-brand-cyan/20 mb-5">
+                    <s.icon className="w-6 h-6 text-brand-cyan" />
                   </div>
                   <span className="block text-xs font-bold text-brand-cyan tracking-widest uppercase mb-2">{s.num}</span>
-                  <h3 className="text-xl font-semibold mb-2">{s.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{s.desc}</p>
-                  {/* Connector arrow (desktop only, not on last) */}
+                  <h3 className="text-xl font-semibold mb-2 text-white">{s.title}</h3>
+                  <p className="text-brand-slate text-sm leading-relaxed">{s.desc}</p>
                   {i < 2 && (
                     <div className="hidden md:block absolute top-7 -end-6 lg:-end-6">
-                      <ArrowRight className={`w-5 h-5 text-gray-300 ${isRtl ? "rotate-180" : ""}`} />
+                      <ArrowRight className={`w-5 h-5 text-brand-slate/50 icon-directional`} />
                     </div>
                   )}
                 </div>
@@ -555,24 +557,24 @@ export default function LandingPage() {
       </section>
 
       {/* ─── FEATURES ─────────────────────────────────────────── */}
-      <section id="features" className="py-20 lg:py-28 bg-[#F5F2EC]">
+      <section id="features" className="py-20 lg:py-28 bg-brand-ink border-t border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{t.featTitle}</h2>
-              <p className="mt-4 text-gray-600 text-lg">{t.featSub}</p>
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white">{t.featTitle}</h2>
+              <p className="mt-4 text-brand-slate text-lg">{t.featSub}</p>
             </div>
           </Reveal>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {features.map((f, i) => (
               <Reveal key={i} delay={i * 80}>
-                <div className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow h-full">
-                  <div className="w-12 h-12 rounded-xl bg-brand-blue/10 flex items-center justify-center mb-4">
-                    <f.icon className="w-5 h-5 text-brand-blue" />
+                <div className="bg-brand-navy rounded-2xl p-7 border border-white/[0.06] hover:shadow-glow-cyan transition-all h-full">
+                  <div className="w-12 h-12 rounded-xl bg-brand-blue/15 border border-brand-cyan/20 flex items-center justify-center mb-4">
+                    <f.icon className="w-5 h-5 text-brand-cyan" />
                   </div>
-                  <h3 className="text-base font-semibold mb-2">{f.title}</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">{f.desc}</p>
+                  <h3 className="text-base font-semibold mb-2 text-white">{f.title}</h3>
+                  <p className="text-sm text-brand-slate leading-relaxed">{f.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -581,15 +583,15 @@ export default function LandingPage() {
       </section>
 
       {/* ─── STATS ────────────────────────────────────────────── */}
-      <section className="py-16 lg:py-20 bg-brand-blue">
+      <section className="py-16 lg:py-20 bg-brand-navy border-y border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {stats.map((s, i) => (
               <Reveal key={i} delay={i * 100}>
                 <div className="text-center">
-                  <s.icon className="w-7 h-7 text-green-300 mx-auto mb-3" />
-                  <div className="text-2xl sm:text-3xl font-bold text-white">{s.value}</div>
-                  <div className="text-sm text-white/70 mt-1">{s.label}</div>
+                  <s.icon className="w-7 h-7 text-brand-cyan mx-auto mb-3" />
+                  <div className="text-2xl sm:text-3xl font-semibold text-white">{s.value}</div>
+                  <div className="text-sm text-brand-slate mt-1">{s.label}</div>
                 </div>
               </Reveal>
             ))}
@@ -598,12 +600,12 @@ export default function LandingPage() {
       </section>
 
       {/* ─── PRICING ──────────────────────────────────────────── */}
-      <section id="pricing" className="py-20 lg:py-28">
+      <section id="pricing" className="py-20 lg:py-28 bg-brand-ink">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{t.priceTitle}</h2>
-              <p className="mt-4 text-gray-600 text-lg">{t.priceSub}</p>
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white">{t.priceTitle}</h2>
+              <p className="mt-4 text-brand-slate text-lg">{t.priceSub}</p>
             </div>
           </Reveal>
 
@@ -644,22 +646,22 @@ export default function LandingPage() {
           </div>
 
           <Reveal delay={300}>
-            <p className="text-center text-sm text-gray-500 mt-10">{t.priceNote.replace("{days}", String(trialDays))}</p>
+            <p className="text-center text-sm text-brand-slate mt-10">{t.priceNote.replace("{days}", String(trialDays))}</p>
           </Reveal>
         </div>
       </section>
 
       {/* ─── FAQ ──────────────────────────────────────────────── */}
-      <section id="faq" className="py-20 lg:py-28 bg-[#F5F2EC]">
+      <section id="faq" className="py-20 lg:py-28 bg-brand-ink border-t border-white/[0.06]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{t.faqTitle}</h2>
-              <p className="mt-4 text-gray-600 text-lg">{t.faqSub}</p>
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white">{t.faqTitle}</h2>
+              <p className="mt-4 text-brand-slate text-lg">{t.faqSub}</p>
             </div>
           </Reveal>
           <Reveal delay={100}>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 sm:px-8">
+            <div className="bg-brand-navy rounded-2xl border border-white/[0.06] px-6 sm:px-8">
               {faqs.map((f, i) => (
                 <FAQItem key={i} question={f.q} answer={f.a} />
               ))}
@@ -669,19 +671,19 @@ export default function LandingPage() {
       </section>
 
       {/* ─── CTA BANNER ───────────────────────────────────────── */}
-      <section className="py-20 lg:py-24 bg-brand-blue relative overflow-hidden">
+      <section className="py-20 lg:py-24 bg-gradient-primary relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 start-1/4 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 end-1/4 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+          <div className="absolute top-0 start-1/4 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 end-1/4 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
         </div>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           <Reveal>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">{t.ctaTitle}</h2>
-            <p className="mt-4 text-white/70 text-lg">{t.ctaSub}</p>
+            <h2 className="text-3xl sm:text-4xl font-semibold text-white tracking-tight">{t.ctaTitle}</h2>
+            <p className="mt-4 text-white/80 text-lg">{t.ctaSub}</p>
             <div className="mt-8 flex items-center justify-center">
               <Link href="/register">
-                <a className="inline-flex items-center gap-2 bg-white text-brand-blue font-semibold px-7 py-3.5 rounded-xl hover:bg-gray-100 transition-colors text-sm shadow-lg">
-                  {t.startTrial} <ArrowRight className="w-4 h-4" />
+                <a className="inline-flex items-center gap-2 bg-white text-brand-blue font-semibold px-7 py-3.5 rounded-xl hover:brightness-95 transition-all text-sm shadow-lg">
+                  {t.startTrial} <ArrowRight className="w-4 h-4 icon-directional" />
                 </a>
               </Link>
             </div>
@@ -690,27 +692,27 @@ export default function LandingPage() {
       </section>
 
       {/* ─── FOOTER ───────────────────────────────────────────── */}
-      <footer className="py-12 bg-gray-900 text-gray-400">
+      <footer className="py-12 bg-brand-ink border-t border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             {/* Logo */}
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center text-white font-bold text-sm">W</div>
+              <Logo size="sm" />
               <span className="font-semibold text-white">{t.copy}</span>
             </div>
 
             {/* Links */}
-            <div className="flex items-center gap-6 text-sm">
-              <Link href="/terms"><a className="hover:text-white transition-colors">{t.terms}</a></Link>
-              <Link href="/terms"><a className="hover:text-white transition-colors">{t.privacy}</a></Link>
-              <button onClick={toggleLang} className="flex items-center gap-1.5 hover:text-white transition-colors">
+            <div className="flex items-center gap-6 text-sm text-brand-slate">
+              <Link href="/terms"><a className="hover:text-brand-cyan transition-colors">{t.terms}</a></Link>
+              <Link href="/terms"><a className="hover:text-brand-cyan transition-colors">{t.privacy}</a></Link>
+              <button onClick={toggleLang} className="flex items-center gap-1.5 hover:text-brand-cyan transition-colors">
                 <Globe className="w-3.5 h-3.5" />
                 {t.switchLang}
               </button>
             </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-gray-800 text-center text-sm">
+          <div className="mt-8 pt-6 border-t border-white/[0.06] text-center text-sm text-brand-slate/60">
             &copy; {new Date().getFullYear()} {t.copy}. {t.rights}
           </div>
         </div>

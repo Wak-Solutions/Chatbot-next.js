@@ -80,8 +80,8 @@ export default function BookDemoPage() {
       <div className="max-w-lg mx-auto space-y-6">
 
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Book a Demo</h1>
-          <p className="text-sm text-gray-500 mt-1">Pick a time and we'll set up a video call. All times are KSA (UTC+3).</p>
+          <h1 className="text-2xl font-bold text-white">Book a Demo</h1>
+          <p className="text-sm text-brand-slate mt-1">Pick a time and we'll set up a video call. All times are KSA (UTC+3).</p>
         </div>
 
         {/* Loading */}
@@ -93,10 +93,10 @@ export default function BookDemoPage() {
 
         {/* Error */}
         {state === "error" && (
-          <div className="bg-white border border-border rounded-xl p-6 text-center space-y-3">
+          <div className="bg-brand-navy border border-border rounded-xl p-6 text-center space-y-3">
             <AlertCircle className="w-10 h-10 text-destructive mx-auto" />
-            <p className="font-semibold text-gray-900">Unable to load booking page</p>
-            <p className="text-sm text-gray-500">{errorMsg}</p>
+            <p className="font-semibold text-white">Unable to load booking page</p>
+            <p className="text-sm text-brand-slate">{errorMsg}</p>
           </div>
         )}
 
@@ -110,12 +110,12 @@ export default function BookDemoPage() {
             )}
 
             {days.length === 0 ? (
-              <div className="bg-white border border-border rounded-xl p-8 text-center text-gray-500 text-sm">
+              <div className="bg-brand-navy border border-border rounded-xl p-8 text-center text-brand-slate text-sm">
                 No available slots in the next 30 days. Please check back later.
               </div>
             ) : !selectedDate ? (
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <div className="flex items-center gap-2 text-sm font-medium text-white/90">
                   <CalendarDays className="w-4 h-4 text-brand-blue" />
                   Select a date
                 </div>
@@ -124,10 +124,10 @@ export default function BookDemoPage() {
                     <button
                       key={d.date}
                       onClick={() => { setSelectedDate(d.date); setSelectedTime(null); setErrorMsg(""); }}
-                      className="bg-white border border-border hover:border-brand-blue hover:bg-brand-blue/5 text-left px-4 py-3 rounded-xl transition-colors"
+                      className="bg-brand-navy border border-border hover:border-brand-blue hover:bg-brand-blue/5 text-left px-4 py-3 rounded-xl transition-colors"
                     >
-                      <p className="font-semibold text-sm text-gray-900">{d.label}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{d.slots.length} slot{d.slots.length !== 1 ? "s" : ""} available</p>
+                      <p className="font-semibold text-sm text-white">{d.label}</p>
+                      <p className="text-xs text-brand-slate mt-0.5">{d.slots.length} slot{d.slots.length !== 1 ? "s" : ""} available</p>
                       {d.bookedSlots?.length > 0 && <p className="text-xs text-muted-foreground/60 mt-0.5">{d.bookedSlots.length} booked</p>}
                     </button>
                   ))}
@@ -137,13 +137,13 @@ export default function BookDemoPage() {
               <div className="space-y-4">
                 <button
                   onClick={() => { setSelectedDate(null); setSelectedTime(null); setErrorMsg(""); }}
-                  className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                  className="flex items-center gap-1 text-sm text-brand-slate hover:text-white transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   {selectedDayData?.label}
                 </button>
 
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <div className="flex items-center gap-2 text-sm font-medium text-white/90">
                   <Clock className="w-4 h-4 text-brand-blue" />
                   Select a time
                 </div>
@@ -156,7 +156,7 @@ export default function BookDemoPage() {
                       className={`px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
                         selectedTime === slot
                           ? "bg-brand-blue text-white border-brand-blue"
-                          : "bg-white border-border hover:border-brand-blue hover:bg-brand-blue/5 text-gray-900"
+                          : "bg-brand-navy border-border hover:border-brand-blue hover:bg-brand-blue/5 text-white"
                       }`}
                     >
                       {slot}
@@ -175,7 +175,7 @@ export default function BookDemoPage() {
 
                 {selectedTime && (
                   <div className="bg-brand-blue/5 border border-brand-blue/20 rounded-xl p-4 space-y-3">
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-white/90">
                       <span className="font-semibold">Selected:</span> {selectedDayData?.label} at {selectedTime} KSA time
                     </p>
                     <button
@@ -198,18 +198,18 @@ export default function BookDemoPage() {
 
         {/* Success — persists across sessions until meeting is completed */}
         {state === "success" && (
-          <div className="bg-white border border-border rounded-xl p-8 text-center space-y-4">
+          <div className="bg-brand-navy border border-border rounded-xl p-8 text-center space-y-4">
             <div className="w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-8 h-8 text-brand-blue" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Demo confirmed!</h2>
-              <p className="text-sm text-gray-500 mt-1">Your slot has been reserved.</p>
+              <h2 className="text-xl font-bold text-white">Demo confirmed!</h2>
+              <p className="text-sm text-brand-slate mt-1">Your slot has been reserved.</p>
             </div>
             {bookedLabel && (
-              <div className="bg-gray-50 rounded-xl px-5 py-4 space-y-2">
-                <p className="text-xs text-gray-400 uppercase tracking-wide">Date & Time (KSA)</p>
-                <p className="font-semibold text-gray-900">{bookedLabel}</p>
+              <div className="bg-white/[0.03] rounded-xl px-5 py-4 space-y-2">
+                <p className="text-xs text-brand-slate/70 uppercase tracking-wide">Date & Time (KSA)</p>
+                <p className="font-semibold text-white">{bookedLabel}</p>
               </div>
             )}
             {meetingLink && (
@@ -222,7 +222,7 @@ export default function BookDemoPage() {
                 <Video className="w-4 h-4" /> Join Meeting
               </a>
             )}
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-brand-slate">
               A confirmation email has been sent to your registered address.
             </p>
           </div>

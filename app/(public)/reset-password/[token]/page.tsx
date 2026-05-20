@@ -8,7 +8,7 @@ import { Lock, Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { csrfFetch } from "@/lib/queryClient";
 
 const inputClass =
-  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors";
+  "w-full px-4 py-2.5 border border-white/[0.08] rounded-xl text-sm bg-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors";
 
 export default function ResetPasswordPage() {
   const params = useParams<{ token: string }>();
@@ -53,26 +53,26 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white/[0.03]">
       <div className="max-w-5xl mx-auto px-4 py-10">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Reset your password</h1>
+          <h1 className="text-2xl font-bold text-white">Reset your password</h1>
         </div>
 
-        <section className="bg-white border border-gray-200 rounded-2xl p-6 max-w-2xl">
+        <section className="bg-brand-navy border border-white/[0.08] rounded-2xl p-6 max-w-2xl">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center">
               <Lock className="w-5 h-5 text-brand-blue" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Choose a new password</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Enter your new password below to regain access to your account.</p>
+              <h2 className="text-lg font-semibold text-white">Choose a new password</h2>
+              <p className="text-xs text-brand-slate mt-0.5">Enter your new password below to regain access to your account.</p>
             </div>
           </div>
 
           {status === "saved" ? (
             <div className="space-y-4 max-w-md">
-              <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2 bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald text-sm rounded-lg px-3 py-2">
                 <Check className="w-4 h-4 shrink-0" />
                 <span>Password updated successfully.</span>
               </div>
@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
               <div>
-                <label className="text-xs font-medium text-gray-700 mb-1.5 block">New password</label>
+                <label className="text-xs font-medium text-white/90 mb-1.5 block">New password</label>
                 <div className="relative">
                   <input
                     type={showNew ? "text" : "password"}
@@ -95,15 +95,15 @@ export default function ResetPasswordPage() {
                     autoComplete="new-password"
                     className={inputClass}
                   />
-                  <button type="button" onClick={() => setShowNew(s => !s)} className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <button type="button" onClick={() => setShowNew(s => !s)} className="absolute end-3 top-1/2 -translate-y-1/2 text-brand-slate/70 hover:text-brand-slate">
                     {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <p className="text-[11px] text-gray-500 mt-1">At least 8 characters.</p>
+                <p className="text-[11px] text-brand-slate mt-1">At least 8 characters.</p>
               </div>
 
               <div>
-                <label className="text-xs font-medium text-gray-700 mb-1.5 block">Confirm new password</label>
+                <label className="text-xs font-medium text-white/90 mb-1.5 block">Confirm new password</label>
                 <input
                   type={showNew ? "text" : "password"}
                   value={confirmPassword}
@@ -114,7 +114,7 @@ export default function ResetPasswordPage() {
               </div>
 
               {error && (
-                <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-3 py-2">
+                <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-3 py-2">
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                   <span>{error}</span>
                 </div>

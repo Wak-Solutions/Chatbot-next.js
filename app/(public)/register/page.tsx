@@ -98,10 +98,10 @@ function StepSidebar({
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 transition-all ${
                     isCompleted
-                      ? "bg-white text-brand-blue"
+                      ? "bg-brand-navy text-brand-blue"
                       : isActive
-                        ? "bg-white/20 text-white ring-2 ring-white"
-                        : "bg-white/10 text-white/40"
+                        ? "bg-brand-navy/20 text-white ring-2 ring-white"
+                        : "bg-brand-navy/10 text-white/40"
                   }`}
                 >
                   {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
@@ -109,7 +109,7 @@ function StepSidebar({
                 {i < 4 && (
                   <div
                     className={`w-0.5 h-10 my-1 ${
-                      stepNum < currentStep ? "bg-white/50" : "bg-white/10"
+                      stepNum < currentStep ? "bg-brand-navy/50" : "bg-brand-navy/10"
                     }`}
                   />
                 )}
@@ -158,10 +158,10 @@ function MobileStepBar({ currentStep, t }: { currentStep: number; t: (key: strin
             key={s}
             className={`h-1.5 flex-1 rounded-full transition-all ${
               s < currentStep
-                ? "bg-white"
+                ? "bg-brand-navy"
                 : s === currentStep
-                  ? "bg-white/60"
-                  : "bg-white/15"
+                  ? "bg-brand-navy/60"
+                  : "bg-brand-navy/15"
             }`}
           />
         ))}
@@ -184,9 +184,9 @@ function FormField({
 }) {
   return (
     <div className={className}>
-      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+      <label className="block text-sm font-medium text-white/90 mb-1.5">
         {label}
-        {hint && <span className="text-xs text-gray-400 font-normal ms-1.5">({hint})</span>}
+        {hint && <span className="text-xs text-brand-slate/70 font-normal ms-1.5">({hint})</span>}
       </label>
       {children}
     </div>
@@ -194,9 +194,9 @@ function FormField({
 }
 
 const inputClass =
-  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors";
+  "w-full px-4 py-2.5 border border-white/[0.08] rounded-xl text-sm bg-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors";
 const selectClass =
-  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors appearance-none";
+  "w-full px-4 py-2.5 border border-white/[0.08] rounded-xl text-sm bg-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors appearance-none";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    STEP 1: ACCOUNT
@@ -256,7 +256,7 @@ function Step1({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
           <button
             type="button"
             onClick={() => setShowPw(!showPw)}
-            className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute end-3 top-1/2 -translate-y-1/2 text-brand-slate/70 hover:text-brand-slate"
           >
             {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
@@ -278,13 +278,13 @@ function Step1({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
           <button
             type="button"
             onClick={() => setShowConfirm(!showConfirm)}
-            className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute end-3 top-1/2 -translate-y-1/2 text-brand-slate/70 hover:text-brand-slate"
           >
             {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
         {form.confirmPassword && form.password !== form.confirmPassword && (
-          <p className="text-xs text-red-500 mt-1">{t("regPasswordMismatch")}</p>
+          <p className="text-xs text-red-400 mt-1">{t("regPasswordMismatch")}</p>
         )}
       </FormField>
 
@@ -301,16 +301,16 @@ function Step1({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
         />
         {form.phone && !/^\+[0-9]{9,14}$/.test(form.phone) ? (
-          <p className="text-xs text-red-500 mt-1">
+          <p className="text-xs text-red-400 mt-1">
             Phone must start with + and contain 10–15 digits (e.g. +966501234567)
           </p>
         ) : (
-          <p className="text-xs text-gray-400 mt-1">Include country code, e.g. +966501234567</p>
+          <p className="text-xs text-brand-slate/70 mt-1">Include country code, e.g. +966501234567</p>
         )}
       </FormField>
 
       <div className="pt-2">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-brand-slate">
           {t("regAlreadyHaveAccount")}{" "}
           <Link href="/login" className="text-brand-blue font-semibold hover:underline">
             {t("regSignIn")}
@@ -470,16 +470,16 @@ function Step3({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
 
   return (
     <div className="space-y-5">
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-        <p className="text-sm text-blue-700">{t("regWhatsAppHelp")}</p>
+      <div className="bg-brand-blue/10 border border-brand-cyan/20 rounded-xl p-4">
+        <p className="text-sm text-brand-cyan">{t("regWhatsAppHelp")}</p>
       </div>
 
       {credentialsEmpty && (
-        <div className="bg-amber-50 border border-amber-300 rounded-xl p-4">
+        <div className="bg-brand-amber/15 border border-amber-300 rounded-xl p-4">
           <p className="text-sm font-semibold text-amber-800">
             ⚠️ Without WhatsApp credentials your chatbot will not work.
           </p>
-          <p className="text-xs text-amber-700 mt-1">
+          <p className="text-xs text-brand-amber mt-1">
             You can add these later in Settings, but the bot will be inactive until then.
           </p>
         </div>
@@ -496,7 +496,7 @@ function Step3({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
       </FormField>
 
       {/* WhatsApp number warning */}
-      <div className="flex gap-2.5 bg-amber-50 border border-amber-200 rounded-xl p-3.5">
+      <div className="flex gap-2.5 bg-brand-amber/15 border border-brand-amber/30 rounded-xl p-3.5">
         <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
         <p className="text-xs text-amber-800 leading-relaxed">{t("regWhatsAppNumberWarning")}</p>
       </div>
@@ -505,11 +505,11 @@ function Step3({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
       <label className="flex items-start gap-2.5 cursor-pointer select-none">
         <input
           type="checkbox"
-          className="mt-0.5 w-4 h-4 rounded border-gray-300 text-brand-blue accent-brand-blue shrink-0"
+          className="mt-0.5 w-4 h-4 rounded border-white/[0.10] text-brand-blue accent-brand-blue shrink-0"
           checked={form.whatsappNumberConfirmed}
           onChange={(e) => setForm({ ...form, whatsappNumberConfirmed: e.target.checked })}
         />
-        <span className="text-sm text-gray-700">{t("regWhatsAppNumberConfirm")}</span>
+        <span className="text-sm text-white/90">{t("regWhatsAppNumberConfirm")}</span>
       </label>
 
       <FormField label={t("regWabaId")}>
@@ -523,7 +523,7 @@ function Step3({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
           placeholder="e.g. 123456789012345"
         />
         {wabaError && (
-          <p className="text-xs text-red-500 mt-1">{wabaError}</p>
+          <p className="text-xs text-red-400 mt-1">{wabaError}</p>
         )}
       </FormField>
 
@@ -545,7 +545,7 @@ function Step3({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
           onChange={(e) => setForm({ ...form, appSecret: e.target.value })}
           placeholder="Meta → App Settings → Basic → App Secret"
         />
-        <p className="text-xs text-amber-700 mt-1.5">
+        <p className="text-xs text-brand-amber mt-1.5">
           Required for incoming messages. Found in Meta Developer Console → your app → Settings → Basic → App Secret.
         </p>
       </FormField>
@@ -566,10 +566,10 @@ function Step3({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
           )}
         </button>
         {form.whatsappVerified && (
-          <span className="text-sm text-green-600 font-medium">{form.whatsappDisplayName}</span>
+          <span className="text-sm text-brand-emerald font-medium">{form.whatsappDisplayName}</span>
         )}
       </div>
-      {verifyError && <p className="text-sm text-red-500">{verifyError}</p>}
+      {verifyError && <p className="text-sm text-red-400">{verifyError}</p>}
     </div>
   );
 }
@@ -644,18 +644,18 @@ function Step4({
                   onChange={(e) => updateAgent(i, "email", e.target.value)}
                 />
                 {emailErrors[i] && (
-                  <p className="text-xs text-red-500 mt-1">{emailErrors[i]}</p>
+                  <p className="text-xs text-red-400 mt-1">{emailErrors[i]}</p>
                 )}
               </div>
             </div>
-            <span className="text-xs bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full mt-2 shrink-0">
+            <span className="text-xs bg-white/[0.05] text-brand-slate px-2.5 py-1 rounded-full mt-2 shrink-0">
               {t("regAgentRole")}
             </span>
             {form.agents.length > 1 && (
               <button
                 type="button"
                 onClick={() => removeAgent(i)}
-                className="text-gray-300 hover:text-red-400 transition-colors mt-2.5"
+                className="text-brand-slate/50 hover:text-red-400 transition-colors mt-2.5"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -696,8 +696,8 @@ function Step5({ currentStep, form, t }: { currentStep: number; form: FormData; 
       <div className="w-20 h-20 bg-brand-blue/10 rounded-full flex items-center justify-center mb-6">
         <Rocket className="w-10 h-10 text-brand-blue" />
       </div>
-      <h2 className="text-2xl font-bold text-gray-900">{t("regGoLiveTitle")}</h2>
-      <p className="text-gray-500 mt-2 mb-8">{t("regGoLiveSubtitle")}</p>
+      <h2 className="text-2xl font-bold text-white">{t("regGoLiveTitle")}</h2>
+      <p className="text-brand-slate mt-2 mb-8">{t("regGoLiveSubtitle")}</p>
 
       <div className="w-full max-w-sm space-y-3 text-start">
         {checks.map((c, i) => (
@@ -705,24 +705,24 @@ function Step5({ currentStep, form, t }: { currentStep: number; form: FormData; 
             key={i}
             className={`flex items-center gap-3 p-3 rounded-xl border ${
               c.done
-                ? "bg-green-50 border-green-100"
-                : "bg-gray-50 border-gray-200"
+                ? "bg-brand-emerald/10 border-brand-emerald/30"
+                : "bg-white/[0.03] border-white/[0.08]"
             }`}
           >
             <div
               className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
-                c.done ? "bg-green-500" : "bg-gray-300"
+                c.done ? "bg-brand-emerald" : "bg-white/[0.10]"
               }`}
             >
               {c.done ? (
                 <Check className="w-3.5 h-3.5 text-white" />
               ) : (
-                <span className="w-2 h-2 rounded-full bg-white" />
+                <span className="w-2 h-2 rounded-full bg-brand-navy" />
               )}
             </div>
             <span
               className={`text-sm font-medium ${
-                c.done ? "text-green-800" : "text-gray-500"
+                c.done ? "text-brand-emerald" : "text-brand-slate"
               }`}
             >
               {t(c.key)}
@@ -942,7 +942,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div dir={isRtl ? "rtl" : "ltr"} className="min-h-screen flex flex-col lg:flex-row bg-white font-sans antialiased">
+    <div dir={isRtl ? "rtl" : "ltr"} className="min-h-screen flex flex-col lg:flex-row bg-brand-navy font-sans antialiased">
       {/* Desktop sidebar */}
       <StepSidebar currentStep={step} t={t} isRtl={isRtl} />
 
@@ -952,16 +952,16 @@ export default function RegisterPage() {
       {/* Right panel */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Top bar */}
-        <div className="flex items-center justify-between px-6 lg:px-10 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 lg:px-10 py-4 border-b border-white/[0.06]">
           <Link href="/">
-            <a className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-brand-blue transition-colors">
+            <a className="flex items-center gap-1.5 text-sm font-medium text-brand-slate hover:text-brand-blue transition-colors">
               <ChevronLeft className="w-4 h-4" />
               Back
             </a>
           </Link>
           <button
             onClick={toggleLang}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            className="flex items-center gap-1.5 text-sm text-brand-slate hover:text-white/90 transition-colors"
           >
             <Globe className="w-4 h-4" />
             {lang === "en" ? "العربية" : "English"}
@@ -973,9 +973,9 @@ export default function RegisterPage() {
           <div className="max-w-xl mx-auto">
             {/* Step title */}
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900">{stepTitles[step]}</h2>
+              <h2 className="text-2xl font-bold text-white">{stepTitles[step]}</h2>
               {step === 1 && (
-                <p className="text-gray-500 mt-1">{t("regSubtitle").replace("{days}", String(trialDays))}</p>
+                <p className="text-brand-slate mt-1">{t("regSubtitle").replace("{days}", String(trialDays))}</p>
               )}
             </div>
 
@@ -988,20 +988,20 @@ export default function RegisterPage() {
 
             {/* Error */}
             {error && (
-              <div className="mt-4 bg-red-50 border border-red-100 rounded-xl p-3">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="mt-4 bg-red-500/10 border border-red-100 rounded-xl p-3">
+                <p className="text-sm text-red-400">{error}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-gray-100 px-6 lg:px-10 py-4">
+        <div className="border-t border-white/[0.06] px-6 lg:px-10 py-4">
           <div className="max-w-xl mx-auto flex items-center justify-between">
             <div />
 
             {/* Step indicator */}
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-brand-slate/70">
               {t("regStepOf").replace("{current}", String(step)).replace("{total}", "5")}
             </span>
 

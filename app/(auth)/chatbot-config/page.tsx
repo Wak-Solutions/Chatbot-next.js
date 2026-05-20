@@ -87,11 +87,11 @@ const TONES = ["Professional", "Friendly", "Formal", "Casual", "Custom"];
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
 const inputCls =
-  "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 " +
-  "focus:outline-none focus:ring-2 focus:ring-brand-blue/40 placeholder:text-gray-400 transition-shadow";
+  "w-full border border-white/[0.08] rounded-lg px-3 py-2 text-sm bg-brand-navy text-white " +
+  "focus:outline-none focus:ring-2 focus:ring-brand-blue/40 placeholder:text-brand-slate/70 transition-shadow";
 
-const labelCls = "block text-xs font-medium text-gray-500 mb-1";
-const hintCls = "text-[11px] text-gray-400 mt-0.5";
+const labelCls = "block text-xs font-medium text-brand-slate mb-1";
+const hintCls = "text-[11px] text-brand-slate/70 mt-0.5";
 
 function uid() {
   return Math.random().toString(36).slice(2, 9);
@@ -111,14 +111,14 @@ function StepCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-      <div className="px-5 pt-5 pb-4 border-b border-gray-100 flex items-start gap-3">
+    <div className="bg-brand-navy border border-white/[0.08] rounded-xl shadow-sm overflow-hidden">
+      <div className="px-5 pt-5 pb-4 border-b border-white/[0.06] flex items-start gap-3">
         <div className="w-6 h-6 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
           {step}
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
-          <p className="text-xs text-gray-400 mt-0.5">{desc}</p>
+          <h2 className="text-sm font-semibold text-white">{title}</h2>
+          <p className="text-xs text-brand-slate/70 mt-0.5">{desc}</p>
         </div>
       </div>
       <div className="px-5 py-4 space-y-4">{children}</div>
@@ -202,17 +202,17 @@ function MenuEditor({
   return (
     <div className="space-y-2">
       {items.length === 0 && (
-        <p className="text-xs text-gray-400 italic py-2">{t("chatbotSetupMenuNoItems")}</p>
+        <p className="text-xs text-brand-slate/70 italic py-2">{t("chatbotSetupMenuNoItems")}</p>
       )}
 
       {items.map((item, idx) => {
         const l1Open = expandedL1 === item.id;
         return (
-          <div key={item.id} className="border border-gray-200 rounded-lg overflow-hidden">
+          <div key={item.id} className="border border-white/[0.08] rounded-lg overflow-hidden">
             {/* Level 1 row */}
-            <div className="flex items-center gap-2 px-3 py-2.5 bg-gray-50">
-              <GripVertical className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
-              <span className="text-xs font-medium text-gray-400 w-5 flex-shrink-0">{idx + 1}.</span>
+            <div className="flex items-center gap-2 px-3 py-2.5 bg-white/[0.03]">
+              <GripVertical className="w-3.5 h-3.5 text-brand-slate/50 flex-shrink-0" />
+              <span className="text-xs font-medium text-brand-slate/70 w-5 flex-shrink-0">{idx + 1}.</span>
               <input
                 className={inputCls + " flex-1 py-1.5 text-xs"}
                 placeholder={t("chatbotSetupMenuItemPlaceholder")}
@@ -222,14 +222,14 @@ function MenuEditor({
               <button
                 type="button"
                 onClick={() => setExpandedL1(l1Open ? null : item.id)}
-                className="text-gray-400 hover:text-gray-600 p-1"
+                className="text-brand-slate/70 hover:text-brand-slate p-1"
               >
                 {l1Open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
               <button
                 type="button"
                 onClick={() => removeItem(item.id)}
-                className="text-gray-300 hover:text-red-500 p-1"
+                className="text-brand-slate/50 hover:text-red-400 p-1"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
@@ -245,8 +245,8 @@ function MenuEditor({
                   transition={{ duration: 0.15 }}
                   className="overflow-hidden"
                 >
-                  <div className="bg-white border-t border-gray-100 px-4 py-3 space-y-2">
-                    <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide">
+                  <div className="bg-brand-navy border-t border-white/[0.06] px-4 py-3 space-y-2">
+                    <p className="text-[11px] font-medium text-brand-slate/70 uppercase tracking-wide">
                       {t("chatbotSetupMenuSubItems")}
                     </p>
 
@@ -254,10 +254,10 @@ function MenuEditor({
                       const l2Key = `${item.id}:${sub.id}`;
                       const l2Open = expandedL2 === l2Key;
                       return (
-                        <div key={sub.id} className="border border-gray-100 rounded-lg overflow-hidden">
+                        <div key={sub.id} className="border border-white/[0.06] rounded-lg overflow-hidden">
                           {/* Level 2 row */}
-                          <div className="flex items-center gap-2 px-3 py-2 bg-gray-50/60">
-                            <span className="text-xs text-gray-400 w-5 flex-shrink-0">
+                          <div className="flex items-center gap-2 px-3 py-2 bg-white/[0.03]/60">
+                            <span className="text-xs text-brand-slate/70 w-5 flex-shrink-0">
                               {SUB_LABELS[si] ?? si + 1}.
                             </span>
                             <input
@@ -269,14 +269,14 @@ function MenuEditor({
                             <button
                               type="button"
                               onClick={() => setExpandedL2(l2Open ? null : l2Key)}
-                              className="text-gray-400 hover:text-gray-600 p-0.5"
+                              className="text-brand-slate/70 hover:text-brand-slate p-0.5"
                             >
                               {l2Open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                             </button>
                             <button
                               type="button"
                               onClick={() => removeSubItem(item.id, sub.id)}
-                              className="text-gray-300 hover:text-red-500 p-0.5"
+                              className="text-brand-slate/50 hover:text-red-400 p-0.5"
                             >
                               <Trash2 className="w-3 h-3" />
                             </button>
@@ -292,12 +292,12 @@ function MenuEditor({
                                 transition={{ duration: 0.12 }}
                                 className="overflow-hidden"
                               >
-                                <div className="bg-gray-50/40 border-t border-gray-100 px-4 py-2.5 space-y-1.5">
+                                <div className="bg-white/[0.03]/40 border-t border-white/[0.06] px-4 py-2.5 space-y-1.5">
                                   {sub.subItems.map((ss) => (
                                     <div key={ss.id} className="flex items-center gap-2">
-                                      <span className="text-xs text-gray-300 w-3 flex-shrink-0">–</span>
+                                      <span className="text-xs text-brand-slate/50 w-3 flex-shrink-0">–</span>
                                       <input
-                                        className={inputCls + " flex-1 py-1 text-xs bg-white"}
+                                        className={inputCls + " flex-1 py-1 text-xs bg-brand-navy"}
                                         placeholder={t("chatbotSetupMenuSubSubItemPlaceholder")}
                                         value={ss.label}
                                         onChange={e => updateSubSubLabel(item.id, sub.id, ss.id, e.target.value)}
@@ -305,7 +305,7 @@ function MenuEditor({
                                       <button
                                         type="button"
                                         onClick={() => removeSubSubItem(item.id, sub.id, ss.id)}
-                                        className="text-gray-300 hover:text-red-500 p-0.5"
+                                        className="text-brand-slate/50 hover:text-red-400 p-0.5"
                                       >
                                         <Trash2 className="w-3 h-3" />
                                       </button>
@@ -357,12 +357,16 @@ function MenuEditor({
 
 // ── First message preview ─────────────────────────────────────────────────────
 
+// Renders inside a WhatsApp-mimicking preview so the admin can see what
+// their chatbot will look like on the customer's actual WhatsApp app.
+// Colors here MUST stay WhatsApp-native (cream wallpaper, green/white
+// bubbles, dark text) — the wider brand palette doesn't apply.
 function ChatBubble({ text, isUser = false }: { text: string; isUser?: boolean }) {
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div className={`max-w-[85%] px-3.5 py-2 rounded-2xl shadow-sm ${isUser ? "bg-[#DCF8C6] rounded-tr-sm" : "bg-white rounded-tl-sm"}`}>
-        <p className="text-[13px] text-gray-800 leading-snug whitespace-pre-wrap">{text}</p>
-        <p className="text-[10px] text-gray-400 text-right mt-1">
+        <p className="text-[13px] text-[#111b21] leading-snug whitespace-pre-wrap">{text}</p>
+        <p className="text-[10px] text-[#667781] text-right mt-1">
           {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
         </p>
       </div>
@@ -404,7 +408,8 @@ function FirstMessagePreview({
     : null;
 
   return (
-    <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-white">
+    <div className="rounded-xl overflow-hidden border border-white/[0.08] shadow-sm bg-[#ECE5DD]">
+      {/* WhatsApp-mimicking preview header — stays WhatsApp-native. */}
       <div className="bg-[#075E54] px-4 py-3 flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
           <span className="text-white font-bold text-xs">{name.charAt(0).toUpperCase()}</span>
@@ -429,9 +434,9 @@ function FirstMessagePreview({
           </>
         )}
       </div>
-      <div className="bg-[#F0F0F0] px-3 py-2 flex items-center gap-2 border-t border-gray-200">
-        <div className="flex-1 bg-white rounded-full px-4 py-1.5 border border-gray-200">
-          <p className="text-gray-400 text-xs">{t("chatbotSetupTypeMessage")}</p>
+      <div className="bg-[#F0F0F0] px-3 py-2 flex items-center gap-2 border-t border-black/[0.08]">
+        <div className="flex-1 bg-white rounded-full px-4 py-1.5 border border-black/[0.06]">
+          <p className="text-[#667781] text-xs">{t("chatbotSetupTypeMessage")}</p>
         </div>
         <div className="w-8 h-8 rounded-full bg-[#075E54] flex items-center justify-center flex-shrink-0">
           <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -642,7 +647,7 @@ export default function ChatbotConfig() {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-brand-navy">
         <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
@@ -657,19 +662,19 @@ export default function ChatbotConfig() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5 text-brand-blue" />
-              <h1 className="text-xl font-bold text-gray-900">{t("chatbotSetupTitle")}</h1>
+              <h1 className="text-xl font-bold text-white">{t("chatbotSetupTitle")}</h1>
             </div>
             {/* Save button + status */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5 text-xs min-w-[90px] justify-end">
                 {saveStatus === "saving" && (
-                  <><span className="w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0" /><span className="text-gray-400">{t("chatbotSetupSaving")}</span></>
+                  <><span className="w-1.5 h-1.5 rounded-full bg-brand-slate flex-shrink-0" /><span className="text-brand-slate/70">{t("chatbotSetupSaving")}</span></>
                 )}
                 {saveStatus === "saved" && (
                   <><span className="w-1.5 h-1.5 rounded-full bg-brand-blue flex-shrink-0" /><span className="text-brand-blue">{t("chatbotSetupSavedSuccess")}</span></>
                 )}
                 {saveStatus === "error" && (
-                  <><span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" /><span className="text-red-500">Save failed</span></>
+                  <><span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" /><span className="text-red-400">Save failed</span></>
                 )}
               </div>
               <button
@@ -732,7 +737,7 @@ export default function ChatbotConfig() {
                 {/* Live first-message preview when menu has items */}
                 {config.menuConfig.some(it => it.label.trim()) && (
                   <div className="pt-2">
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
+                    <p className="text-xs font-medium text-brand-slate/70 uppercase tracking-wide mb-2">
                       {t("chatbotSetupMenuFirstMessage")}
                     </p>
                     <FirstMessagePreview
@@ -776,13 +781,13 @@ export default function ChatbotConfig() {
                   </div>
                   <div className="space-y-3">
                     {config.faq.map((f, i) => (
-                      <div key={f.id} className="border border-gray-200 rounded-lg p-3 space-y-2">
+                      <div key={f.id} className="border border-white/[0.08] rounded-lg p-3 space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-gray-400">Q{i + 1}</span>
+                          <span className="text-xs font-medium text-brand-slate/70">Q{i + 1}</span>
                           <button
                             type="button"
                             onClick={() => updateConfig({ faq: config.faq.filter(x => x.id !== f.id) })}
-                            className="text-gray-300 hover:text-red-500"
+                            className="text-brand-slate/50 hover:text-red-400"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -803,7 +808,7 @@ export default function ChatbotConfig() {
                       </div>
                     ))}
                     {config.faq.length === 0 && (
-                      <p className="text-xs text-gray-400 italic">{t("chatbotSetupMenuNoItems").replace("menu items", "FAQ items")}</p>
+                      <p className="text-xs text-brand-slate/70 italic">{t("chatbotSetupMenuNoItems").replace("menu items", "FAQ items")}</p>
                     )}
                   </div>
                 </div>
@@ -843,7 +848,7 @@ export default function ChatbotConfig() {
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                           config.tone === tone
                             ? "bg-brand-blue text-white border-brand-blue"
-                            : "bg-white text-gray-600 border-gray-200 hover:border-brand-blue/40"
+                            : "bg-brand-navy text-brand-slate border-white/[0.08] hover:border-brand-blue/40"
                         }`}
                       >
                         {tone}
@@ -898,7 +903,7 @@ export default function ChatbotConfig() {
                         <button
                           type="button"
                           onClick={() => updateConfig({ escalationRules: config.escalationRules.filter(x => x.id !== er.id) })}
-                          className="text-gray-300 hover:text-red-500 flex-shrink-0"
+                          className="text-brand-slate/50 hover:text-red-400 flex-shrink-0"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -920,14 +925,14 @@ export default function ChatbotConfig() {
               </StepCard> */}
 
               {/* SUGGEST A CHANGE — hidden for now, re-enable when ready */}
-              {/* <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-                <div className="px-5 pt-5 pb-4 border-b border-gray-100 flex items-start gap-3">
+              {/* <div className="bg-brand-navy border border-white/[0.08] rounded-xl shadow-sm overflow-hidden">
+                <div className="px-5 pt-5 pb-4 border-b border-white/[0.06] flex items-start gap-3">
                   <div className="w-6 h-6 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                     ✦
                   </div>
                   <div>
-                    <h2 className="text-sm font-semibold text-gray-900">{t("chatbotSetupSuggestTitle")}</h2>
-                    <p className="text-xs text-gray-400 mt-0.5">{t("chatbotSetupSuggestDesc")}</p>
+                    <h2 className="text-sm font-semibold text-white">{t("chatbotSetupSuggestTitle")}</h2>
+                    <p className="text-xs text-brand-slate/70 mt-0.5">{t("chatbotSetupSuggestDesc")}</p>
                   </div>
                 </div>
                 <div className="px-5 py-4 space-y-3">
@@ -940,7 +945,7 @@ export default function ChatbotConfig() {
                     disabled={suggesting}
                   />
                   {suggestError && (
-                    <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                    <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
                       {suggestError}
                     </p>
                   )}

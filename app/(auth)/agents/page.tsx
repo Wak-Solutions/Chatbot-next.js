@@ -47,10 +47,10 @@ function Badge({ children, color }: { children: React.ReactNode; color: string }
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+      <div className="bg-brand-navy rounded-2xl shadow-xl w-full max-w-md p-6">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-900 p-1 rounded-lg hover:bg-gray-50 transition-colors">
+          <h3 className="text-base font-semibold text-white">{title}</h3>
+          <button onClick={onClose} className="text-brand-slate hover:text-white p-1 rounded-lg hover:bg-white/[0.03] transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -228,13 +228,13 @@ export default function AgentsTab() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Users className="w-5 h-5 text-brand-blue" />
-              <h1 className="text-2xl font-bold text-gray-900">{t("agentsTitle")}</h1>
+              <h1 className="text-2xl font-bold text-white">{t("agentsTitle")}</h1>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => fetchAll(period)}
                 title="Refresh"
-                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 px-3 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 text-sm text-brand-slate hover:text-white px-3 py-2 rounded-xl border border-white/[0.08] hover:bg-white/[0.03] transition-colors"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
               </button>
@@ -250,10 +250,10 @@ export default function AgentsTab() {
 
           {/* Section A — Agent List */}
           <section className="space-y-3">
-            {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-4 py-2">{error}</p>}
+            {error && <p className="text-sm text-red-400 bg-red-500/10 rounded-lg px-4 py-2">{error}</p>}
 
             {/* Period filter */}
-            <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+            <div className="flex gap-1 bg-white/[0.05] p-1 rounded-xl w-fit">
               {PERIODS.map(p => (
                 <button
                   key={p.key}
@@ -261,7 +261,7 @@ export default function AgentsTab() {
                   className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     period === p.key
                       ? "bg-brand-blue text-white shadow-sm"
-                      : "text-gray-500 hover:text-gray-900"
+                      : "text-brand-slate hover:text-white"
                   }`}
                 >
                   {p.label}
@@ -269,7 +269,7 @@ export default function AgentsTab() {
               ))}
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div className="bg-brand-navy border border-white/[0.08] rounded-xl overflow-hidden">
               {loading ? (
                 <div className="flex items-center justify-center py-16">
                   <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
@@ -277,66 +277,66 @@ export default function AgentsTab() {
               ) : (
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50/50">
-                      <th className="text-left px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("agentsColAgent")}</th>
-                      <th className="text-left px-2 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-28">{t("agentsColRoleStatus")}</th>
-                      <th className="text-center px-2 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-20">
+                    <tr className="border-b border-white/[0.08] bg-white/[0.03]/50">
+                      <th className="text-left px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("agentsColAgent")}</th>
+                      <th className="text-left px-2 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide w-28">{t("agentsColRoleStatus")}</th>
+                      <th className="text-center px-2 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide w-20">
                         <span className="block">{t("agentsColChatsResolved")}</span>
                         {period !== "all" && (
-                          <span className="block normal-case font-normal text-gray-400">{PERIODS.find(p => p.key === period)!.sub}</span>
+                          <span className="block normal-case font-normal text-brand-slate/70">{PERIODS.find(p => p.key === period)!.sub}</span>
                         )}
                       </th>
-                      <th className="text-center px-2 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-20">{t("agentsColMeetings")}</th>
-                      <th className="text-center px-2 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-16">{t("agentsColRating")}</th>
-                      <th className="hidden md:table-cell text-left px-2 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-28">{t("agentsColLastLogin")}</th>
-                      <th className="text-right px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-24 xl:w-32">{t("agentsColActions")}</th>
+                      <th className="text-center px-2 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide w-20">{t("agentsColMeetings")}</th>
+                      <th className="text-center px-2 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide w-16">{t("agentsColRating")}</th>
+                      <th className="hidden md:table-cell text-left px-2 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide w-28">{t("agentsColLastLogin")}</th>
+                      <th className="text-right px-3 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide w-24 xl:w-32">{t("agentsColActions")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {agents.map(agent => (
-                      <tr key={agent.id} className="hover:bg-gray-50/50 transition-colors">
+                      <tr key={agent.id} className="hover:bg-white/[0.03]/50 transition-colors">
                         {/* Agent: name always, email on md+ */}
                         <td className="px-3 py-3">
-                          <p className="font-medium text-gray-900 truncate">{agent.name}</p>
-                          <p className="hidden md:block text-xs text-gray-500 font-mono truncate">{agent.email}</p>
+                          <p className="font-medium text-white truncate">{agent.name}</p>
+                          <p className="hidden md:block text-xs text-brand-slate font-mono truncate">{agent.email}</p>
                         </td>
                         {/* Role + Status stacked */}
                         <td className="px-2 py-3">
                           <div className="flex flex-col gap-1 items-start">
-                            <Badge color={agent.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"}>
+                            <Badge color={agent.role === "admin" ? "bg-brand-violet/15 text-brand-violet" : "bg-brand-blue/15 text-brand-cyan"}>
                               {agent.role}
                             </Badge>
-                            <Badge color={agent.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}>
+                            <Badge color={agent.is_active ? "bg-brand-emerald/15 text-brand-emerald" : "bg-white/[0.05] text-brand-slate"}>
                               {agent.is_active ? t("statusActive") : t("statusInactive")}
                             </Badge>
                           </div>
                         </td>
                         {/* Chats Resolved */}
-                        <td className="px-1 py-3 text-center font-semibold text-gray-900">
+                        <td className="px-1 py-3 text-center font-semibold text-white">
                           {agent.resolved_chats}
                         </td>
                         {/* Meetings Done */}
                         <td className="px-1 py-3 text-center">
-                          <span className={agent.meetings_completed > 0 ? "font-medium text-gray-900" : "text-gray-500"}>
+                          <span className={agent.meetings_completed > 0 ? "font-medium text-white" : "text-brand-slate"}>
                             {agent.meetings_completed}
                           </span>
                         </td>
                         {/* Avg Rating — colour coded */}
                         <td className="px-1 py-3 text-center">
                           {agent.avg_survey_rating == null ? (
-                            <span className="text-gray-500">—</span>
+                            <span className="text-brand-slate">—</span>
                           ) : (
                             <span className={`font-medium ${
                               agent.avg_survey_rating >= 4 ? "text-brand-blue"
                               : agent.avg_survey_rating >= 2 ? "text-amber-600"
-                              : "text-red-600"
+                              : "text-red-400"
                             }`}>
                               {agent.avg_survey_rating} ★
                             </span>
                           )}
                         </td>
                         {/* Last Login — hidden on mobile */}
-                        <td className="hidden md:table-cell px-2 py-3 text-gray-500 text-xs whitespace-nowrap">
+                        <td className="hidden md:table-cell px-2 py-3 text-brand-slate text-xs whitespace-nowrap">
                           {agent.last_login
                             ? new Date(agent.last_login).toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
                             : t("agentsNever")}
@@ -347,7 +347,7 @@ export default function AgentsTab() {
                             <button
                               onClick={() => { setEditForm({ name: agent.name, email: agent.email, role: agent.role }); setEditAgent(agent); setEditError(""); }}
                               title="Edit"
-                              className="flex items-center gap-1 px-1.5 py-1 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                              className="flex items-center gap-1 px-1.5 py-1 rounded-lg text-brand-slate hover:text-white hover:bg-white/[0.03] transition-colors"
                             >
                               <Edit2 className="w-3.5 h-3.5 flex-shrink-0" />
                               <span className="hidden xl:inline text-xs">{t("agentsBtnEdit")}</span>
@@ -355,7 +355,7 @@ export default function AgentsTab() {
                             <button
                               onClick={() => { setResetAgent(agent); setNewPw(""); setResetError(""); }}
                               title={t("agentsBtnReset")}
-                              className="flex items-center gap-1 px-1.5 py-1 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                              className="flex items-center gap-1 px-1.5 py-1 rounded-lg text-brand-slate hover:text-white hover:bg-white/[0.03] transition-colors"
                             >
                               <KeyRound className="w-3.5 h-3.5 flex-shrink-0" />
                               <span className="hidden xl:inline text-xs">{t("agentsBtnReset")}</span>
@@ -363,7 +363,7 @@ export default function AgentsTab() {
                             <button
                               onClick={() => toggleActive(agent)}
                               title={agent.is_active ? t("agentsBtnDeactivate") : t("agentsBtnActivate")}
-                              className={`flex items-center gap-1 px-1.5 py-1 rounded-lg transition-colors ${agent.is_active ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}`}
+                              className={`flex items-center gap-1 px-1.5 py-1 rounded-lg transition-colors ${agent.is_active ? "text-red-400 hover:bg-red-500/10" : "text-brand-emerald hover:bg-brand-emerald/10"}`}
                             >
                               {agent.is_active ? <UserX className="w-3.5 h-3.5 flex-shrink-0" /> : <UserCheck className="w-3.5 h-3.5 flex-shrink-0" />}
                               <span className="hidden xl:inline text-xs">{agent.is_active ? t("agentsBtnDeactivate") : t("agentsBtnActivate")}</span>
@@ -373,7 +373,7 @@ export default function AgentsTab() {
                       </tr>
                     ))}
                     {agents.length === 0 && (
-                      <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500 text-sm">{t("agentsNoAgents")}</td></tr>
+                      <tr><td colSpan={7} className="px-4 py-8 text-center text-brand-slate text-sm">{t("agentsNoAgents")}</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -383,33 +383,33 @@ export default function AgentsTab() {
 
           {/* Section B — Workload */}
           <section className="space-y-3 pb-8">
-            <h2 className="text-base font-semibold text-gray-900">{t("agentsWorkloadOverview")}</h2>
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <h2 className="text-base font-semibold text-white">{t("agentsWorkloadOverview")}</h2>
+            <div className="bg-brand-navy border border-white/[0.08] rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50/50">
+                    <tr className="border-b border-white/[0.08] bg-white/[0.03]/50">
                       {[t("agentsColAgentName"), t("agentsColActiveChats"), t("agentsColResolvedToday"), t("agentsColResolvedWeek"), t("agentsColTotalResolved"), t("agentsColMeetingsDone")].map(h => (
-                        <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
+                        <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {workload.map(row => (
-                      <tr key={row.agent_id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-4 py-3 font-medium text-gray-900 flex items-center gap-2">
+                      <tr key={row.agent_id} className="hover:bg-white/[0.03]/50 transition-colors">
+                        <td className="px-4 py-3 font-medium text-white flex items-center gap-2">
                           {row.name}
-                          {!row.is_active && <Badge color="bg-gray-100 text-gray-400">{t("agentsStatusInactive")}</Badge>}
+                          {!row.is_active && <Badge color="bg-white/[0.05] text-brand-slate/70">{t("agentsStatusInactive")}</Badge>}
                         </td>
-                        <td className="px-4 py-3 text-center font-semibold text-gray-900">{row.active_chats}</td>
-                        <td className="px-4 py-3 text-center text-gray-900">{row.resolved_today}</td>
-                        <td className="px-4 py-3 text-center text-gray-900">{row.resolved_this_week}</td>
-                        <td className="px-4 py-3 text-center text-gray-900">{row.total_resolved}</td>
-                        <td className="px-4 py-3 text-center text-gray-900">{row.meetings_completed}</td>
+                        <td className="px-4 py-3 text-center font-semibold text-white">{row.active_chats}</td>
+                        <td className="px-4 py-3 text-center text-white">{row.resolved_today}</td>
+                        <td className="px-4 py-3 text-center text-white">{row.resolved_this_week}</td>
+                        <td className="px-4 py-3 text-center text-white">{row.total_resolved}</td>
+                        <td className="px-4 py-3 text-center text-white">{row.meetings_completed}</td>
                       </tr>
                     ))}
                     {workload.length === 0 && (
-                      <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500 text-sm">{t("agentsNoAgents")}</td></tr>
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-brand-slate text-sm">{t("agentsNoAgents")}</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -425,10 +425,10 @@ export default function AgentsTab() {
         <Modal title={t("agentsModalNewTitle")} onClose={() => setShowNewModal(false)}>
           {createdPassword ? (
             <div className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                <p className="text-sm font-semibold text-green-800 mb-1">{t("agentsCreatedSuccess")}</p>
-                <p className="text-xs text-green-700 mb-3">{t("agentsShareCredentials")}</p>
-                <p className="text-xs text-green-900 font-mono bg-green-100 rounded-lg px-3 py-2 break-all">
+              <div className="bg-brand-emerald/10 border border-brand-emerald/30 rounded-xl p-4">
+                <p className="text-sm font-semibold text-brand-emerald mb-1">{t("agentsCreatedSuccess")}</p>
+                <p className="text-xs text-brand-emerald mb-3">{t("agentsShareCredentials")}</p>
+                <p className="text-xs text-brand-emerald font-mono bg-brand-emerald/15 rounded-lg px-3 py-2 break-all">
                   {t("agentsPasswordLabel")} <strong>{createdPassword}</strong>
                 </p>
               </div>
@@ -444,7 +444,7 @@ export default function AgentsTab() {
                 { label: t("agentsFormPassword"), key: "password", type: "password", placeholder: t("agentsFormPasswordPlaceholder") },
               ].map(f => (
                 <div key={f.key} className="space-y-1">
-                  <label className="text-sm font-medium text-gray-900">{f.label}</label>
+                  <label className="text-sm font-medium text-white">{f.label}</label>
                   <input
                     type={f.type}
                     placeholder={f.placeholder}
@@ -452,25 +452,25 @@ export default function AgentsTab() {
                     minLength={f.key === "password" ? 6 : 1}
                     value={(newAgent as any)[f.key]}
                     onChange={e => setNewAgent(p => ({ ...p, [f.key]: e.target.value }))}
-                    className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${f.key === "name" && nameError(newAgent.name) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
+                    className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${f.key === "name" && nameError(newAgent.name) ? "border-red-300 focus:border-red-400" : "border-white/[0.08]"}`}
                   />
                   {f.key === "name" && nameError(newAgent.name) && (
-                    <p className="text-xs text-red-500">{nameError(newAgent.name)}</p>
+                    <p className="text-xs text-red-400">{nameError(newAgent.name)}</p>
                   )}
                 </div>
               ))}
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-900">{t("agentsFormRole")}</label>
+                <label className="text-sm font-medium text-white">{t("agentsFormRole")}</label>
                 <select
                   value={newAgent.role}
                   onChange={e => setNewAgent(p => ({ ...p, role: e.target.value as "agent" | "admin" }))}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue"
+                  className="w-full border border-white/[0.08] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue"
                 >
                   <option value="agent">{t("agentsRoleOptionAgent")}</option>
                   <option value="admin">{t("agentsRoleOptionAdmin")}</option>
                 </select>
               </div>
-              {newError && <p className="text-sm text-red-600">{newError}</p>}
+              {newError && <p className="text-sm text-red-400">{newError}</p>}
               <button type="submit" disabled={newSaving} className="w-full py-2.5 bg-brand-blue text-white rounded-xl text-sm font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors">
                 {newSaving ? t("creating") : t("agentsBtnCreate")}
               </button>
@@ -488,30 +488,30 @@ export default function AgentsTab() {
               { label: t("agentsFormEmail"), key: "email", type: "email" },
             ].map(f => (
               <div key={f.key} className="space-y-1">
-                <label className="text-sm font-medium text-gray-900">{f.label}</label>
+                <label className="text-sm font-medium text-white">{f.label}</label>
                 <input
                   type={f.type} required
                   value={(editForm as any)[f.key]}
                   onChange={e => setEditForm(p => ({ ...p, [f.key]: e.target.value }))}
-                  className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${f.key === "name" && nameError(editForm.name) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
+                  className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${f.key === "name" && nameError(editForm.name) ? "border-red-300 focus:border-red-400" : "border-white/[0.08]"}`}
                 />
                 {f.key === "name" && nameError(editForm.name) && (
-                  <p className="text-xs text-red-500">{nameError(editForm.name)}</p>
+                  <p className="text-xs text-red-400">{nameError(editForm.name)}</p>
                 )}
               </div>
             ))}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-900">{t("agentsFormRole")}</label>
+              <label className="text-sm font-medium text-white">{t("agentsFormRole")}</label>
               <select
                 value={editForm.role}
                 onChange={e => setEditForm(p => ({ ...p, role: e.target.value as "agent" | "admin" }))}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue"
+                className="w-full border border-white/[0.08] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue"
               >
                 <option value="agent">{t("agentsRoleOptionAgent")}</option>
                 <option value="admin">{t("agentsRoleOptionAdmin")}</option>
               </select>
             </div>
-            {editError && <p className="text-sm text-red-600">{editError}</p>}
+            {editError && <p className="text-sm text-red-400">{editError}</p>}
             <button type="submit" disabled={editSaving} className="w-full py-2.5 bg-brand-blue text-white rounded-xl text-sm font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors">
               {editSaving ? t("saving") : t("agentsBtnSave")}
             </button>
@@ -524,17 +524,17 @@ export default function AgentsTab() {
         <Modal title={`${t("agentsModalResetTitle")} — ${resetAgent.name}`} onClose={() => setResetAgent(null)}>
           <form onSubmit={handleResetPassword} className="space-y-4">
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-900">{t("agentsFormNewPassword")}</label>
+              <label className="text-sm font-medium text-white">{t("agentsFormNewPassword")}</label>
               <input
                 type="password" required minLength={6}
                 placeholder={t("agentsFormPasswordPlaceholder")}
                 value={newPw}
                 onChange={e => setNewPw(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue"
+                className="w-full border border-white/[0.08] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue"
                 autoFocus
               />
             </div>
-            {resetError && <p className="text-sm text-red-600">{resetError}</p>}
+            {resetError && <p className="text-sm text-red-400">{resetError}</p>}
             <button type="submit" disabled={resetSaving} className="w-full py-2.5 bg-brand-blue text-white rounded-xl text-sm font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors">
               {resetSaving ? t("saving") : t("agentsBtnSetPassword")}
             </button>

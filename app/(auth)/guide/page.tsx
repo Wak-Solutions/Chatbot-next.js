@@ -33,39 +33,39 @@ const installStepsAr = [
 // ── Tiny helpers for the guide prose ────────────────────────────────────────
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <h2 id={id} className="text-lg font-bold text-gray-900 mt-10 mb-3 pb-1 border-b border-gray-200 scroll-mt-20">
+    <h2 id={id} className="text-lg font-bold text-white mt-10 mb-3 pb-1 border-b border-white/[0.08] scroll-mt-20">
       {children}
     </h2>
   );
 }
 function H3({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-base font-semibold text-gray-900 mt-6 mb-2">{children}</h3>;
+  return <h3 className="text-base font-semibold text-white mt-6 mb-2">{children}</h3>;
 }
 function H4({ children }: { children: React.ReactNode }) {
-  return <h4 className="text-sm font-semibold text-gray-900 mt-4 mb-1">{children}</h4>;
+  return <h4 className="text-sm font-semibold text-white mt-4 mb-1">{children}</h4>;
 }
 function P({ children }: { children: React.ReactNode }) {
-  return <p className="text-sm text-gray-700 leading-relaxed mb-3">{children}</p>;
+  return <p className="text-sm text-white/90 leading-relaxed mb-3">{children}</p>;
 }
 function Ol({ children }: { children: React.ReactNode }) {
-  return <ol className="list-decimal list-outside ms-5 space-y-1 mb-3 text-sm text-gray-700">{children}</ol>;
+  return <ol className="list-decimal list-outside ms-5 space-y-1 mb-3 text-sm text-white/90">{children}</ol>;
 }
 function Ul({ children }: { children: React.ReactNode }) {
-  return <ul className="list-disc list-outside ms-5 space-y-1 mb-3 text-sm text-gray-700">{children}</ul>;
+  return <ul className="list-disc list-outside ms-5 space-y-1 mb-3 text-sm text-white/90">{children}</ul>;
 }
 function Li({ children }: { children: React.ReactNode }) {
   return <li className="leading-relaxed">{children}</li>;
 }
 function Tip({ children, label = "Tip" }: { children: React.ReactNode; label?: string }) {
   return (
-    <div className="my-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 text-sm text-amber-900">
+    <div className="my-3 bg-brand-amber/15 border border-brand-amber/30 rounded-lg px-4 py-2.5 text-sm text-amber-900">
       <span className="font-semibold">{label}: </span>{children}
     </div>
   );
 }
 function Note({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 text-sm text-blue-900">
+    <div className="my-3 bg-brand-blue/10 border border-brand-cyan/30 rounded-lg px-4 py-2.5 text-sm text-brand-cyan">
       {children}
     </div>
   );
@@ -73,19 +73,19 @@ function Note({ children }: { children: React.ReactNode }) {
 function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
   return (
     <div className="overflow-x-auto mb-4">
-      <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
-        <thead className="bg-gray-100">
+      <table className="w-full text-sm border border-white/[0.08] rounded-lg overflow-hidden">
+        <thead className="bg-white/[0.05]">
           <tr>
             {headers.map(h => (
-              <th key={h} className="text-start px-3 py-2 font-semibold text-gray-900 border-b border-gray-200">{h}</th>
+              <th key={h} className="text-start px-3 py-2 font-semibold text-white border-b border-white/[0.08]">{h}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+            <tr key={i} className={i % 2 === 0 ? "bg-brand-navy" : "bg-white/[0.03]"}>
               {row.map((cell, j) => (
-                <td key={j} className="px-3 py-2 text-gray-700 border-b border-gray-200/50">{cell}</td>
+                <td key={j} className="px-3 py-2 text-white/90 border-b border-white/[0.08]/50">{cell}</td>
               ))}
             </tr>
           ))}
@@ -99,14 +99,14 @@ function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
 function UserGuide() {
   return (
     <article className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">WAK Agent Dashboard — User Guide</h1>
-      <p className="text-sm text-gray-500 mb-8">
+      <h1 className="text-2xl font-bold text-white mb-1">WAK Agent Dashboard — User Guide</h1>
+      <p className="text-sm text-brand-slate mb-8">
         Everything you need to know to handle customer conversations, meetings, and team management — no technical knowledge needed.
       </p>
 
       {/* Table of contents */}
-      <nav className="bg-gray-50/50 border border-gray-200 rounded-xl p-5 mb-10">
-        <p className="text-sm font-semibold text-gray-900 mb-3">Contents</p>
+      <nav className="bg-white/[0.03]/50 border border-white/[0.08] rounded-xl p-5 mb-10">
+        <p className="text-sm font-semibold text-white mb-3">Contents</p>
         <ol className="list-decimal list-outside ml-5 space-y-1 text-sm">
           {[
             ["#dashboard", "The Dashboard (Chat View)"],
@@ -490,7 +490,7 @@ function UserGuide() {
         <Li>Next time, tap <strong>Sign in with Face ID / Fingerprint</strong> on the login screen.</Li>
       </Ol>
 
-      <p className="text-xs text-gray-500 mt-12 pt-4 border-t border-gray-200">
+      <p className="text-xs text-brand-slate mt-12 pt-4 border-t border-white/[0.08]">
         WAK Solutions Agent Portal — Internal Guide
       </p>
     </article>
@@ -501,14 +501,14 @@ function UserGuide() {
 function ArabicUserGuide() {
   return (
     <article dir="rtl" className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">دليل المستخدم — لوحة تحكم وكلاء WAK</h1>
-      <p className="text-sm text-gray-500 mb-8">
+      <h1 className="text-2xl font-bold text-white mb-1">دليل المستخدم — لوحة تحكم وكلاء WAK</h1>
+      <p className="text-sm text-brand-slate mb-8">
         كل ما تحتاج معرفته للتعامل مع محادثات العملاء، الاجتماعات، وإدارة الفريق — لا حاجة لمعرفة تقنية.
       </p>
 
       {/* Table of contents */}
-      <nav className="bg-gray-50/50 border border-gray-200 rounded-xl p-5 mb-10">
-        <p className="text-sm font-semibold text-gray-900 mb-3">المحتويات</p>
+      <nav className="bg-white/[0.03]/50 border border-white/[0.08] rounded-xl p-5 mb-10">
+        <p className="text-sm font-semibold text-white mb-3">المحتويات</p>
         <ol className="list-decimal list-outside ms-5 space-y-1 text-sm">
           {[
             ["#dashboard", "لوحة التحكم (عرض المحادثة)"],
@@ -892,7 +892,7 @@ function ArabicUserGuide() {
         <Li>في المرة القادمة، انقر على <strong>تسجيل الدخول ببصمة الوجه / الإصبع</strong> في شاشة تسجيل الدخول.</Li>
       </Ol>
 
-      <p className="text-xs text-gray-500 mt-12 pt-4 border-t border-gray-200">
+      <p className="text-xs text-brand-slate mt-12 pt-4 border-t border-white/[0.08]">
         بوابة وكلاء WAK Solutions — دليل داخلي
       </p>
     </article>
@@ -913,8 +913,8 @@ function InstallGuide({
 }) {
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-xl font-bold text-gray-900 mb-2">{title}</h1>
-      <p className="text-sm text-gray-500 mb-8">{subtitle}</p>
+      <h1 className="text-xl font-bold text-white mb-2">{title}</h1>
+      <p className="text-sm text-brand-slate mb-8">{subtitle}</p>
       <ol className="space-y-10">
         {steps.map((step, i) => (
           <li key={i} className="flex flex-col items-center gap-3">
@@ -922,11 +922,11 @@ function InstallGuide({
               <span className="flex-shrink-0 w-7 h-7 rounded-full bg-brand-blue text-white text-xs font-bold flex items-center justify-center mt-0.5">
                 {i + 1}
               </span>
-              <p className="text-sm text-gray-900 leading-snug pt-1">{step.label}</p>
+              <p className="text-sm text-white leading-snug pt-1">{step.label}</p>
             </div>
             <button
               onClick={() => onLightbox(step.img)}
-              className="block rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-brand-blue"
+              className="block rounded-2xl overflow-hidden border border-white/[0.08] shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-brand-blue"
               aria-label={`View step ${i + 1} fullscreen`}
             >
               <img
@@ -968,7 +968,7 @@ export default function Guide() {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-brand-navy">
         <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
@@ -983,7 +983,7 @@ export default function Guide() {
     <DashboardLayout>
       <div className="h-full overflow-y-auto">
         {/* Tab bar */}
-        <div className="border-b border-gray-200 bg-white flex-shrink-0">
+        <div className="border-b border-white/[0.08] bg-brand-navy flex-shrink-0">
           <div className="max-w-3xl mx-auto px-4 flex gap-0">
             {tabs.map(({ key, Icon, label }) => (
               <button
@@ -992,7 +992,7 @@ export default function Guide() {
                 className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
                   tab === key
                     ? "border-brand-blue text-brand-blue"
-                    : "border-transparent text-gray-500 hover:text-gray-900"
+                    : "border-transparent text-brand-slate hover:text-white"
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -1025,7 +1025,7 @@ export default function Guide() {
           >
             <button
               onClick={() => setLightbox(null)}
-              className="absolute top-4 right-4 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
+              className="absolute top-4 right-4 text-white/80 hover:text-white p-2 rounded-full hover:bg-brand-navy/10 transition-colors"
               aria-label="Close"
             >
               <X className="w-6 h-6" />

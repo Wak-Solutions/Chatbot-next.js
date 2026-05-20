@@ -103,7 +103,7 @@ export default function SurveyPage() {
     <div className="min-h-screen bg-[#F5F2EC] flex flex-col">
       {/* Header */}
       <header className="bg-brand-blue px-5 py-4 flex items-center gap-3 shadow-md">
-        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-brand-navy/20 flex items-center justify-center flex-shrink-0">
           <span className="text-white text-xs font-bold">W</span>
         </div>
         <span className="text-white font-semibold text-sm">WAK Solutions</span>
@@ -119,26 +119,26 @@ export default function SurveyPage() {
 
         {/* Invalid / expired */}
         {status === "invalid" && (
-          <div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100">
+          <div className="bg-brand-navy rounded-2xl p-8 text-center shadow-sm border border-white/[0.06]">
             <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-            <p className="text-lg font-semibold text-gray-800 mb-1 leading-snug" dir="rtl">
+            <p className="text-lg font-semibold text-white mb-1 leading-snug" dir="rtl">
               هذا الرابط لم يعد صالحاً.
             </p>
-            <p className="text-lg font-semibold text-gray-800 mb-4">
+            <p className="text-lg font-semibold text-white mb-4">
               This survey link is no longer valid.
             </p>
-            {errorMsg && <p className="text-sm text-gray-400">{errorMsg}</p>}
+            {errorMsg && <p className="text-sm text-brand-slate/70">{errorMsg}</p>}
           </div>
         )}
 
         {/* Thank-you */}
         {status === "submitted" && (
-          <div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100">
+          <div className="bg-brand-navy rounded-2xl p-8 text-center shadow-sm border border-white/[0.06]">
             <CheckCircle2 className="w-14 h-14 text-brand-blue mx-auto mb-5" />
-            <p className="text-xl font-bold text-gray-900 mb-1 leading-snug" dir="rtl">
+            <p className="text-xl font-bold text-white mb-1 leading-snug" dir="rtl">
               شكراً على وقتك ومشاركتك! 💚
             </p>
-            <p className="text-xl font-bold text-gray-900">Thank you for your feedback!</p>
+            <p className="text-xl font-bold text-white">Thank you for your feedback!</p>
           </div>
         )}
 
@@ -146,17 +146,17 @@ export default function SurveyPage() {
         {status === "ready" && survey && (
           <div className="space-y-5">
             {/* Header card */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div className="bg-brand-navy rounded-2xl p-6 shadow-sm border border-white/[0.06]">
               <h1 className="text-xl font-bold text-brand-blue mb-1">{survey.title}</h1>
               {survey.description && (
-                <p className="text-sm text-gray-500">{survey.description}</p>
+                <p className="text-sm text-brand-slate">{survey.description}</p>
               )}
             </div>
 
             {/* Questions */}
             {survey.questions.map((q, idx) => (
-              <div key={q.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
-                <p className="text-sm font-semibold text-gray-800 leading-snug">
+              <div key={q.id} className="bg-brand-navy rounded-2xl p-6 shadow-sm border border-white/[0.06] space-y-4">
+                <p className="text-sm font-semibold text-white leading-snug">
                   <span className="text-brand-blue mr-1.5">{idx + 1}.</span>
                   {q.question_text}
                 </p>
@@ -173,7 +173,7 @@ export default function SurveyPage() {
                           className={`w-13 h-13 min-w-[52px] min-h-[52px] rounded-xl text-lg font-bold border-2 transition-all select-none ${
                             selected
                               ? "bg-brand-blue border-brand-blue text-white scale-105 shadow-md"
-                              : "bg-white border-gray-200 text-gray-600 hover:border-brand-blue active:scale-95"
+                              : "bg-brand-navy border-white/[0.08] text-brand-slate hover:border-brand-blue active:scale-95"
                           }`}
                         >
                           {n}
@@ -197,7 +197,7 @@ export default function SurveyPage() {
                               ? val
                                 ? "bg-brand-blue border-brand-blue text-white shadow-md"
                                 : "bg-red-500 border-red-500 text-white shadow-md"
-                              : "bg-white border-gray-200 text-gray-700 hover:border-gray-400 active:scale-95"
+                              : "bg-brand-navy border-white/[0.08] text-white/90 hover:border-white/[0.10] active:scale-95"
                           }`}
                         >
                           {val ? "Yes / نعم" : "No / لا"}
@@ -214,7 +214,7 @@ export default function SurveyPage() {
                     value={answers[q.id]?.answer_text ?? ""}
                     onChange={(e) => setText(q.id, e.target.value)}
                     placeholder="Your answer… / إجابتك…"
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-brand-blue resize-none"
+                    className="w-full border-2 border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white/90 focus:outline-none focus:border-brand-blue resize-none"
                   />
                 )}
               </div>
@@ -222,7 +222,7 @@ export default function SurveyPage() {
 
             {/* Error */}
             {submitError && (
-              <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 border border-red-100">
+              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 rounded-xl px-4 py-3 border border-red-100">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
                 {submitError}
               </div>
@@ -248,9 +248,9 @@ export default function SurveyPage() {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 text-center text-xs text-gray-400 border-t border-gray-100 mt-2">
+      <footer className="py-4 text-center text-xs text-brand-slate/70 border-t border-white/[0.06] mt-2">
         © 2026 WAK Solutions ·{" "}
-        <a href="/terms" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 transition-colors underline underline-offset-2">
+        <a href="/terms" target="_blank" rel="noopener noreferrer" className="hover:text-brand-slate transition-colors underline underline-offset-2">
           Terms &amp; Conditions
         </a>
       </footer>

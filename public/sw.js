@@ -1,5 +1,5 @@
 // WAK Solutions Agent - Service Worker
-const CACHE_NAME = 'wak-agent-v2';
+const CACHE_NAME = 'wak-agent-v3';
 
 self.addEventListener('install', (event) => {
   // Skip caching offline.html — not critical, avoids install failures

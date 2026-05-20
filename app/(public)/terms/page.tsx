@@ -10,16 +10,16 @@ export default function TermsPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col bg-gray-50"
+      className="min-h-screen flex flex-col bg-brand-ink"
       dir={isRtl ? "rtl" : "ltr"}
     >
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-5 py-4">
+      <header className="bg-brand-navy border-b border-white/[0.08] px-5 py-4">
         <div className="max-w-3xl mx-auto flex items-center gap-4">
           <div className="w-10 h-10 bg-brand-blue rounded-xl flex items-center justify-center text-white font-bold text-lg">W</div>
           <div>
-            <p className="font-bold text-base leading-tight text-gray-900">WAK Solutions</p>
-            <p className="text-xs text-gray-500">{t("termsPageTitle")}</p>
+            <p className="font-bold text-base leading-tight text-white">WAK Solutions</p>
+            <p className="text-xs text-brand-slate">{t("termsPageTitle")}</p>
           </div>
         </div>
       </header>
@@ -29,7 +29,7 @@ export default function TermsPage() {
         {/* Title block */}
         <div className="text-center space-y-1">
           <h1 className="text-3xl font-bold text-brand-blue">{t("termsPageTitle")}</h1>
-          <p className="text-sm text-gray-500">{t("termsPageLastUpdated")}</p>
+          <p className="text-sm text-brand-slate">{t("termsPageLastUpdated")}</p>
         </div>
 
         {/* 1. Service Overview */}
@@ -134,7 +134,7 @@ export default function TermsPage() {
         </Section>
 
         {/* Footer */}
-        <div className="pt-4 border-t border-gray-200 text-center text-sm text-gray-500">
+        <div className="pt-4 border-t border-white/[0.08] text-center text-sm text-brand-slate">
           {t("termsPageFooter")}
         </div>
       </main>
@@ -152,12 +152,12 @@ function Section({
   isRtl: boolean;
 }) {
   return (
-    <section className="bg-white rounded-xl border border-gray-200 px-7 py-6">
+    <section className="bg-brand-navy rounded-xl border border-white/[0.08] px-7 py-6">
       <h2 className="text-lg font-bold text-brand-cyan mb-3 flex items-center gap-2">
         <span className="w-1 h-5 rounded-full bg-brand-blue flex-shrink-0" />
         {title}
       </h2>
-      <div className="text-sm text-gray-700 leading-relaxed">{children}</div>
+      <div className="text-sm text-white/90 leading-relaxed">{children}</div>
     </section>
   );
 }

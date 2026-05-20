@@ -45,12 +45,12 @@ function formatKsa(iso: string): string {
 
 function StatusBadge({ status, label }: { status: string; label: string }) {
   const colors: Record<string, string> = {
-    in_progress: "bg-yellow-100 text-yellow-700",
-    closed: "bg-green-100 text-green-700",
-    resolved: "bg-green-100 text-green-700",
-    completed: "bg-green-100 text-green-700",
-    open: "bg-gray-100 text-gray-600",
-    pending: "bg-blue-100 text-blue-700",
+    in_progress: "bg-brand-amber/15 text-brand-amber border border-brand-amber/30",
+    closed: "bg-brand-emerald/15 text-brand-emerald border border-brand-emerald/30",
+    resolved: "bg-brand-emerald/15 text-brand-emerald border border-brand-emerald/30",
+    completed: "bg-brand-emerald/15 text-brand-emerald border border-brand-emerald/30",
+    open: "bg-white/[0.05] text-brand-slate border border-white/[0.08]",
+    pending: "bg-brand-blue/15 text-brand-cyan border border-brand-cyan/30",
   };
   return (
     <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${colors[status] ?? colors.open}`}>
@@ -63,37 +63,37 @@ function MeetingModal({ item, onClose }: { item: InboxItem; onClose: () => void 
   const { t } = useLanguage();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+      <div className="bg-brand-navy rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-600" />
-            <h3 className="text-base font-semibold text-gray-900">{t("inboxMeetingDetails")}</h3>
+            <Calendar className="w-5 h-5 text-brand-cyan" />
+            <h3 className="text-base font-semibold text-white">{t("inboxMeetingDetails")}</h3>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+          <button onClick={onClose} className="p-1 rounded-lg text-brand-slate/70 hover:text-brand-slate hover:bg-white/[0.05] transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
         <div className="space-y-4">
-          <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+          <div className="bg-white/[0.03] rounded-xl p-4 space-y-3">
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-0.5">{t("inboxCustomer")}</p>
-              <p className="text-sm font-semibold font-mono text-gray-900">{item.customer_phone}</p>
+              <p className="text-xs text-brand-slate uppercase tracking-wider font-medium mb-0.5">{t("inboxCustomer")}</p>
+              <p className="text-sm font-semibold font-mono text-white">{item.customer_phone}</p>
             </div>
             {item.meeting_scheduled_at && (
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-0.5">{t("inboxDateTime")}</p>
-                <p className="text-sm font-semibold text-gray-900">{formatKsa(item.meeting_scheduled_at)}</p>
+                <p className="text-xs text-brand-slate uppercase tracking-wider font-medium mb-0.5">{t("inboxDateTime")}</p>
+                <p className="text-sm font-semibold text-white">{formatKsa(item.meeting_scheduled_at)}</p>
               </div>
             )}
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-0.5">{t("inboxStatus")}</p>
+              <p className="text-xs text-brand-slate uppercase tracking-wider font-medium mb-0.5">{t("inboxStatus")}</p>
               <StatusBadge status={item.meeting_status ?? "pending"} label={item.meeting_status ?? "pending"} />
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-0.5">{t("inboxAssignedAgent")}</p>
+              <p className="text-xs text-brand-slate uppercase tracking-wider font-medium mb-0.5">{t("inboxAssignedAgent")}</p>
               {item.meeting_agent_name
-                ? <p className="text-sm text-gray-900">{item.meeting_agent_name}</p>
-                : <p className="text-sm text-gray-400 italic">{t("inboxUnassigned")}</p>}
+                ? <p className="text-sm text-white">{item.meeting_agent_name}</p>
+                : <p className="text-sm text-brand-slate/70 italic">{t("inboxUnassigned")}</p>}
             </div>
           </div>
           {item.meeting_link && (
@@ -195,31 +195,31 @@ export default function InboxPage() {
           {/* Page header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{t("inboxTitle")}</h1>
-              <p className="text-sm text-gray-500 mt-1">{items.length} items</p>
+              <h1 className="text-2xl font-bold text-white">{t("inboxTitle")}</h1>
+              <p className="text-sm text-brand-slate mt-1">{items.length} items</p>
             </div>
             <button
               onClick={fetchData}
-              className="flex items-center gap-1.5 text-xs font-medium text-gray-600 border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium text-brand-slate border border-white/[0.08] px-3 py-2 rounded-lg hover:bg-white/[0.03] transition-colors"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Refresh
             </button>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit mb-5">
+          <div className="flex gap-1 bg-white/[0.05] p-1 rounded-xl w-fit mb-5">
             {tabs.filter(tb => tb.show).map(tb => (
               <button
                 key={tb.key}
                 onClick={() => setTab(tb.key)}
                 className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                  tab === tb.key ? "bg-white shadow-sm text-gray-900" : "text-gray-500 hover:text-gray-700"
+                  tab === tb.key ? "bg-brand-navy shadow-sm text-white" : "text-brand-slate hover:text-white/90"
                 }`}
               >
                 {tb.key === "all" ? <Users className="w-3.5 h-3.5" /> : <Inbox className="w-3.5 h-3.5" />}
                 {tb.label}
                 <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
-                  tab === tb.key ? "bg-brand-blue text-white" : "bg-gray-300/50 text-gray-500"
+                  tab === tb.key ? "bg-brand-blue text-white" : "bg-white/[0.10]/50 text-brand-slate"
                 }`}>
                   {tb.count}
                 </span>
@@ -228,13 +228,13 @@ export default function InboxPage() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2 mb-4">{error}</p>
+            <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2 mb-4">{error}</p>
           )}
 
           {/* Items */}
           <div className="space-y-2">
             {activeItems.length === 0 ? (
-              <div className="bg-white border border-gray-200 rounded-xl flex flex-col items-center justify-center py-16 text-gray-400 gap-2">
+              <div className="bg-brand-navy border border-white/[0.08] rounded-xl flex flex-col items-center justify-center py-16 text-brand-slate/70 gap-2">
                 <Inbox className="w-10 h-10 opacity-30" />
                 <p className="text-sm">
                   {tab === "shared" ? t("inboxEmptyShared") : tab === "mine" ? t("inboxEmptyMy") : t("inboxEmptyAll")}
@@ -243,35 +243,35 @@ export default function InboxPage() {
             ) : (
               activeItems.map(item =>
                 item.item_type === "meeting" ? (
-                  <div key={`meeting-${item.meeting_id}`} className="bg-white border border-gray-200 rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-gray-50/50 transition-colors">
-                    <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                      <Calendar className="w-4 h-4 text-blue-600" />
+                  <div key={`meeting-${item.meeting_id}`} className="bg-brand-navy border border-white/[0.08] rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-white/[0.03]/50 transition-colors">
+                    <div className="w-9 h-9 rounded-full bg-brand-blue/15 flex items-center justify-center shrink-0">
+                      <Calendar className="w-4 h-4 text-brand-cyan" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-medium text-gray-900 font-mono">{item.customer_phone}</p>
+                        <p className="text-sm font-medium text-white font-mono">{item.customer_phone}</p>
                         <StatusBadge status={item.meeting_status ?? "pending"} label={item.meeting_status ?? "pending"} />
                       </div>
                       {item.meeting_scheduled_at && (
-                        <p className="text-xs text-gray-500 mt-0.5">{formatKsa(item.meeting_scheduled_at)}</p>
+                        <p className="text-xs text-brand-slate mt-0.5">{formatKsa(item.meeting_scheduled_at)}</p>
                       )}
                     </div>
                     <button
                       onClick={() => setMeetingModal(item)}
-                      className="px-3 py-1.5 text-xs font-medium border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="px-3 py-1.5 text-xs font-medium border border-white/[0.08] text-white/90 rounded-lg hover:bg-white/[0.03] transition-colors"
                     >
                       {t("inboxView")}
                     </button>
                   </div>
                 ) : (
-                  <div key={item.customer_phone} className="bg-white border border-gray-200 rounded-xl px-4 py-3 hover:bg-gray-50/50 transition-colors">
+                  <div key={item.customer_phone} className="bg-brand-navy border border-white/[0.08] rounded-xl px-4 py-3 hover:bg-white/[0.03]/50 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-brand-blue/10 flex items-center justify-center shrink-0">
                         <User className="w-4 h-4 text-brand-blue" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-sm font-medium text-gray-900 font-mono">{item.customer_phone}</p>
+                          <p className="text-sm font-medium text-white font-mono">{item.customer_phone}</p>
                           <StatusBadge
                             status={item.chat_status ?? "open"}
                             label={item.chat_status === "in_progress" ? `${t("statusInProgress")}${item.assigned_agent_name ? ` · ${item.assigned_agent_name}` : ""}` : item.chat_status === "closed" || item.chat_status === "resolved" ? t("statusResolved") : t("statusOpen")}
@@ -279,11 +279,11 @@ export default function InboxPage() {
                         </div>
                         {/* ESCALATION — hidden for now */}
                         {/* {item.escalation_reason && (
-                          <p className="text-xs text-gray-500 truncate">{item.escalation_reason}</p>
+                          <p className="text-xs text-brand-slate truncate">{item.escalation_reason}</p>
                         )} */}
                         <div className="flex items-center gap-1.5 mt-0.5">
-                          <Clock className="w-3 h-3 text-gray-400" />
-                          <span className="text-xs text-gray-400">{timeAgo(item.created_at)}</span>
+                          <Clock className="w-3 h-3 text-brand-slate/70" />
+                          <span className="text-xs text-brand-slate/70">{timeAgo(item.created_at)}</span>
                         </div>
                       </div>
                       <div className="shrink-0">
@@ -308,7 +308,7 @@ export default function InboxPage() {
                     {item.meeting_id && item.meeting_scheduled_at && (
                       <button
                         onClick={() => setMeetingModal(item)}
-                        className="mt-2 ms-12 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-700 font-medium hover:bg-blue-100 transition-colors"
+                        className="mt-2 ms-12 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-blue/10 border border-brand-cyan/30 text-xs text-brand-cyan font-medium hover:bg-brand-blue/15 transition-colors"
                       >
                         <Calendar className="w-3 h-3" />
                         {t("inboxMeeting")} · {formatKsa(item.meeting_scheduled_at)}

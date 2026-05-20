@@ -53,16 +53,16 @@ const EVENT_CONFIG: Record<
   TimelineEvent["type"],
   { icon: React.ReactNode; bg: string; text: string; ring: string }
 > = {
-  first_contact:      { icon: <MessageSquare className="w-3.5 h-3.5" />, bg: "bg-blue-100",   text: "text-blue-600",   ring: "ring-blue-200"   },
-  bot_message:        { icon: <Bot            className="w-3.5 h-3.5" />, bg: "bg-gray-100",   text: "text-gray-500",   ring: "ring-gray-200"   },
-  agent_message:      { icon: <HeadphonesIcon className="w-3.5 h-3.5" />, bg: "bg-purple-100", text: "text-purple-600", ring: "ring-purple-200" },
+  first_contact:      { icon: <MessageSquare className="w-3.5 h-3.5" />, bg: "bg-brand-blue/15",   text: "text-brand-cyan",   ring: "ring-brand-cyan/30"   },
+  bot_message:        { icon: <Bot            className="w-3.5 h-3.5" />, bg: "bg-white/[0.05]",   text: "text-brand-slate",   ring: "ring-white/[0.10]"   },
+  agent_message:      { icon: <HeadphonesIcon className="w-3.5 h-3.5" />, bg: "bg-brand-violet/15", text: "text-brand-violet", ring: "ring-brand-violet/30" },
   // ESCALATION — hidden for now
-  // escalation:      { icon: <AlertTriangle  className="w-3.5 h-3.5" />, bg: "bg-orange-100", text: "text-orange-600", ring: "ring-orange-200" },
-  escalation:         { icon: <AlertTriangle  className="w-3.5 h-3.5" />, bg: "bg-gray-100",   text: "text-gray-400",   ring: "ring-gray-200"   },
+  // escalation:      { icon: <AlertTriangle  className="w-3.5 h-3.5" />, bg: "bg-brand-amber/15", text: "text-brand-amber", ring: "ring-brand-amber/30" },
+  escalation:         { icon: <AlertTriangle  className="w-3.5 h-3.5" />, bg: "bg-white/[0.05]",   text: "text-brand-slate/70",   ring: "ring-white/[0.10]"   },
   meeting_booked:     { icon: <Calendar       className="w-3.5 h-3.5" />, bg: "bg-teal-100",   text: "text-teal-600",   ring: "ring-teal-200"   },
-  meeting_completed:  { icon: <CheckCircle2   className="w-3.5 h-3.5" />, bg: "bg-green-100",  text: "text-green-600",  ring: "ring-green-200"  },
-  survey_sent:        { icon: <ClipboardList  className="w-3.5 h-3.5" />, bg: "bg-yellow-100", text: "text-yellow-600", ring: "ring-yellow-200" },
-  survey_submitted:   { icon: <ClipboardCheck className="w-3.5 h-3.5" />, bg: "bg-green-100",  text: "text-green-600",  ring: "ring-green-200"  },
+  meeting_completed:  { icon: <CheckCircle2   className="w-3.5 h-3.5" />, bg: "bg-brand-emerald/15",  text: "text-brand-emerald",  ring: "ring-green-200"  },
+  survey_sent:        { icon: <ClipboardList  className="w-3.5 h-3.5" />, bg: "bg-brand-amber/15", text: "text-brand-amber", ring: "ring-brand-amber/30" },
+  survey_submitted:   { icon: <ClipboardCheck className="w-3.5 h-3.5" />, bg: "bg-brand-emerald/15",  text: "text-brand-emerald",  ring: "ring-green-200"  },
   order:              { icon: <Package        className="w-3.5 h-3.5" />, bg: "bg-indigo-100", text: "text-indigo-600", ring: "ring-indigo-200" },
 };
 
@@ -109,10 +109,10 @@ function FunnelTab() {
 
   return (
     <div className="space-y-6 p-6">
-      <h2 className="text-base font-semibold text-gray-900">{t("funnelTitle")}</h2>
+      <h2 className="text-base font-semibold text-white">{t("funnelTitle")}</h2>
 
       {/* Recharts bar chart */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <div className="bg-brand-navy border border-white/[0.08] rounded-xl p-4">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
             data={annotated}
@@ -145,30 +145,30 @@ function FunnelTab() {
       </div>
 
       {/* Stage table with drop-off */}
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="bg-brand-navy border border-white/[0.08] rounded-xl overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 bg-gray-50/50">
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Stage</th>
-              <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Customers</th>
-              <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("funnelDropOff")}</th>
+            <tr className="border-b border-white/[0.08] bg-white/[0.03]/50">
+              <th className="text-left px-4 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">Stage</th>
+              <th className="text-right px-4 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">Customers</th>
+              <th className="text-right px-4 py-3 text-xs font-semibold text-brand-slate uppercase tracking-wide">{t("funnelDropOff")}</th>
               <th className="px-4 py-3 w-40"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {annotated.map((s, i) => (
-              <tr key={s.stage} className="hover:bg-gray-50/50">
-                <td className="px-4 py-3 font-medium text-gray-900">{s.stage}</td>
-                <td className="px-4 py-3 text-right font-semibold text-gray-900">{s.count}</td>
+              <tr key={s.stage} className="hover:bg-white/[0.03]/50">
+                <td className="px-4 py-3 font-medium text-white">{s.stage}</td>
+                <td className="px-4 py-3 text-right font-semibold text-white">{s.count}</td>
                 <td className="px-4 py-3 text-right">
                   {s.dropOff !== null ? (
-                    <span className={`text-sm font-medium ${s.dropOff >= 50 ? "text-red-500" : s.dropOff >= 25 ? "text-orange-500" : "text-gray-500"}`}>
+                    <span className={`text-sm font-medium ${s.dropOff >= 50 ? "text-red-400" : s.dropOff >= 25 ? "text-orange-500" : "text-brand-slate"}`}>
                       −{s.dropOff}%
                     </span>
-                  ) : <span className="text-gray-500">--</span>}
+                  ) : <span className="text-brand-slate">--</span>}
                 </td>
                 <td className="px-4 py-3">
-                  <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="w-full bg-white/[0.05] rounded-full h-2">
                     <div
                       className="h-2 rounded-full transition-all"
                       style={{
@@ -276,27 +276,27 @@ export default function CustomersPage() {
           {/* ── Left Panel: Customer List ── */}
           <div
             className={`
-              w-full md:w-[340px] md:flex-shrink-0 border-e border-gray-200 bg-white flex flex-col
+              w-full md:w-[340px] md:flex-shrink-0 border-e border-white/[0.08] bg-brand-navy flex flex-col
               ${selectedPhone ? "hidden md:flex" : "flex"}
             `}
           >
             {/* Left panel header */}
             <div className="px-5 pt-5 pb-3 flex-shrink-0">
-              <h1 className="text-lg font-bold text-gray-900">{t("customersTitle")}</h1>
-              <p className="text-xs text-gray-400 mt-0.5">{total} {t("customersTotal")}</p>
+              <h1 className="text-lg font-bold text-white">{t("customersTitle")}</h1>
+              <p className="text-xs text-brand-slate/70 mt-0.5">{total} {t("customersTotal")}</p>
             </div>
 
             {/* Tab bar */}
             <div className="px-5 pb-3 flex-shrink-0">
-              <div className="flex gap-1 bg-gray-100 p-1 rounded-xl">
+              <div className="flex gap-1 bg-white/[0.05] p-1 rounded-xl">
                 {(["list", "funnel"] as const).map(key => (
                   <button
                     key={key}
                     onClick={() => { setTab(key); if (key === "funnel") setSelectedPhone(null); }}
                     className={`flex-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5 ${
                       tab === key
-                        ? "bg-white shadow-sm text-gray-900"
-                        : "text-gray-500 hover:text-gray-700"
+                        ? "bg-brand-navy shadow-sm text-white"
+                        : "text-brand-slate hover:text-white/90"
                     }`}
                   >
                     {key === "list" ? <Users2 className="w-3.5 h-3.5" /> : <BarChart3 className="w-3.5 h-3.5" />}
@@ -311,13 +311,13 @@ export default function CustomersPage() {
                 {/* Search */}
                 <div className="px-5 pb-3 flex-shrink-0">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-slate/70 pointer-events-none" />
                     <input
                       type="text"
                       placeholder={t("customersSearch")}
                       value={search}
                       onChange={e => setSearch(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-blue transition-colors"
+                      className="w-full pl-9 pr-4 py-2 text-sm border border-white/[0.08] rounded-xl bg-white/[0.03] focus:bg-brand-navy focus:outline-none focus:border-brand-blue transition-colors"
                     />
                   </div>
                 </div>
@@ -329,7 +329,7 @@ export default function CustomersPage() {
                       <div className="w-5 h-5 border-[3px] border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
                     </div>
                   ) : customers.length === 0 ? (
-                    <div className="px-5 py-12 text-center text-sm text-gray-500">
+                    <div className="px-5 py-12 text-center text-sm text-brand-slate">
                       {t("customersNoResults")}
                     </div>
                   ) : (
@@ -343,14 +343,14 @@ export default function CustomersPage() {
                             className={`w-full text-left px-5 py-3.5 transition-colors ${
                               isSelected
                                 ? "bg-brand-blue/[0.08] border-s-[3px] border-brand-blue"
-                                : "hover:bg-gray-50 border-s-[3px] border-transparent"
+                                : "hover:bg-white/[0.03] border-s-[3px] border-transparent"
                             }`}
                           >
-                            <p className="text-sm font-semibold text-gray-900 truncate">
-                              {c.name || <span className="text-gray-400 italic font-normal">{t("customersUnknown")}</span>}
+                            <p className="text-sm font-semibold text-white truncate">
+                              {c.name || <span className="text-brand-slate/70 italic font-normal">{t("customersUnknown")}</span>}
                             </p>
-                            <p className="text-xs text-gray-400 font-mono mt-0.5">{maskPhone(c.phone)}</p>
-                            <p className="text-xs text-gray-400 mt-0.5">{c.touchpoints} {t("customersTouchpoints").toLowerCase()}</p>
+                            <p className="text-xs text-brand-slate/70 font-mono mt-0.5">{maskPhone(c.phone)}</p>
+                            <p className="text-xs text-brand-slate/70 mt-0.5">{c.touchpoints} {t("customersTouchpoints").toLowerCase()}</p>
                           </button>
                         );
                       })}
@@ -359,22 +359,22 @@ export default function CustomersPage() {
 
                   {/* Pagination */}
                   {totalPages > 1 && (
-                    <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100">
-                      <p className="text-xs text-gray-400">
+                    <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.06]">
+                      <p className="text-xs text-brand-slate/70">
                         {page} / {totalPages}
                       </p>
                       <div className="flex gap-1">
                         <button
                           onClick={() => setPage(p => Math.max(1, p - 1))}
                           disabled={page === 1}
-                          className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                          className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-white/[0.03] disabled:opacity-40 transition-colors"
                         >
                           <ChevronLeft className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                           disabled={page === totalPages}
-                          className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                          className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-white/[0.03] disabled:opacity-40 transition-colors"
                         >
                           <ChevronRight className="w-3.5 h-3.5" />
                         </button>
@@ -391,7 +391,7 @@ export default function CustomersPage() {
           {/* ── Right Panel ── */}
           <div
             className={`
-              flex-1 bg-gray-50 flex flex-col min-w-0
+              flex-1 bg-white/[0.03] flex flex-col min-w-0
               ${selectedPhone ? "flex" : "hidden md:flex"}
             `}
           >
@@ -403,20 +403,20 @@ export default function CustomersPage() {
             ) : selectedPhone ? (
               <>
                 {/* Right panel header */}
-                <div className="flex-shrink-0 bg-white border-b border-gray-200 px-5 py-4">
+                <div className="flex-shrink-0 bg-brand-navy border-b border-white/[0.08] px-5 py-4">
                   <div className="flex items-center gap-3">
                     {/* Mobile back button */}
                     <button
                       onClick={() => setSelectedPhone(null)}
-                      className="md:hidden p-1.5 -ms-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="md:hidden p-1.5 -ms-1.5 rounded-lg hover:bg-white/[0.05] transition-colors"
                     >
-                      <ArrowLeft className="w-4 h-4 text-gray-500" />
+                      <ArrowLeft className="w-4 h-4 text-brand-slate" />
                     </button>
                     <div className="min-w-0">
-                      <h2 className="text-xl font-bold text-gray-900 truncate">
+                      <h2 className="text-xl font-bold text-white truncate">
                         {selectedCustomer?.name || selectedPhone}
                       </h2>
-                      <p className="text-sm text-gray-500 mt-0.5">
+                      <p className="text-sm text-brand-slate mt-0.5">
                         {t("journeyTitle")} — {journeyData?.timeline.length ?? 0} {t("customersTouchpoints").toLowerCase()}
                       </p>
                     </div>
@@ -430,11 +430,11 @@ export default function CustomersPage() {
                       <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
                     </div>
                   ) : !journeyData || journeyData.timeline.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center pt-16">{t("journeyNoEvents")}</p>
+                    <p className="text-sm text-brand-slate text-center pt-16">{t("journeyNoEvents")}</p>
                   ) : (
                     <div className="relative">
                       {/* Vertical connector line */}
-                      <div className="absolute top-3 bottom-3 start-[15px] w-px bg-gray-200" />
+                      <div className="absolute top-3 bottom-3 start-[15px] w-px bg-white/[0.08]" />
 
                       <div className="space-y-0">
                         {journeyData.timeline.map((evt, i) => {
@@ -446,9 +446,9 @@ export default function CustomersPage() {
                                 {cfg.icon}
                               </div>
                               {/* Event card */}
-                              <div className="flex-1 min-w-0 bg-white border border-gray-200 rounded-xl px-5 py-4 hover:shadow-md transition-shadow">
-                                <p className="text-sm font-medium text-gray-900 leading-snug">{evt.summary}</p>
-                                <p className="text-xs text-gray-500 mt-1">
+                              <div className="flex-1 min-w-0 bg-brand-navy border border-white/[0.08] rounded-xl px-5 py-4 hover:shadow-md transition-shadow">
+                                <p className="text-sm font-medium text-white leading-snug">{evt.summary}</p>
+                                <p className="text-xs text-brand-slate mt-1">
                                   {format(new Date(evt.timestamp), "MMM d, yyyy · h:mm a")}
                                 </p>
                               </div>
@@ -462,8 +462,8 @@ export default function CustomersPage() {
               </>
             ) : (
               /* Empty state -- no customer selected */
-              <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-                <Users2 className="w-10 h-10 mb-3 text-gray-300" />
+              <div className="flex-1 flex flex-col items-center justify-center text-brand-slate/70">
+                <Users2 className="w-10 h-10 mb-3 text-brand-slate/50" />
                 <p className="text-sm font-medium">Select a customer to view their journey</p>
               </div>
             )}

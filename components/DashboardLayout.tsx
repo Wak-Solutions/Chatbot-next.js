@@ -84,7 +84,7 @@ export default function DashboardLayout({
 
   if (isAuthLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-brand-navy">
         <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
@@ -163,8 +163,8 @@ export default function DashboardLayout({
               <Link key={n.href} href={n.href}>
                 <a className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium transition-colors ${
                   isActive(n.href)
-                    ? "border-s-[3px] border-white bg-white/15 text-white shadow-sm"
-                    : "text-white/55 hover:text-white/85 hover:bg-white/[0.08]"
+                    ? "border-s-[3px] border-white bg-brand-navy/15 text-white shadow-sm"
+                    : "text-white/55 hover:text-white/85 hover:bg-brand-navy/[0.08]"
                 }`}>
                   {n.icon}
                   {n.label}
@@ -182,8 +182,8 @@ export default function DashboardLayout({
                   <Link key={n.href} href={n.href}>
                     <a className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium transition-colors ${
                       isActive(n.href)
-                        ? "border-s-[3px] border-white bg-white/15 text-white shadow-sm"
-                        : "text-white/55 hover:text-white/85 hover:bg-white/[0.08]"
+                        ? "border-s-[3px] border-white bg-brand-navy/15 text-white shadow-sm"
+                        : "text-white/55 hover:text-white/85 hover:bg-brand-navy/[0.08]"
                     }`}>
                       {n.icon}
                       {n.label}
@@ -198,7 +198,7 @@ export default function DashboardLayout({
         {/* Agent name */}
         {agentName && (
           <div className="px-5 py-3 border-t border-white/10 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-full bg-brand-navy/20 flex items-center justify-center shrink-0">
               <span className="text-white text-[11px] font-bold leading-none">
                 {agentName.split(" ").map((w: string) => w[0]).slice(0, 2).join("").toUpperCase()}
               </span>
@@ -211,20 +211,20 @@ export default function DashboardLayout({
         <div className="px-3.5 pb-5 pt-3 border-t border-white/10 space-y-0.5">
           <button
             onClick={handleRegisterBiometric}
-            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium text-white/55 hover:text-white/85 hover:bg-white/[0.08] transition-colors"
+            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium text-white/55 hover:text-white/85 hover:bg-brand-navy/[0.08] transition-colors"
           >
             <Fingerprint className="w-[18px] h-[18px]" /> Biometric
           </button>
           <button
             onClick={toggleLang}
-            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium text-white/55 hover:text-white/85 hover:bg-white/[0.08] transition-colors"
+            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium text-white/55 hover:text-white/85 hover:bg-brand-navy/[0.08] transition-colors"
           >
             <Globe className="w-[18px] h-[18px]" /> {t("switchLang")}
           </button>
           <button
             onClick={handleLogout}
             data-testid="button-logout"
-            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium text-white/55 hover:text-red-300 hover:bg-white/[0.08] transition-colors"
+            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium text-white/55 hover:text-red-300 hover:bg-brand-navy/[0.08] transition-colors"
           >
             <LogOut className="w-[18px] h-[18px]" /> {t("logout")}
           </button>
@@ -255,7 +255,7 @@ export default function DashboardLayout({
             )}
           </span>
           {agentName && (
-            <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-brand-navy/20 flex items-center justify-center">
               <span className="text-white text-[11px] font-bold leading-none">
                 {agentName.split(" ").map((w: string) => w[0]).slice(0, 2).join("").toUpperCase()}
               </span>
@@ -274,7 +274,7 @@ export default function DashboardLayout({
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] md:hidden" onClick={() => setMobileOpen(false)}>
           <div className="absolute inset-0 bg-black/40" />
-          <div className={`absolute top-0 ${isRtl ? "left-0" : "right-0"} h-full w-80 bg-white shadow-xl flex flex-col`} onClick={e => e.stopPropagation()}>
+          <div className={`absolute top-0 ${isRtl ? "left-0" : "right-0"} h-full w-80 bg-brand-navy shadow-xl flex flex-col`} onClick={e => e.stopPropagation()}>
             <div className="h-[56px] bg-brand-ink flex items-center justify-between px-5">
               <span className="text-white font-semibold text-sm">{t("menu")}</span>
               <button onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white p-1 rounded transition-colors">
@@ -289,31 +289,31 @@ export default function DashboardLayout({
                     className={`flex items-center gap-4 px-5 py-3.5 text-sm font-medium transition-colors min-h-[48px] ${
                       isActive(item.href)
                         ? "bg-brand-blue/10 text-brand-blue border-s-4 border-brand-cyan"
-                        : "text-gray-700 hover:bg-gray-50"
+                        : "text-white/90 hover:bg-white/[0.03]"
                     }`}
                   >
-                    <span className={isActive(item.href) ? "text-brand-blue" : "text-gray-400"}>{item.icon}</span>
+                    <span className={isActive(item.href) ? "text-brand-blue" : "text-brand-slate/70"}>{item.icon}</span>
                     {item.label}
                   </a>
                 </Link>
               ))}
               <button
                 onClick={() => { handleRegisterBiometric(); setMobileOpen(false); }}
-                className="w-full flex items-center gap-4 px-5 py-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors min-h-[48px]"
+                className="w-full flex items-center gap-4 px-5 py-3.5 text-sm font-medium text-white/90 hover:bg-white/[0.03] transition-colors min-h-[48px]"
               >
-                <span className="text-gray-400"><Fingerprint className="w-5 h-5" /></span>
+                <span className="text-brand-slate/70"><Fingerprint className="w-5 h-5" /></span>
                 Biometric
               </button>
               <button
                 onClick={() => { toggleLang(); setMobileOpen(false); }}
-                className="w-full flex items-center gap-4 px-5 py-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors min-h-[48px]"
+                className="w-full flex items-center gap-4 px-5 py-3.5 text-sm font-medium text-white/90 hover:bg-white/[0.03] transition-colors min-h-[48px]"
               >
-                <span className="text-gray-400"><Globe className="w-5 h-5" /></span>
+                <span className="text-brand-slate/70"><Globe className="w-5 h-5" /></span>
                 {t("switchLang")}
               </button>
               <button
                 onClick={() => { handleLogout(); setMobileOpen(false); }}
-                className="w-full flex items-center gap-4 px-5 py-3.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors min-h-[48px]"
+                className="w-full flex items-center gap-4 px-5 py-3.5 text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors min-h-[48px]"
               >
                 <span className="text-red-400"><LogOut className="w-5 h-5" /></span>
                 {t("logout")}
@@ -326,8 +326,8 @@ export default function DashboardLayout({
       {/* ─── Main content ─── */}
       <div className="flex-1 flex flex-col min-w-0 min-h-0 h-full">
         {/* Desktop top bar */}
-        <div className="hidden md:flex items-center justify-end gap-3 px-6 py-2.5 border-b border-gray-100 bg-white shrink-0">
-          <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold px-2.5 py-1 rounded-full">
+        <div className="hidden md:flex items-center justify-end gap-3 px-6 py-2.5 border-b border-white/[0.06] bg-brand-navy shrink-0">
+          <span className="inline-flex items-center gap-1.5 bg-brand-amber/15 text-brand-amber border border-brand-amber/30 text-[11px] font-semibold px-2.5 py-1 rounded-full">
             {showUnlimited ? (
               <><Infinity className="w-3 h-3" /> Unlimited days remaining</>
             ) : (
@@ -345,18 +345,18 @@ export default function DashboardLayout({
         {(showInstallPrompt || showBanner) && (
           <div className="notification-banners">
             {showInstallPrompt && (
-              <div className="bg-blue-50 border-b border-blue-200 px-5 py-2.5 flex items-center justify-between gap-3 shrink-0 md:flex">
+              <div className="bg-brand-blue/10 border-b border-brand-cyan/30 px-5 py-2.5 flex items-center justify-between gap-3 shrink-0 md:flex">
                 <div className="flex items-center gap-2 text-sm text-blue-800">
                   <Share className="w-4 h-4 shrink-0" />
                   <span>{t("iosInstallPrompt")}</span>
                 </div>
-                <button onClick={dismissInstallPrompt} className="shrink-0 text-blue-600 hover:text-blue-800 p-1 rounded transition-colors">
+                <button onClick={dismissInstallPrompt} className="shrink-0 text-brand-cyan hover:text-blue-800 p-1 rounded transition-colors">
                   <X className="w-4 h-4" />
                 </button>
               </div>
             )}
             {showBanner && (
-              <div className="bg-amber-50 border-b border-amber-200 px-5 py-2.5 flex items-center justify-between gap-3 shrink-0">
+              <div className="bg-brand-amber/15 border-b border-brand-amber/30 px-5 py-2.5 flex items-center justify-between gap-3 shrink-0">
                 <div className="flex items-center gap-2 text-sm text-amber-800">
                   <Bell className="w-4 h-4 shrink-0" />
                   <span>{t("enableNotificationsPrompt")}</span>

@@ -33,7 +33,7 @@ function maskToken(token: string): string {
 }
 
 const inputClass =
-  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors";
+  "w-full px-4 py-2.5 border border-white/[0.08] rounded-xl text-sm bg-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    WhatsApp Panel
@@ -124,7 +124,7 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
 
   if (loadError) {
     return (
-      <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl p-4">
+      <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-100 rounded-xl p-4">
         <AlertCircle className="w-4 h-4 shrink-0" />
         {loadError}
       </div>
@@ -132,19 +132,19 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+    <div className="bg-brand-navy rounded-2xl border border-white/[0.08] overflow-hidden">
       {/* Panel header */}
-      <div className="px-6 py-5 border-b border-gray-100">
-        <h2 className="text-base font-semibold text-gray-900">{t("settingsWhatsApp")}</h2>
-        <p className="text-sm text-gray-500 mt-1">{t("settingsWhatsAppDesc")}</p>
+      <div className="px-6 py-5 border-b border-white/[0.06]">
+        <h2 className="text-base font-semibold text-white">{t("settingsWhatsApp")}</h2>
+        <p className="text-sm text-brand-slate mt-1">{t("settingsWhatsAppDesc")}</p>
       </div>
 
       <div className="px-6 py-6 space-y-5 max-w-lg">
         {/* Phone Number ID */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-medium text-white/90 mb-1.5">
             {t("settingsPhoneNumberId")}
-            <span className="text-xs text-gray-400 font-normal ms-1.5">({t("settingsPhoneNumberIdHint")})</span>
+            <span className="text-xs text-brand-slate/70 font-normal ms-1.5">({t("settingsPhoneNumberIdHint")})</span>
           </label>
           <input
             className={inputClass}
@@ -156,7 +156,7 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
 
         {/* WABA ID */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-medium text-white/90 mb-1.5">
             {t("settingsWabaId")}
           </label>
           <input
@@ -169,9 +169,9 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
 
         {/* Access Token */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-medium text-white/90 mb-1.5">
             {t("settingsAccessToken")}
-            <span className="text-xs text-gray-400 font-normal ms-1.5">({t("settingsAccessTokenHint")})</span>
+            <span className="text-xs text-brand-slate/70 font-normal ms-1.5">({t("settingsAccessTokenHint")})</span>
           </label>
           <div className="relative">
             <input
@@ -185,7 +185,7 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
               <button
                 type="button"
                 onClick={() => setRevealToken(v => !v)}
-                className="absolute end-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 font-medium transition-colors"
+                className="absolute end-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-brand-slate hover:text-white/90 font-medium transition-colors"
               >
                 {revealToken
                   ? <><EyeOff className="w-3.5 h-3.5" />{t("settingsHide")}</>
@@ -198,9 +198,9 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
 
         {/* App Secret */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-medium text-white/90 mb-1.5">
             App Secret
-            <span className="text-xs text-gray-400 font-normal ms-1.5">(Meta Developer → App Settings → Basic → App Secret)</span>
+            <span className="text-xs text-brand-slate/70 font-normal ms-1.5">(Meta Developer → App Settings → Basic → App Secret)</span>
           </label>
           <div className="relative">
             <input
@@ -214,7 +214,7 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
               <button
                 type="button"
                 onClick={() => setRevealSecret(v => !v)}
-                className="absolute end-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 font-medium transition-colors"
+                className="absolute end-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-brand-slate hover:text-white/90 font-medium transition-colors"
               >
                 {revealSecret
                   ? <><EyeOff className="w-3.5 h-3.5" />{t("settingsHide")}</>
@@ -223,7 +223,7 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
               </button>
             )}
           </div>
-          <p className="text-xs text-amber-700 mt-1.5">Required for Meta to send messages to your bot. Without this, the signature check will reject all incoming messages.</p>
+          <p className="text-xs text-brand-amber mt-1.5">Required for Meta to send messages to your bot. Without this, the signature check will reject all incoming messages.</p>
         </div>
 
         {/* Verify row */}
@@ -243,24 +243,24 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
             )}
           </button>
           {verifyStatus === "verified" && verifiedName && (
-            <span className="text-sm text-green-600 font-medium">{verifiedName}</span>
+            <span className="text-sm text-brand-emerald font-medium">{verifiedName}</span>
           )}
           {verifyStatus === "error" && (
-            <span className="text-sm text-red-500">{verifyError}</span>
+            <span className="text-sm text-red-400">{verifyError}</span>
           )}
           {saveStatus === "saving" && (
-            <span className="text-sm text-gray-500 inline-flex items-center gap-2">
-              <div className="w-3.5 h-3.5 border-2 border-gray-300 border-t-gray-700 rounded-full animate-spin" />
+            <span className="text-sm text-brand-slate inline-flex items-center gap-2">
+              <div className="w-3.5 h-3.5 border-2 border-white/[0.10] border-t-gray-700 rounded-full animate-spin" />
               {t("settingsSaving")}
             </span>
           )}
           {saveStatus === "saved" && (
-            <span className="text-sm text-green-600 font-medium inline-flex items-center gap-1">
+            <span className="text-sm text-brand-emerald font-medium inline-flex items-center gap-1">
               <Check className="w-4 h-4" />{t("settingsSaved")}
             </span>
           )}
           {saveStatus === "error" && saveError && (
-            <span className="text-sm text-red-500">{saveError}</span>
+            <span className="text-sm text-red-400">{saveError}</span>
           )}
         </div>
       </div>
@@ -313,7 +313,7 @@ function BrandingPanel({ t }: { t: (k: string) => string }) {
 
   if (loadError) {
     return (
-      <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl p-4">
+      <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-100 rounded-xl p-4">
         <AlertCircle className="w-4 h-4 shrink-0" />
         {loadError}
       </div>
@@ -321,15 +321,15 @@ function BrandingPanel({ t }: { t: (k: string) => string }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      <div className="px-6 py-5 border-b border-gray-100">
-        <h2 className="text-base font-semibold text-gray-900">{t("settingsBranding")}</h2>
-        <p className="text-sm text-gray-500 mt-1">{t("settingsBrandingDesc")}</p>
+    <div className="bg-brand-navy rounded-2xl border border-white/[0.08] overflow-hidden">
+      <div className="px-6 py-5 border-b border-white/[0.06]">
+        <h2 className="text-base font-semibold text-white">{t("settingsBranding")}</h2>
+        <p className="text-sm text-brand-slate mt-1">{t("settingsBrandingDesc")}</p>
       </div>
 
       <div className="px-6 py-6 space-y-5 max-w-lg">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-medium text-white/90 mb-1.5">
             {t("settingsBrandName")}
           </label>
           <input
@@ -338,7 +338,7 @@ function BrandingPanel({ t }: { t: (k: string) => string }) {
             onChange={e => { setBrandName(e.target.value); setSaveStatus("idle"); }}
             placeholder="e.g. Acme Corp"
           />
-          <p className="text-xs text-gray-400 mt-1">{t("settingsBrandNameHint")}</p>
+          <p className="text-xs text-brand-slate/70 mt-1">{t("settingsBrandNameHint")}</p>
         </div>
 
         <div className="flex items-center gap-3 pt-1">
@@ -357,7 +357,7 @@ function BrandingPanel({ t }: { t: (k: string) => string }) {
             )}
           </button>
           {saveStatus === "error" && saveError && (
-            <span className="text-sm text-red-500">{saveError}</span>
+            <span className="text-sm text-red-400">{saveError}</span>
           )}
         </div>
       </div>
@@ -435,20 +435,20 @@ function ChangePasswordPanel({ t }: { t: (k: string) => string }) {
   };
 
   return (
-    <section className="bg-white border border-gray-200 rounded-2xl p-6">
+    <section className="bg-brand-navy border border-white/[0.08] rounded-2xl p-6">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center">
           <Lock className="w-5 h-5 text-brand-blue" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{t("settingsChangePassword")}</h2>
-          <p className="text-xs text-gray-500 mt-0.5">{t("settingsChangePasswordSub")}</p>
+          <h2 className="text-lg font-semibold text-white">{t("settingsChangePassword")}</h2>
+          <p className="text-xs text-brand-slate mt-0.5">{t("settingsChangePasswordSub")}</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
         <div>
-          <label className="text-xs font-medium text-gray-700 mb-1.5 block">{t("settingsCurrentPassword")}</label>
+          <label className="text-xs font-medium text-white/90 mb-1.5 block">{t("settingsCurrentPassword")}</label>
           <div className="relative">
             <input
               type={showCurrent ? "text" : "password"}
@@ -457,13 +457,13 @@ function ChangePasswordPanel({ t }: { t: (k: string) => string }) {
               autoComplete="current-password"
               className={inputClass}
             />
-            <button type="button" onClick={() => setShowCurrent(s => !s)} className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+            <button type="button" onClick={() => setShowCurrent(s => !s)} className="absolute end-3 top-1/2 -translate-y-1/2 text-brand-slate/70 hover:text-brand-slate">
               {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-700 mb-1.5 block">{t("settingsNewPassword")}</label>
+          <label className="text-xs font-medium text-white/90 mb-1.5 block">{t("settingsNewPassword")}</label>
           <div className="relative">
             <input
               type={showNew ? "text" : "password"}
@@ -472,14 +472,14 @@ function ChangePasswordPanel({ t }: { t: (k: string) => string }) {
               autoComplete="new-password"
               className={inputClass}
             />
-            <button type="button" onClick={() => setShowNew(s => !s)} className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+            <button type="button" onClick={() => setShowNew(s => !s)} className="absolute end-3 top-1/2 -translate-y-1/2 text-brand-slate/70 hover:text-brand-slate">
               {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
-          <p className="text-[11px] text-gray-500 mt-1">{t("settingsPasswordHint")}</p>
+          <p className="text-[11px] text-brand-slate mt-1">{t("settingsPasswordHint")}</p>
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-700 mb-1.5 block">{t("settingsConfirmPassword")}</label>
+          <label className="text-xs font-medium text-white/90 mb-1.5 block">{t("settingsConfirmPassword")}</label>
           <input
             type={showNew ? "text" : "password"}
             value={confirmPassword}
@@ -490,13 +490,13 @@ function ChangePasswordPanel({ t }: { t: (k: string) => string }) {
         </div>
 
         {error && (
-          <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-3 py-2">
+          <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-3 py-2">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
         {status === "saved" && (
-          <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2 bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald text-sm rounded-lg px-3 py-2">
             <Check className="w-4 h-4 shrink-0" />
             <span>{t("settingsPasswordUpdated")}</span>
           </div>
@@ -532,7 +532,7 @@ function BrandingWarningBanner() {
 
   if (!show) return null;
   return (
-    <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800 flex items-center gap-2">
+    <div className="mb-6 bg-brand-amber/15 border border-brand-amber/30 rounded-lg px-4 py-3 text-sm text-amber-800 flex items-center gap-2">
       <span>⚠</span>
       <span>Please set your Brand Name in Settings → Branding.</span>
     </div>
@@ -550,7 +550,7 @@ export default function SettingsPage() {
       <div dir={isRtl ? "rtl" : "ltr"} className="max-w-5xl mx-auto">
         {/* Page title */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">{t("settings")}</h1>
+          <h1 className="text-2xl font-bold text-white">{t("settings")}</h1>
         </div>
         <BrandingWarningBanner />
 
@@ -565,10 +565,10 @@ export default function SettingsPage() {
                     className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors text-start ${
                       activeSection === s.id
                         ? "bg-brand-blue/10 text-brand-blue"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        : "text-brand-slate hover:bg-white/[0.05] hover:text-white"
                     }`}
                   >
-                    <span className={activeSection === s.id ? "text-brand-blue" : "text-gray-400"}>
+                    <span className={activeSection === s.id ? "text-brand-blue" : "text-brand-slate/70"}>
                       {s.icon}
                     </span>
                     {t(s.labelKey)}

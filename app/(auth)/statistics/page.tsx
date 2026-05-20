@@ -162,12 +162,12 @@ export default function Statistics() {
 
           {/* ── Page Header ── */}
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{t("statisticsTitle")}</h1>
-            <p className="text-sm text-gray-500 mt-1">{t("statisticsSubtitle")}</p>
+            <h1 className="text-2xl font-bold text-white">{t("statisticsTitle")}</h1>
+            <p className="text-sm text-brand-slate mt-1">{t("statisticsSubtitle")}</p>
           </div>
 
           {/* ── Date Range Filter ── */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
+          <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-4 space-y-3">
             <div className="flex flex-wrap gap-2">
               {presets.map(p => (
                 <button
@@ -176,7 +176,7 @@ export default function Statistics() {
                   className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     preset === p.key
                       ? "bg-brand-blue text-white"
-                      : "bg-gray-100 text-gray-500 hover:text-gray-700"
+                      : "bg-white/[0.05] text-brand-slate hover:text-white/90"
                   }`}
                 >
                   {p.label}
@@ -187,24 +187,24 @@ export default function Statistics() {
             {preset === "custom" && (
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-gray-500 whitespace-nowrap">{t("statisticsFrom")}</label>
+                  <label className="text-xs text-brand-slate whitespace-nowrap">{t("statisticsFrom")}</label>
                   <input
                     type="date"
                     value={customFrom}
                     max={customTo}
                     onChange={e => setCustomFrom(e.target.value)}
-                    className="border border-gray-200 rounded-md px-2 py-1 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                    className="border border-white/[0.08] rounded-md px-2 py-1 text-sm bg-brand-navy text-white focus:outline-none focus:ring-2 focus:ring-brand-blue"
                   />
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-gray-500 whitespace-nowrap">{t("statisticsTo")}</label>
+                  <label className="text-xs text-brand-slate whitespace-nowrap">{t("statisticsTo")}</label>
                   <input
                     type="date"
                     value={customTo}
                     min={customFrom}
                     max={toDateInput(new Date())}
                     onChange={e => setCustomTo(e.target.value)}
-                    className="border border-gray-200 rounded-md px-2 py-1 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                    className="border border-white/[0.08] rounded-md px-2 py-1 text-sm bg-brand-navy text-white focus:outline-none focus:ring-2 focus:ring-brand-blue"
                   />
                 </div>
               </div>
@@ -214,13 +214,13 @@ export default function Statistics() {
           {/* ── Stat Cards Grid (NEW) ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Unique Customers */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs text-gray-500 uppercase tracking-wider">{t("statisticsUniqueCustomers")}</p>
+            <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5">
+              <p className="text-xs text-brand-slate uppercase tracking-wider">{t("statisticsUniqueCustomers")}</p>
               {isStatsLoading ? (
-                <div className="h-9 w-16 bg-gray-100 rounded animate-pulse mt-2" />
+                <div className="h-9 w-16 bg-white/[0.05] rounded animate-pulse mt-2" />
               ) : (
                 <>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">{stats?.totalCustomers ?? 0}</p>
+                  <p className="text-3xl font-bold text-white mt-1">{stats?.totalCustomers ?? 0}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3.5 h-3.5 text-brand-blue" />
                     <span className="text-sm font-medium text-brand-blue">+12% {t("statisticsThisMonth")}</span>
@@ -230,13 +230,13 @@ export default function Statistics() {
             </div>
 
             {/* Total Messages */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs text-gray-500 uppercase tracking-wider">{t("statisticsTotalMessages")}</p>
+            <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5">
+              <p className="text-xs text-brand-slate uppercase tracking-wider">{t("statisticsTotalMessages")}</p>
               {isStatsLoading ? (
-                <div className="h-9 w-16 bg-gray-100 rounded animate-pulse mt-2" />
+                <div className="h-9 w-16 bg-white/[0.05] rounded animate-pulse mt-2" />
               ) : (
                 <>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">{totalMessages}</p>
+                  <p className="text-3xl font-bold text-white mt-1">{totalMessages}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3.5 h-3.5 text-brand-blue" />
                     <span className="text-sm font-medium text-brand-blue">+8% {t("statisticsThisMonth")}</span>
@@ -246,13 +246,13 @@ export default function Statistics() {
             </div>
 
             {/* Avg per Day */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs text-gray-500 uppercase tracking-wider">{t("statisticsAvgPerDay")}</p>
+            <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5">
+              <p className="text-xs text-brand-slate uppercase tracking-wider">{t("statisticsAvgPerDay")}</p>
               {isStatsLoading ? (
-                <div className="h-9 w-16 bg-gray-100 rounded animate-pulse mt-2" />
+                <div className="h-9 w-16 bg-white/[0.05] rounded animate-pulse mt-2" />
               ) : (
                 <>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">{avgPerDay.toFixed(1)}</p>
+                  <p className="text-3xl font-bold text-white mt-1">{avgPerDay.toFixed(1)}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3.5 h-3.5 text-brand-blue" />
                     <span className="text-sm font-medium text-brand-blue">+5% {t("statisticsThisMonth")}</span>
@@ -262,28 +262,28 @@ export default function Statistics() {
             </div>
 
             {/* Peak Day */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs text-gray-500 uppercase tracking-wider">{t("statisticsPeakDay")}</p>
+            <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5">
+              <p className="text-xs text-brand-slate uppercase tracking-wider">{t("statisticsPeakDay")}</p>
               {isStatsLoading ? (
-                <div className="h-9 w-16 bg-gray-100 rounded animate-pulse mt-2" />
+                <div className="h-9 w-16 bg-white/[0.05] rounded animate-pulse mt-2" />
               ) : (
                 <>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">{peakDayEntry?.count ?? 0}</p>
-                  <p className="text-sm text-gray-500 mt-1">{peakDayEntry?.label ?? "—"}</p>
+                  <p className="text-3xl font-bold text-white mt-1">{peakDayEntry?.count ?? 0}</p>
+                  <p className="text-sm text-brand-slate mt-1">{peakDayEntry?.label ?? "—"}</p>
                 </>
               )}
             </div>
           </div>
 
           {/* ── Bar Chart ── */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5 max-w-4xl">
-            <p className="text-xs text-gray-500 mb-4">{t("statisticsPerDay")}</p>
+          <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5 max-w-4xl">
+            <p className="text-xs text-brand-slate mb-4">{t("statisticsPerDay")}</p>
             {isStatsLoading ? (
               <div className="h-48 flex items-center justify-center">
                 <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
               </div>
             ) : chartData.length === 0 ? (
-              <div className="h-48 flex items-center justify-center text-sm text-gray-500">
+              <div className="h-48 flex items-center justify-center text-sm text-brand-slate">
                 {t("statisticsNoData")}
               </div>
             ) : showBarChart ? (
@@ -318,7 +318,7 @@ export default function Statistics() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-48 flex items-center justify-center text-sm text-gray-500">
+              <div className="h-48 flex items-center justify-center text-sm text-brand-slate">
                 {t("statisticsRangeTooLarge")}
               </div>
             )}
@@ -327,7 +327,7 @@ export default function Statistics() {
           {/* ── AI Summary ── */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-gray-900">{t("statisticsAiSummary")}</h2>
+              <h2 className="text-base font-semibold text-white">{t("statisticsAiSummary")}</h2>
               <button
                 onClick={() => generateSummary({ from: fromISO, to: toISO })}
                 disabled={isSummaryLoading}
@@ -347,26 +347,26 @@ export default function Statistics() {
               </button>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-200 p-5 min-h-[120px] flex flex-col justify-center">
+            <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5 min-h-[120px] flex flex-col justify-center">
               {isSummaryLoading ? (
                 <div className="space-y-2">
-                  <div className="h-3 bg-gray-100 rounded animate-pulse w-full" />
-                  <div className="h-3 bg-gray-100 rounded animate-pulse w-5/6" />
-                  <div className="h-3 bg-gray-100 rounded animate-pulse w-4/6" />
-                  <div className="h-3 bg-gray-100 rounded animate-pulse w-5/6 mt-2" />
-                  <div className="h-3 bg-gray-100 rounded animate-pulse w-3/6" />
+                  <div className="h-3 bg-white/[0.05] rounded animate-pulse w-full" />
+                  <div className="h-3 bg-white/[0.05] rounded animate-pulse w-5/6" />
+                  <div className="h-3 bg-white/[0.05] rounded animate-pulse w-4/6" />
+                  <div className="h-3 bg-white/[0.05] rounded animate-pulse w-5/6 mt-2" />
+                  <div className="h-3 bg-white/[0.05] rounded animate-pulse w-3/6" />
                 </div>
               ) : summaryError ? (
-                <div className="flex items-start gap-2 text-sm text-red-600">
+                <div className="flex items-start gap-2 text-sm text-red-400">
                   <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <span>{summaryError.message}</span>
                 </div>
               ) : summaryData ? (
-                <p className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap">
+                <p className="text-sm text-white leading-relaxed whitespace-pre-wrap">
                   {summaryData.summary}
                 </p>
               ) : (
-                <p className="text-sm text-gray-500 text-center">
+                <p className="text-sm text-brand-slate text-center">
                   {t("statisticsClickToGenerate")}
                 </p>
               )}
@@ -377,10 +377,10 @@ export default function Statistics() {
           <section className="space-y-4 pb-8">
             <div className="flex items-center gap-2">
               <ClipboardList className="w-4 h-4 text-brand-blue" />
-              <h2 className="text-base font-semibold text-gray-900">{t("statisticsSurveyOverview")}</h2>
+              <h2 className="text-base font-semibold text-white">{t("statisticsSurveyOverview")}</h2>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+            <div className="bg-brand-navy rounded-xl border border-white/[0.08] p-5 space-y-4">
               {surveyOverview === null ? (
                 <div className="h-16 flex items-center justify-center">
                   <div className="w-5 h-5 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
@@ -389,8 +389,8 @@ export default function Statistics() {
                 <>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-0.5">{t("statisticsActiveSurvey")}</p>
-                      <p className="text-sm font-semibold text-gray-900">
+                      <p className="text-xs text-brand-slate uppercase tracking-wide mb-0.5">{t("statisticsActiveSurvey")}</p>
+                      <p className="text-sm font-semibold text-white">
                         {surveyOverview.survey_id ? surveyOverview.title : t("statisticsNoActiveSurvey")}
                       </p>
                     </div>
@@ -402,22 +402,22 @@ export default function Statistics() {
                   </div>
 
                   {surveyOverview.survey_id && (
-                    <div className="grid grid-cols-3 gap-3 pt-2 border-t border-gray-200">
+                    <div className="grid grid-cols-3 gap-3 pt-2 border-t border-white/[0.08]">
                       <div className="text-center">
-                        <p className="text-xl font-bold text-gray-900">{surveyOverview.weekly_sent ?? 0}</p>
-                        <p className="text-xs text-gray-500">{t("statisticsSentThisWeek")}</p>
+                        <p className="text-xl font-bold text-white">{surveyOverview.weekly_sent ?? 0}</p>
+                        <p className="text-xs text-brand-slate">{t("statisticsSentThisWeek")}</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xl font-bold text-gray-900">{surveyOverview.weekly_submitted ?? 0}</p>
-                        <p className="text-xs text-gray-500">{t("statisticsSubmitted")}</p>
+                        <p className="text-xl font-bold text-white">{surveyOverview.weekly_submitted ?? 0}</p>
+                        <p className="text-xs text-brand-slate">{t("statisticsSubmitted")}</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xl font-bold text-gray-900">
+                        <p className="text-xl font-bold text-white">
                           {surveyOverview.avg_rating_this_week != null
                             ? `${surveyOverview.avg_rating_this_week} / 5`
                             : "—"}
                         </p>
-                        <p className="text-xs text-gray-500">{t("statisticsAvgRating")}</p>
+                        <p className="text-xs text-brand-slate">{t("statisticsAvgRating")}</p>
                       </div>
                     </div>
                   )}
