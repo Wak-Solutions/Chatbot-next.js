@@ -121,7 +121,7 @@ function UserGuide() {
             ["#mobile", "Mobile Use"],
           ].map(([href, label]) => (
             <li key={href}>
-              <a href={href} className="text-[#0F510F] hover:underline">{label}</a>
+              <a href={href} className="text-brand-blue hover:underline">{label}</a>
             </li>
           ))}
         </ol>
@@ -523,7 +523,7 @@ function ArabicUserGuide() {
             ["#mobile", "الاستخدام عبر الجوال"],
           ].map(([href, label]) => (
             <li key={href}>
-              <a href={href} className="text-[#0F510F] hover:underline">{label}</a>
+              <a href={href} className="text-brand-blue hover:underline">{label}</a>
             </li>
           ))}
         </ol>
@@ -919,14 +919,14 @@ function InstallGuide({
         {steps.map((step, i) => (
           <li key={i} className="flex flex-col items-center gap-3">
             <div className="w-full flex items-start gap-3">
-              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-[#0F510F] text-white text-xs font-bold flex items-center justify-center mt-0.5">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-brand-blue text-white text-xs font-bold flex items-center justify-center mt-0.5">
                 {i + 1}
               </span>
               <p className="text-sm text-gray-900 leading-snug pt-1">{step.label}</p>
             </div>
             <button
               onClick={() => onLightbox(step.img)}
-              className="block rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-[#0F510F]"
+              className="block rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-brand-blue"
               aria-label={`View step ${i + 1} fullscreen`}
             >
               <img
@@ -969,7 +969,7 @@ export default function Guide() {
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
   }
@@ -991,7 +991,7 @@ export default function Guide() {
                 onClick={() => setTab(key)}
                 className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
                   tab === key
-                    ? "border-[#0F510F] text-[#0F510F]"
+                    ? "border-brand-blue text-brand-blue"
                     : "border-transparent text-gray-500 hover:text-gray-900"
                 }`}
               >

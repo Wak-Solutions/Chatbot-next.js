@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 
 /* ─── Brand ───────────────────────────────────────────────────── */
-const G = "#0F510F";
-const G2 = "#408440";
+const G = "#0066FF";  // brand blue
+const G2 = "#00C8FF"; // brand cyan
 const CR = "#F5F2EC";
 
 /* ─── Types ───────────────────────────────────────────────────── */
@@ -84,7 +84,7 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
         "bg-[#DCF8C6] text-gray-800"
       }`}>
         {m.label && (
-          <div className={`text-[10px] font-semibold mb-0.5 ${m.from === "bot" ? "text-[#408440]" : "text-blue-600"}`}>
+          <div className={`text-[10px] font-semibold mb-0.5 ${m.from === "bot" ? "text-brand-cyan" : "text-blue-600"}`}>
             {m.from === "bot" && <Bot className="w-3 h-3 inline mr-0.5 -mt-0.5" />}
             {m.label}
           </div>
@@ -92,9 +92,9 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
         {m.voice ? (
           <div>
             <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2 mb-1.5">
-              <Mic className="w-4 h-4 text-[#0F510F] shrink-0" />
+              <Mic className="w-4 h-4 text-brand-blue shrink-0" />
               <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full w-[70%] bg-[#0F510F] rounded-full" />
+                <div className="h-full w-[70%] bg-brand-blue rounded-full" />
               </div>
               <span className="text-[10px] text-gray-500">0:12</span>
             </div>
@@ -116,7 +116,7 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
   const chatInput = (
     <div className="bg-white border-t border-gray-200 px-4 py-2 flex items-center gap-2">
       <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-xs text-gray-400">Type a message...</div>
-      <div className="w-8 h-8 bg-[#0F510F] rounded-full flex items-center justify-center">
+      <div className="w-8 h-8 bg-brand-blue rounded-full flex items-center justify-center">
         <Send className="w-3.5 h-3.5 text-white" />
       </div>
     </div>
@@ -130,12 +130,12 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
           <div className="px-4 py-3 bg-white border-b border-gray-200 flex items-center gap-3">
             <button
               onClick={() => setChatOpen(false)}
-              className="w-11 h-11 flex items-center justify-center -ms-2 text-[#0F510F]"
+              className="w-11 h-11 flex items-center justify-center -ms-2 text-brand-blue"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div className="w-8 h-8 rounded-full bg-[#0F510F]/10 flex items-center justify-center">
-              <span className="text-xs font-bold text-[#0F510F]">{inboxConvos[selected]?.name?.charAt(0)}</span>
+            <div className="w-8 h-8 rounded-full bg-brand-blue/10 flex items-center justify-center">
+              <span className="text-xs font-bold text-brand-blue">{inboxConvos[selected]?.name?.charAt(0)}</span>
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-800">{inboxConvos[selected]?.name}</div>
@@ -192,7 +192,7 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
               key={i}
               onClick={() => setSelected(Math.min(i, 1))}
               className={`w-full text-start px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                (i === selected) ? "bg-[#0F510F]/5 border-s-2 border-s-[#0F510F]" : ""
+                (i === selected) ? "bg-brand-blue/5 border-s-2 border-s-brand-blue" : ""
               }`}
             >
               <div className="flex items-center justify-between mb-0.5">
@@ -211,8 +211,8 @@ function ScreenInbox({ portrait = false }: { portrait?: boolean }) {
       {/* Chat panel */}
       <div className="flex-1 flex flex-col bg-[#F0EDE8] min-w-0">
         <div className="px-4 py-3 bg-white border-b border-gray-200 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[#0F510F]/10 flex items-center justify-center">
-            <span className="text-xs font-bold text-[#0F510F]">{inboxConvos[selected]?.name?.charAt(0)}</span>
+          <div className="w-8 h-8 rounded-full bg-brand-blue/10 flex items-center justify-center">
+            <span className="text-xs font-bold text-brand-blue">{inboxConvos[selected]?.name?.charAt(0)}</span>
           </div>
           <div>
             <div className="text-sm font-semibold text-gray-800">{inboxConvos[selected]?.name}</div>
@@ -247,7 +247,7 @@ function ScreenLiveChat() {
               key={i}
               onClick={() => setSel(i)}
               className={`w-full text-start px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                i === sel ? "bg-[#0F510F]/5 border-s-2 border-s-[#0F510F]" : ""
+                i === sel ? "bg-brand-blue/5 border-s-2 border-s-brand-blue" : ""
               }`}
             >
               <div className="flex items-center justify-between mb-0.5">
@@ -265,14 +265,14 @@ function ScreenLiveChat() {
       </div>
       <div className="flex-1 flex flex-col bg-[#F0EDE8] min-w-0">
         <div className="px-4 py-3 bg-white border-b border-gray-200 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[#0F510F]/10 flex items-center justify-center">
-            <span className="text-xs font-bold text-[#0F510F]">O</span>
+          <div className="w-8 h-8 rounded-full bg-brand-blue/10 flex items-center justify-center">
+            <span className="text-xs font-bold text-brand-blue">O</span>
           </div>
           <div>
             <div className="text-sm font-semibold text-gray-800">Omar Saleh</div>
             <div className="text-[10px] text-gray-400">+966 5** ***2288</div>
           </div>
-          <div className="ms-auto flex items-center gap-1 text-[10px] text-[#408440] bg-green-50 px-2 py-1 rounded-full">
+          <div className="ms-auto flex items-center gap-1 text-[10px] text-brand-cyan bg-green-50 px-2 py-1 rounded-full">
             <Bot className="w-3 h-3" /> AI handling
           </div>
         </div>
@@ -290,16 +290,16 @@ function ScreenLiveChat() {
                 m.from === "customer" ? "bg-white text-gray-800" : "bg-gray-100 text-gray-800 border border-gray-200"
               }`}>
                 {m.label && (
-                  <div className="text-[10px] font-semibold text-[#408440] mb-0.5">
+                  <div className="text-[10px] font-semibold text-brand-cyan mb-0.5">
                     <Bot className="w-3 h-3 inline mr-0.5 -mt-0.5" />{m.label}
                   </div>
                 )}
                 <p className="text-[13px] leading-relaxed">{m.text}</p>
                 {m.hasLink && (
-                  <div className="mt-1.5 bg-white rounded-lg border border-[#0F510F]/20 px-3 py-2 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-[#0F510F]" />
+                  <div className="mt-1.5 bg-white rounded-lg border border-brand-blue/20 px-3 py-2 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-brand-blue" />
                     <div>
-                      <div className="text-xs font-medium text-[#0F510F]">Book a meeting</div>
+                      <div className="text-xs font-medium text-brand-blue">Book a meeting</div>
                       <div className="text-[10px] text-gray-400">Sunday, 10:00 AM — Agent Nora</div>
                     </div>
                     <ChevronRight className="w-3 h-3 text-gray-400 ms-auto" />
@@ -312,7 +312,7 @@ function ScreenLiveChat() {
         </div>
         <div className="bg-white border-t border-gray-200 px-4 py-2 flex items-center gap-2">
           <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-xs text-gray-400">Type a message...</div>
-          <div className="w-8 h-8 bg-[#0F510F] rounded-full flex items-center justify-center">
+          <div className="w-8 h-8 bg-brand-blue rounded-full flex items-center justify-center">
             <Send className="w-3.5 h-3.5 text-white" />
           </div>
         </div>
@@ -337,7 +337,7 @@ function ScreenMeetings() {
           <h2 className="text-lg font-semibold text-gray-900">Meetings</h2>
           <p className="text-sm text-gray-500">Upcoming and past meetings with customers</p>
         </div>
-        <button className="bg-[#0F510F] text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-1.5">
+        <button className="bg-brand-blue text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-1.5">
           <Plus className="w-3.5 h-3.5" /> New Meeting
         </button>
       </div>
@@ -369,7 +369,7 @@ function ScreenMeetings() {
                 <td className="px-4 py-3">
                   {r.status !== "Completed" && (
                     <button className={`text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1 ${
-                      r.status === "In Progress" ? "bg-[#0F510F] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      r.status === "In Progress" ? "bg-brand-blue text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}>
                       <Video className="w-3 h-3" /> Join
                     </button>
@@ -434,7 +434,7 @@ function ScreenJourney() {
               key={i}
               onClick={() => setSel(i)}
               className={`w-full text-start px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                i === sel ? "bg-[#0F510F]/5 border-s-2 border-s-[#0F510F]" : ""
+                i === sel ? "bg-brand-blue/5 border-s-2 border-s-brand-blue" : ""
               }`}
             >
               <div className="text-sm font-medium text-gray-900">{c.name}</div>
@@ -516,7 +516,7 @@ function ScreenStats({ portrait = false }: { portrait?: boolean }) {
           {days.map((d, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
               <span className="text-[10px] text-gray-500 font-medium">{d.val}</span>
-              <div className="w-full rounded-t-md bg-[#0F510F]/80 transition-all" style={{ height: `${(d.val / maxVal) * 100}%` }} />
+              <div className="w-full rounded-t-md bg-brand-blue/80 transition-all" style={{ height: `${(d.val / maxVal) * 100}%` }} />
               <span className="text-[10px] text-gray-400">{d.label}</span>
             </div>
           ))}
@@ -579,7 +579,7 @@ function ScreenChatbot() {
               <div className="flex gap-2">
                 {["Casual", "Professional", "Formal"].map((t, i) => (
                   <div key={t} className={`text-xs px-3 py-1.5 rounded-lg border cursor-pointer ${
-                    i === 1 ? "bg-[#0F510F] text-white border-[#0F510F]" : "bg-white text-gray-600 border-gray-200"
+                    i === 1 ? "bg-brand-blue text-white border-brand-blue" : "bg-white text-gray-600 border-gray-200"
                   }`}>{t}</div>
                 ))}
               </div>
@@ -608,7 +608,7 @@ function ScreenChatbot() {
               <div className="flex items-center gap-2"><StatusDot color="bg-orange-400" /> Escalate if bot confidence is below 60%</div>
             </div>
           </div>
-          <button className="bg-[#0F510F] text-white text-sm font-medium px-6 py-2.5 rounded-lg">Save configuration</button>
+          <button className="bg-brand-blue text-white text-sm font-medium px-6 py-2.5 rounded-lg">Save configuration</button>
         </div>
         {/* Preview */}
         <div className="w-[220px] shrink-0">
@@ -620,7 +620,7 @@ function ScreenChatbot() {
             </div>
             <div className="px-2 py-3 space-y-1.5">
               <div className="bg-white rounded-lg px-2.5 py-1.5 shadow-sm max-w-[90%]">
-                <div className="text-[10px] text-[#408440] font-semibold mb-0.5">AI Assistant</div>
+                <div className="text-[10px] text-brand-cyan font-semibold mb-0.5">AI Assistant</div>
                 <p className="text-[10px] text-gray-700 leading-relaxed">Hello! Welcome to WAK Solutions. I'm your AI assistant. How can I help you today?</p>
               </div>
             </div>
@@ -667,7 +667,7 @@ function ScreenContacts() {
           <button className="bg-white border border-gray-200 text-gray-700 text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-1.5 hover:bg-gray-50">
             <Upload className="w-3.5 h-3.5" /> Upload CSV
           </button>
-          <button className="bg-[#0F510F] text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-1.5">
+          <button className="bg-brand-blue text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-1.5">
             <Plus className="w-3.5 h-3.5" /> Add contact
           </button>
         </div>
@@ -930,7 +930,7 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
         <div className="flex flex-1 min-h-0">
 
           {/* Sidebar nav */}
-          <div className="hidden md:flex flex-col w-[200px] bg-[#0F510F] shrink-0">
+          <div className="hidden md:flex flex-col w-[200px] bg-brand-blue shrink-0">
             <div className="px-4 py-4 flex items-center gap-2 border-b border-white/10">
               <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center text-white font-bold text-sm">W</div>
               <span className="text-white/90 font-semibold text-sm">WAK Solutions</span>
@@ -991,7 +991,7 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
           </div>
 
           <Link href="/register">
-            <a className="bg-[#0F510F] text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#0d440d] transition-colors flex items-center gap-1.5 shrink-0">
+            <a className="bg-brand-blue text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#0d440d] transition-colors flex items-center gap-1.5 shrink-0">
               Start free trial <ArrowRight className="w-3.5 h-3.5" />
             </a>
           </Link>

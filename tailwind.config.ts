@@ -13,11 +13,28 @@ export default {
   theme: {
     extend: {
       borderRadius: {
-        lg: ".5625rem", /* 9px */
-        md: ".375rem", /* 6px */
-        sm: ".1875rem", /* 3px */
+        // WAK brand: softer 12/16/20 card radii. shadcn primitives use
+        // these via the `rounded-lg|md|sm` utilities they bake in.
+        lg: ".75rem",   /* 12px */
+        md: ".5rem",    /* 8px */
+        sm: ".375rem",  /* 6px */
+        "2xl": "1.25rem", /* 20px — hero cards */
       },
       colors: {
+        // Raw WAK brand palette — direct utility access (e.g. bg-brand-blue,
+        // text-brand-cyan). Use these for hero gradients and accent text
+        // where the shadcn semantic tokens (primary/accent) don't fit.
+        brand: {
+          cyan: "#00C8FF",
+          blue: "#0066FF",
+          navy: "#0B1D33",
+          ink: "#0F172A",
+          "cyan-2": "#22D3EE",
+          emerald: "#10B981",
+          amber: "#F59E0B",
+          violet: "#8B5CF6",
+          slate: "#64748B",
+        },
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
         border: "hsl(var(--border) / <alpha-value>)",

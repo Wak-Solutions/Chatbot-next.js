@@ -215,7 +215,7 @@ export default function AgentsTab() {
 
   if (isAuthLoading || !isAuthenticated) {
     return <div className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
     </div>;
   }
 
@@ -227,7 +227,7 @@ export default function AgentsTab() {
           {/* Page header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Users className="w-5 h-5 text-[#0F510F]" />
+              <Users className="w-5 h-5 text-brand-blue" />
               <h1 className="text-2xl font-bold text-gray-900">{t("agentsTitle")}</h1>
             </div>
             <div className="flex items-center gap-2">
@@ -240,7 +240,7 @@ export default function AgentsTab() {
               </button>
               <button
                 onClick={() => { setCreatedPassword(null); setNewError(""); setShowNewModal(true); }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#0F510F] text-white rounded-xl text-sm font-semibold hover:bg-[#0d4510] transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 bg-brand-blue text-white rounded-xl text-sm font-semibold hover:bg-brand-cyan transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 {t("agentsNewAgent")}
@@ -260,7 +260,7 @@ export default function AgentsTab() {
                   onClick={() => setPeriod(p.key)}
                   className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     period === p.key
-                      ? "bg-[#0F510F] text-white shadow-sm"
+                      ? "bg-brand-blue text-white shadow-sm"
                       : "text-gray-500 hover:text-gray-900"
                   }`}
                 >
@@ -272,7 +272,7 @@ export default function AgentsTab() {
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
               {loading ? (
                 <div className="flex items-center justify-center py-16">
-                  <div className="w-6 h-6 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
                 </div>
               ) : (
                 <table className="w-full text-sm">
@@ -327,7 +327,7 @@ export default function AgentsTab() {
                             <span className="text-gray-500">—</span>
                           ) : (
                             <span className={`font-medium ${
-                              agent.avg_survey_rating >= 4 ? "text-[#0F510F]"
+                              agent.avg_survey_rating >= 4 ? "text-brand-blue"
                               : agent.avg_survey_rating >= 2 ? "text-amber-600"
                               : "text-red-600"
                             }`}>
@@ -432,7 +432,7 @@ export default function AgentsTab() {
                   {t("agentsPasswordLabel")} <strong>{createdPassword}</strong>
                 </p>
               </div>
-              <button onClick={() => setShowNewModal(false)} className="w-full py-2.5 bg-[#0F510F] text-white rounded-xl text-sm font-semibold hover:bg-[#0d4510] transition-colors">
+              <button onClick={() => setShowNewModal(false)} className="w-full py-2.5 bg-brand-blue text-white rounded-xl text-sm font-semibold hover:bg-brand-cyan transition-colors">
                 {t("agentsBtnDone")}
               </button>
             </div>
@@ -452,7 +452,7 @@ export default function AgentsTab() {
                     minLength={f.key === "password" ? 6 : 1}
                     value={(newAgent as any)[f.key]}
                     onChange={e => setNewAgent(p => ({ ...p, [f.key]: e.target.value }))}
-                    className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#0F510F] ${f.key === "name" && nameError(newAgent.name) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
+                    className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${f.key === "name" && nameError(newAgent.name) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
                   />
                   {f.key === "name" && nameError(newAgent.name) && (
                     <p className="text-xs text-red-500">{nameError(newAgent.name)}</p>
@@ -464,14 +464,14 @@ export default function AgentsTab() {
                 <select
                   value={newAgent.role}
                   onChange={e => setNewAgent(p => ({ ...p, role: e.target.value as "agent" | "admin" }))}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#0F510F]"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue"
                 >
                   <option value="agent">{t("agentsRoleOptionAgent")}</option>
                   <option value="admin">{t("agentsRoleOptionAdmin")}</option>
                 </select>
               </div>
               {newError && <p className="text-sm text-red-600">{newError}</p>}
-              <button type="submit" disabled={newSaving} className="w-full py-2.5 bg-[#0F510F] text-white rounded-xl text-sm font-semibold hover:bg-[#0d4510] disabled:opacity-60 transition-colors">
+              <button type="submit" disabled={newSaving} className="w-full py-2.5 bg-brand-blue text-white rounded-xl text-sm font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors">
                 {newSaving ? t("creating") : t("agentsBtnCreate")}
               </button>
             </form>
@@ -493,7 +493,7 @@ export default function AgentsTab() {
                   type={f.type} required
                   value={(editForm as any)[f.key]}
                   onChange={e => setEditForm(p => ({ ...p, [f.key]: e.target.value }))}
-                  className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#0F510F] ${f.key === "name" && nameError(editForm.name) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
+                  className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${f.key === "name" && nameError(editForm.name) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
                 />
                 {f.key === "name" && nameError(editForm.name) && (
                   <p className="text-xs text-red-500">{nameError(editForm.name)}</p>
@@ -505,14 +505,14 @@ export default function AgentsTab() {
               <select
                 value={editForm.role}
                 onChange={e => setEditForm(p => ({ ...p, role: e.target.value as "agent" | "admin" }))}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#0F510F]"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue"
               >
                 <option value="agent">{t("agentsRoleOptionAgent")}</option>
                 <option value="admin">{t("agentsRoleOptionAdmin")}</option>
               </select>
             </div>
             {editError && <p className="text-sm text-red-600">{editError}</p>}
-            <button type="submit" disabled={editSaving} className="w-full py-2.5 bg-[#0F510F] text-white rounded-xl text-sm font-semibold hover:bg-[#0d4510] disabled:opacity-60 transition-colors">
+            <button type="submit" disabled={editSaving} className="w-full py-2.5 bg-brand-blue text-white rounded-xl text-sm font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors">
               {editSaving ? t("saving") : t("agentsBtnSave")}
             </button>
           </form>
@@ -530,12 +530,12 @@ export default function AgentsTab() {
                 placeholder={t("agentsFormPasswordPlaceholder")}
                 value={newPw}
                 onChange={e => setNewPw(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#0F510F]"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue"
                 autoFocus
               />
             </div>
             {resetError && <p className="text-sm text-red-600">{resetError}</p>}
-            <button type="submit" disabled={resetSaving} className="w-full py-2.5 bg-[#0F510F] text-white rounded-xl text-sm font-semibold hover:bg-[#0d4510] disabled:opacity-60 transition-colors">
+            <button type="submit" disabled={resetSaving} className="w-full py-2.5 bg-brand-blue text-white rounded-xl text-sm font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors">
               {resetSaving ? t("saving") : t("agentsBtnSetPassword")}
             </button>
           </form>

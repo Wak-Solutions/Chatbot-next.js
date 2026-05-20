@@ -121,7 +121,7 @@ export default function SurveysTab() {
   if (isAuthLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
   }
@@ -270,7 +270,7 @@ export default function SurveysTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">{t("surveysTitle")}</h1>
-        <button onClick={openNew} className="flex items-center gap-1.5 bg-[#0F510F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#0d4510] transition-colors">
+        <button onClick={openNew} className="flex items-center gap-1.5 bg-brand-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-cyan transition-colors">
           <Plus className="w-4 h-4" /> {t("surveysNewSurvey")}
         </button>
       </div>
@@ -279,7 +279,7 @@ export default function SurveysTab() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <div className="w-6 h-6 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+          <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
         </div>
       ) : surveys.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
@@ -400,7 +400,7 @@ export default function SurveysTab() {
               value={draft.title}
               onChange={(e) => setDraft({ ...draft, title: e.target.value })}
               placeholder={t("surveysFormTitlePlaceholder")}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F510F]"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue"
             />
           </div>
           <div className="space-y-1">
@@ -410,7 +410,7 @@ export default function SurveysTab() {
               value={draft.description}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })}
               placeholder={t("surveysFormDescPlaceholder")}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F510F] resize-none"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue resize-none"
             />
           </div>
         </div>
@@ -435,7 +435,7 @@ export default function SurveysTab() {
                     value={q.question_text}
                     onChange={(e) => updateQ(q._key, { question_text: e.target.value })}
                     placeholder={t("surveysQuestionPlaceholder")}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F510F]"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue"
                   />
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs text-gray-500">{t("surveysQuestionTypeLabel")}</span>
@@ -445,8 +445,8 @@ export default function SurveysTab() {
                         onClick={() => updateQ(q._key, { question_type: t })}
                         className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                           q.question_type === t
-                            ? "bg-[#0F510F] text-white border-[#0F510F]"
-                            : "border-gray-200 text-gray-500 hover:border-[#0F510F]"
+                            ? "bg-brand-blue text-white border-brand-blue"
+                            : "border-gray-200 text-gray-500 hover:border-brand-blue"
                         }`}
                       >
                         {TYPE_LABELS[t]}
@@ -471,7 +471,7 @@ export default function SurveysTab() {
 
           <button
             onClick={addQuestion}
-            className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-[#0F510F]/30 text-[#0F510F] rounded-xl py-3 text-sm font-medium hover:border-[#0F510F]/60 hover:bg-[#0F510F]/5 transition-colors"
+            className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-brand-blue/30 text-brand-blue rounded-xl py-3 text-sm font-medium hover:border-brand-blue/60 hover:bg-brand-blue/5 transition-colors"
           >
             <Plus className="w-4 h-4" /> {t("surveysBtnAddQuestion")}
           </button>
@@ -486,7 +486,7 @@ export default function SurveysTab() {
           <button
             onClick={saveDraft}
             disabled={saving || !draft.title.trim()}
-            className="flex-1 bg-[#0F510F] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-[#0d4510] disabled:opacity-60 transition-colors"
+            className="flex-1 bg-brand-blue text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-cyan disabled:opacity-60 transition-colors"
           >
             {saving ? t("saving") : t("surveysBtnSave")}
           </button>
@@ -510,7 +510,7 @@ export default function SurveysTab() {
 
       {resultsLoading && (
         <div className="flex items-center justify-center py-16">
-          <div className="w-6 h-6 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+          <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
         </div>
       )}
 
@@ -534,7 +534,7 @@ export default function SurveysTab() {
           {results.questions.map((q: any, idx: number) => (
             <div key={q.question_id} className="bg-white border border-gray-200 rounded-xl p-5 space-y-3">
               <p className="text-sm font-semibold text-gray-900">
-                <span className="text-[#0F510F] mr-1">{idx + 1}.</span>
+                <span className="text-brand-blue mr-1">{idx + 1}.</span>
                 {q.question_text}
               </p>
 
@@ -552,7 +552,7 @@ export default function SurveysTab() {
                       <div key={n} className="flex items-center gap-2 text-xs">
                         <span className="w-3 text-right text-gray-500 font-mono">{n}</span>
                         <div className="flex-1 h-4 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#0F510F] rounded-full transition-all" style={{ width: `${pct}%` }} />
+                          <div className="h-full bg-brand-blue rounded-full transition-all" style={{ width: `${pct}%` }} />
                         </div>
                         <span className="w-12 text-gray-500 text-right">{count} ({pct}%)</span>
                       </div>
@@ -570,7 +570,7 @@ export default function SurveysTab() {
                 return (
                   <div className="space-y-2">
                     {[
-                      { label: "Yes / نعم", count: yes, pct: yesPct, color: "bg-[#0F510F]" },
+                      { label: "Yes / نعم", count: yes, pct: yesPct, color: "bg-brand-blue" },
                       { label: "No / لا",   count: no,  pct: noPct,  color: "bg-red-500" },
                     ].map((row) => (
                       <div key={row.label} className="space-y-1">

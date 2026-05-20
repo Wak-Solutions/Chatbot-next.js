@@ -68,7 +68,7 @@ export default function MeetingPage() {
   // ── Loading / redirecting to Daily.co room ──────────────────────────────────
   return (
     <div className="min-h-screen bg-[#F5F2EC] flex flex-col items-center justify-center px-4">
-      <div className="w-10 h-10 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin mb-4" />
+      <div className="w-10 h-10 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin mb-4" />
       <p className="text-sm text-gray-600">Opening your meeting…</p>
     </div>
   );

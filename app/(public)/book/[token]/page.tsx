@@ -75,9 +75,9 @@ export default function BookMeeting() {
   const selectedDayData = days.find(d => d.date === selectedDate);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0F510F]/5 to-background flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-brand-blue/5 to-background flex flex-col">
       {/* Header */}
-      <header className="bg-[#0F510F] text-white px-5 py-4 flex items-center gap-3 shadow-md">
+      <header className="bg-brand-blue text-white px-5 py-4 flex items-center gap-3 shadow-md">
         <Video className="w-5 h-5" />
         <div>
           <p className="font-semibold text-sm">WAK Solutions</p>
@@ -90,7 +90,7 @@ export default function BookMeeting() {
         {/* Loading */}
         {state === "loading" && (
           <div className="flex items-center justify-center py-24">
-            <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
           </div>
         )}
 
@@ -115,10 +115,10 @@ export default function BookMeeting() {
         {/* Already booked */}
         {state === "alreadyBooked" && (
           <div className="bg-card border border-border rounded-xl p-6 text-center space-y-3">
-            <CheckCircle2 className="w-10 h-10 text-[#0F510F] mx-auto" />
+            <CheckCircle2 className="w-10 h-10 text-brand-blue mx-auto" />
             <p className="font-semibold text-foreground">Meeting already scheduled</p>
             <p className="text-sm text-muted-foreground">Your meeting is booked for:</p>
-            <p className="text-base font-semibold text-[#0F510F]">{alreadyBookedLabel} KSA time</p>
+            <p className="text-base font-semibold text-brand-blue">{alreadyBookedLabel} KSA time</p>
             <p className="text-xs text-muted-foreground">You will receive the meeting link via WhatsApp 15 minutes before the meeting.</p>
           </div>
         )}
@@ -146,7 +146,7 @@ export default function BookMeeting() {
               /* Date picker */
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                  <CalendarDays className="w-4 h-4 text-[#0F510F]" />
+                  <CalendarDays className="w-4 h-4 text-brand-blue" />
                   Select a date
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -154,7 +154,7 @@ export default function BookMeeting() {
                     <button
                       key={d.date}
                       onClick={() => { setSelectedDate(d.date); setSelectedTime(null); setErrorMsg(""); }}
-                      className="bg-card border border-border hover:border-[#0F510F] hover:bg-[#0F510F]/5 text-left px-4 py-3 rounded-xl transition-colors"
+                      className="bg-card border border-border hover:border-brand-blue hover:bg-brand-blue/5 text-left px-4 py-3 rounded-xl transition-colors"
                     >
                       <p className="font-semibold text-sm text-foreground">{d.label}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">{d.slots.length} slot{d.slots.length !== 1 ? "s" : ""} available</p>
@@ -174,7 +174,7 @@ export default function BookMeeting() {
                 </button>
 
                 <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                  <Clock className="w-4 h-4 text-[#0F510F]" />
+                  <Clock className="w-4 h-4 text-brand-blue" />
                   Select a time
                 </div>
 
@@ -186,8 +186,8 @@ export default function BookMeeting() {
                       onClick={() => { setSelectedTime(slot); setErrorMsg(""); }}
                       className={`px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
                         selectedTime === slot
-                          ? "bg-[#0F510F] text-white border-[#0F510F]"
-                          : "bg-card border-border hover:border-[#0F510F] hover:bg-[#0F510F]/5 text-foreground"
+                          ? "bg-brand-blue text-white border-brand-blue"
+                          : "bg-card border-border hover:border-brand-blue hover:bg-brand-blue/5 text-foreground"
                       }`}
                     >
                       {slot}
@@ -206,14 +206,14 @@ export default function BookMeeting() {
                 </div>
 
                 {selectedTime && (
-                  <div className="bg-[#0F510F]/5 border border-[#0F510F]/20 rounded-xl p-4 space-y-3">
+                  <div className="bg-brand-blue/5 border border-brand-blue/20 rounded-xl p-4 space-y-3">
                     <p className="text-sm text-foreground">
                       <span className="font-semibold">Selected:</span> {selectedDayData?.label} at {selectedTime} KSA time
                     </p>
                     <button
                       onClick={handleConfirm}
                       disabled={confirming}
-                      className="w-full bg-[#0F510F] text-white py-3 rounded-xl font-semibold text-sm hover:bg-[#0d4510] disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
+                      className="w-full bg-brand-blue text-white py-3 rounded-xl font-semibold text-sm hover:bg-brand-cyan disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
                     >
                       {confirming ? (
                         <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Confirming…</>
@@ -231,8 +231,8 @@ export default function BookMeeting() {
         {/* Success */}
         {state === "success" && (
           <div className="bg-card border border-border rounded-xl p-8 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-[#0F510F]/10 flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-8 h-8 text-[#0F510F]" />
+            <div className="w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-8 h-8 text-brand-blue" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-foreground">Meeting confirmed!</h2>

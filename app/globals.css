@@ -1,73 +1,116 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* LIGHT MODE */
+/*
+ * ============================================================================
+ * WAK Solutions brand tokens
+ * ============================================================================
+ *
+ * Two layers of variables:
+ *   1. --color-* / --gradient-* — raw brand palette + gradient definitions.
+ *      Used directly by utility classes (.gradient-text-primary, etc.)
+ *      and by the Logo / Card / Button visuals.
+ *   2. --background, --primary, etc. — shadcn-style HSL tokens. Wired so
+ *      every shadcn primitive (components/ui/*) inherits the brand
+ *      automatically without per-component code edits.
+ *
+ * Fonts come from app/layout.tsx via next/font (--font-sans, --font-cairo).
+ * Cairo auto-applies on [lang="ar"] / [dir="rtl"] (see the @layer base
+ * block at the bottom).
+ *
+ * Dark is the default. The :root block below IS the dark theme; the
+ * .light class block mirrors the same brand tokens for the rare light
+ * surface (currently none in product, kept for future toggle support).
+ */
+
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
-  --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  /* Raw brand palette. Keep these in sync with public/manifest.json and
+     scripts/generate-icons.mjs. */
+  --color-cyan:    #00C8FF;
+  --color-blue:    #0066FF;
+  --color-navy:    #0B1D33;
+  --color-ink:     #0F172A;
+  --color-white:   #FFFFFF;
+  --color-cyan-2:  #22D3EE;
+  --color-emerald: #10B981;
+  --color-amber:   #F59E0B;
+  --color-violet:  #8B5CF6;
+  --color-slate:   #64748B;
 
-  --background: 120 14% 97%;
-  --foreground: 0 0% 10%;
-  --border: 120 8% 88%;
-  --input: 120 8% 88%;
+  --gradient-primary: linear-gradient(135deg, #00C8FF 0%, #0066FF 100%);
+  --gradient-cool:    linear-gradient(135deg, #00C8FF 0%, #10B981 100%);
+  --gradient-aurora:  linear-gradient(135deg, #0066FF 0%, #8B5CF6 100%);
 
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 10%;
-  --card-border: 120 8% 90%;
+  /* shadcn tokens (HSL triplets, alpha-aware). Mapped onto the brand
+     palette above so all shadcn primitives rebrand without code edits. */
+  --background: 222 47% 11%;            /* --color-ink  */
+  --foreground: 0 0% 100%;              /* --color-white */
+  --border: 0 0% 100%;                  /* alpha applied via opacity utilities; rgba border below */
+  --input: 213 47% 12%;                 /* --color-navy-ish */
 
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 10%;
-  --popover-border: 120 8% 88%;
+  --card: 213 49% 12%;                  /* --color-navy */
+  --card-foreground: 0 0% 100%;
+  --card-border: 0 0% 100%;
 
-  --primary: 120 68% 19%;
+  --popover: 213 49% 12%;
+  --popover-foreground: 0 0% 100%;
+  --popover-border: 0 0% 100%;
+
+  --primary: 217 100% 50%;              /* --color-blue */
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 120 35% 38%;
+  --secondary: 213 49% 12%;             /* --color-navy surface for secondary buttons */
   --secondary-foreground: 0 0% 100%;
 
-  --muted: 120 10% 92%;
-  --muted-foreground: 0 0% 40%;
+  --muted: 213 27% 18%;
+  --muted-foreground: 215 16% 47%;      /* --color-slate */
 
-  --accent: 120 20% 90%;
-  --accent-foreground: 120 68% 19%;
+  --accent: 191 100% 50%;               /* --color-cyan */
+  --accent-foreground: 222 47% 11%;     /* ink text on cyan accent */
 
-  --destructive: 0 84% 60%;
+  --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
 
-  --sidebar: 120 14% 96%;
-  --sidebar-foreground: 0 0% 10%;
-  --sidebar-border: 120 8% 88%;
-  --sidebar-primary: 120 68% 19%;
+  --sidebar: 222 47% 11%;               /* --color-ink */
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-border: 0 0% 100%;
+  --sidebar-primary: 217 100% 50%;      /* --color-blue */
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 120 20% 90%;
-  --sidebar-accent-foreground: 120 68% 19%;
-  --sidebar-ring: 120 68% 19%;
+  --sidebar-accent: 217 100% 50%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-ring: 191 100% 50%;
 
-  --ring: 120 68% 19%;
-  --chart-1: 120 68% 19%;
-  --chart-2: 120 35% 38%;
-  --chart-3: 120 20% 55%;
-  --chart-4: 40 80% 55%;
-  --chart-5: 0 84% 60%;
+  --ring: 191 100% 50%;                 /* --color-cyan focus ring */
+  --chart-1: 217 100% 50%;
+  --chart-2: 191 100% 50%;
+  --chart-3: 188 95% 53%;
+  --chart-4: 38 92% 50%;
+  --chart-5: 0 72% 51%;
 
-  --font-sans: 'Inter', sans-serif;
+  /* Existing app conventions kept stable. */
+  --button-outline: rgba(255,255,255, .10);
+  --badge-outline: rgba(255,255,255, .06);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .09);
+
+  --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-cairo: var(--font-cairo-google), 'Cairo', system-ui, sans-serif;
   --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
-  --radius: .5rem;
-  --shadow-2xs: 0px 1px 2px 0px rgba(0,0,0,0.04);
-  --shadow-xs: 0px 1px 3px 0px rgba(0,0,0,0.06);
-  --shadow-sm: 0px 1px 3px 0px rgba(0,0,0,0.06), 0px 1px 2px -1px rgba(0,0,0,0.04);
-  --shadow: 0px 2px 4px 0px rgba(0,0,0,0.06), 0px 1px 2px -1px rgba(0,0,0,0.04);
-  --shadow-md: 0px 4px 6px -1px rgba(0,0,0,0.07), 0px 2px 4px -2px rgba(0,0,0,0.04);
-  --shadow-lg: 0px 10px 15px -3px rgba(0,0,0,0.07), 0px 4px 6px -4px rgba(0,0,0,0.04);
-  --shadow-xl: 0px 20px 25px -5px rgba(0,0,0,0.07), 0px 8px 10px -6px rgba(0,0,0,0.04);
-  --shadow-2xl: 0px 25px 50px -12px rgba(0,0,0,0.14);
+  --font-mono: ui-monospace, Menlo, monospace;
+  --radius: .75rem;                      /* 12px — bumped from 8 for the brand's softer card feel */
+
+  --shadow-2xs: 0px 1px 2px 0px rgba(0,0,0,0.20);
+  --shadow-xs: 0px 1px 3px 0px rgba(0,0,0,0.25);
+  --shadow-sm: 0px 1px 3px 0px rgba(0,0,0,0.25), 0px 1px 2px -1px rgba(0,0,0,0.20);
+  --shadow: 0px 2px 4px 0px rgba(0,0,0,0.25), 0px 1px 2px -1px rgba(0,0,0,0.20);
+  --shadow-md: 0px 4px 6px -1px rgba(0,0,0,0.28), 0px 2px 4px -2px rgba(0,0,0,0.20);
+  --shadow-lg: 0px 10px 15px -3px rgba(0,0,0,0.28), 0px 4px 6px -4px rgba(0,0,0,0.20);
+  --shadow-xl: 0px 20px 25px -5px rgba(0,0,0,0.28), 0px 8px 10px -6px rgba(0,0,0,0.20);
+  --shadow-2xl: 0px 25px 50px -12px rgba(0,0,0,0.50);
+  --shadow-glow-cyan: 0 0 0 1px rgba(0,200,255,0.18), 0 12px 32px -8px rgba(0,200,255,0.20);
+
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
@@ -87,93 +130,118 @@
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
+/* The .dark class is kept for code that already toggles it (next-themes
+   etc.), but maps to the same brand tokens as :root since dark IS the
+   default theme. */
 .dark {
-  --button-outline: rgba(255,255,255, .10);
-  --badge-outline: rgba(255,255,255, .05);
-  --opaque-button-border-intensity: 9;
-  --elevate-1: rgba(255,255,255, .04);
-  --elevate-2: rgba(255,255,255, .09);
+  /* Empty: :root already carries the dark/brand values. */
+}
 
-  --background: 120 10% 8%;
-  --foreground: 120 5% 92%;
-  --border: 120 8% 18%;
-  --input: 120 8% 22%;
-
-  --card: 120 10% 11%;
-  --card-foreground: 120 5% 92%;
-  --card-border: 120 8% 18%;
-
-  --popover: 120 10% 11%;
-  --popover-foreground: 120 5% 92%;
-  --popover-border: 120 8% 18%;
-
-  --primary: 120 50% 40%;
+/* Light theme mirror — same brand pillars, surfaces inverted. Currently
+   unused by product but reserved for future toggle. */
+.light {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 217 100% 50%;
   --primary-foreground: 0 0% 100%;
-
-  --secondary: 120 30% 45%;
-  --secondary-foreground: 0 0% 100%;
-
-  --muted: 120 8% 16%;
-  --muted-foreground: 120 5% 55%;
-
-  --accent: 120 15% 18%;
-  --accent-foreground: 120 50% 70%;
-
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 0 0% 100%;
-
-  --sidebar: 120 10% 9%;
-  --sidebar-foreground: 120 5% 92%;
-  --sidebar-border: 120 8% 18%;
-  --sidebar-primary: 120 50% 40%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 120 15% 18%;
-  --sidebar-accent-foreground: 120 50% 70%;
-  --sidebar-ring: 120 50% 40%;
-
-  --ring: 120 50% 40%;
-  --chart-1: 120 50% 40%;
-  --chart-2: 120 30% 45%;
-  --chart-3: 120 20% 55%;
-  --chart-4: 40 80% 55%;
-  --chart-5: 0 72% 51%;
-
-  --shadow-2xs: 0px 1px 2px 0px rgba(0,0,0,0.20);
-  --shadow-xs: 0px 1px 3px 0px rgba(0,0,0,0.25);
-  --shadow-sm: 0px 1px 3px 0px rgba(0,0,0,0.25), 0px 1px 2px -1px rgba(0,0,0,0.20);
-  --shadow: 0px 2px 4px 0px rgba(0,0,0,0.25), 0px 1px 2px -1px rgba(0,0,0,0.20);
-  --shadow-md: 0px 4px 6px -1px rgba(0,0,0,0.28), 0px 2px 4px -2px rgba(0,0,0,0.20);
-  --shadow-lg: 0px 10px 15px -3px rgba(0,0,0,0.28), 0px 4px 6px -4px rgba(0,0,0,0.20);
-  --shadow-xl: 0px 20px 25px -5px rgba(0,0,0,0.28), 0px 8px 10px -6px rgba(0,0,0,0.20);
-  --shadow-2xl: 0px 25px 50px -12px rgba(0,0,0,0.50);
+  --secondary: 213 27% 95%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 213 27% 95%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 191 100% 50%;
+  --accent-foreground: 222 47% 11%;
+  --ring: 191 100% 50%;
 }
 
 @layer base {
   * {
     @apply border-border;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  html {
+    background-color: hsl(var(--background));
   }
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    font-feature-settings: 'cv11', 'ss01';
   }
 
-  /* Custom scrollbar */
+  /* Cairo auto-applies for Arabic content. The --font-cairo variable is
+     wired in app/layout.tsx via next/font/google. */
+  html[lang="ar"] body,
+  html[dir="rtl"] body,
+  [lang="ar"],
+  [dir="rtl"] {
+    font-family: var(--font-cairo);
+  }
+
+  /* Mirror directional icons (arrow / chevron / send) under RTL. Apply
+     by adding the .icon-directional class to the icon element. */
+  [dir="rtl"] .icon-directional {
+    transform: scaleX(-1);
+  }
+
+  /* Brand scrollbar — thin slate thumb on ink track. */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: hsl(var(--background));
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/30 rounded-full;
+    background: hsl(var(--muted-foreground) / 0.45);
+    border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
+    background: hsl(var(--accent) / 0.55);
+  }
+
+  /* Selection: brand cyan with readable foreground. */
+  ::selection {
+    background-color: rgba(0, 200, 255, 0.30);
+    color: var(--color-white);
   }
 }
 
 @layer utilities {
+  /* Brand gradient utility classes. */
+  .bg-gradient-primary { background-image: var(--gradient-primary); }
+  .bg-gradient-cool    { background-image: var(--gradient-cool); }
+  .bg-gradient-aurora  { background-image: var(--gradient-aurora); }
+
+  .text-gradient-primary {
+    background-image: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-aurora {
+    background-image: var(--gradient-aurora);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Soft cyan glow used on hover for brand cards / hero CTAs. */
+  .shadow-glow-cyan {
+    box-shadow: var(--shadow-glow-cyan);
+  }
+
+  /* Subtle radial backdrop for hero/landing surfaces. */
+  .bg-brand-aurora {
+    background:
+      radial-gradient(60% 60% at 50% 0%, rgba(0, 102, 255, 0.18) 0%, transparent 70%),
+      radial-gradient(40% 40% at 80% 100%, rgba(0, 200, 255, 0.10) 0%, transparent 70%),
+      hsl(var(--background));
+  }
+
   input[type="search"]::-webkit-search-cancel-button {
     @apply hidden;
   }
@@ -231,7 +299,7 @@
   }
 
   .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
-  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+  .active-elevate:active:not(.no-default-active-elevate)::after {
     background-color: var(--elevate-2);
   }
 
@@ -244,21 +312,18 @@
 
   /* Landscape iPhone/iPad: extend background into safe-area insets so the
      notch and Dynamic Island show the app shell color instead of white gaps.
-     viewport-fit=cover (set in index.html) lets the layout reach the edges;
-     these padding rules push interactive content back into the safe area.
      env() returns 0 in portrait and on desktop — this block has no effect there. */
   @supports (padding: env(safe-area-inset-left)) {
     @media (orientation: landscape) and (max-width: 1024px) {
       body {
-        background-color: #0F510F;
+        background-color: hsl(var(--background));
         padding-left: env(safe-area-inset-left);
         padding-right: env(safe-area-inset-right);
       }
     }
   }
 
-  /* Push notification banners below the fixed mobile navbar in portrait mode.
-     The navbar is h-[56px]; landscape and desktop are unaffected. */
+  /* Push notification banners below the fixed mobile navbar in portrait mode. */
   @media (max-width: 768px) and (orientation: portrait) {
     .notification-banners {
       padding-top: 56px;

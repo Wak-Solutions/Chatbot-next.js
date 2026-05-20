@@ -16,7 +16,7 @@ export default function TermsPage() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-5 py-4">
         <div className="max-w-3xl mx-auto flex items-center gap-4">
-          <div className="w-10 h-10 bg-[#0F510F] rounded-xl flex items-center justify-center text-white font-bold text-lg">W</div>
+          <div className="w-10 h-10 bg-brand-blue rounded-xl flex items-center justify-center text-white font-bold text-lg">W</div>
           <div>
             <p className="font-bold text-base leading-tight text-gray-900">WAK Solutions</p>
             <p className="text-xs text-gray-500">{t("termsPageTitle")}</p>
@@ -28,7 +28,7 @@ export default function TermsPage() {
       <main className="flex-1 w-full max-w-3xl mx-auto px-5 py-10 space-y-8">
         {/* Title block */}
         <div className="text-center space-y-1">
-          <h1 className="text-3xl font-bold text-[#0F510F]">{t("termsPageTitle")}</h1>
+          <h1 className="text-3xl font-bold text-brand-blue">{t("termsPageTitle")}</h1>
           <p className="text-sm text-gray-500">{t("termsPageLastUpdated")}</p>
         </div>
 
@@ -153,8 +153,8 @@ function Section({
 }) {
   return (
     <section className="bg-white rounded-xl border border-gray-200 px-7 py-6">
-      <h2 className="text-lg font-bold text-[#408440] mb-3 flex items-center gap-2">
-        <span className="w-1 h-5 rounded-full bg-[#0F510F] flex-shrink-0" />
+      <h2 className="text-lg font-bold text-brand-cyan mb-3 flex items-center gap-2">
+        <span className="w-1 h-5 rounded-full bg-brand-blue flex-shrink-0" />
         {title}
       </h2>
       <div className="text-sm text-gray-700 leading-relaxed">{children}</div>

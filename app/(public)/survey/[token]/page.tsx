@@ -102,7 +102,7 @@ export default function SurveyPage() {
   return (
     <div className="min-h-screen bg-[#F5F2EC] flex flex-col">
       {/* Header */}
-      <header className="bg-[#0F510F] px-5 py-4 flex items-center gap-3 shadow-md">
+      <header className="bg-brand-blue px-5 py-4 flex items-center gap-3 shadow-md">
         <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
           <span className="text-white text-xs font-bold">W</span>
         </div>
@@ -113,7 +113,7 @@ export default function SurveyPage() {
         {/* Loading */}
         {status === "loading" && (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
           </div>
         )}
 
@@ -134,7 +134,7 @@ export default function SurveyPage() {
         {/* Thank-you */}
         {status === "submitted" && (
           <div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100">
-            <CheckCircle2 className="w-14 h-14 text-[#0F510F] mx-auto mb-5" />
+            <CheckCircle2 className="w-14 h-14 text-brand-blue mx-auto mb-5" />
             <p className="text-xl font-bold text-gray-900 mb-1 leading-snug" dir="rtl">
               شكراً على وقتك ومشاركتك! 💚
             </p>
@@ -147,7 +147,7 @@ export default function SurveyPage() {
           <div className="space-y-5">
             {/* Header card */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <h1 className="text-xl font-bold text-[#0F510F] mb-1">{survey.title}</h1>
+              <h1 className="text-xl font-bold text-brand-blue mb-1">{survey.title}</h1>
               {survey.description && (
                 <p className="text-sm text-gray-500">{survey.description}</p>
               )}
@@ -157,7 +157,7 @@ export default function SurveyPage() {
             {survey.questions.map((q, idx) => (
               <div key={q.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
                 <p className="text-sm font-semibold text-gray-800 leading-snug">
-                  <span className="text-[#0F510F] mr-1.5">{idx + 1}.</span>
+                  <span className="text-brand-blue mr-1.5">{idx + 1}.</span>
                   {q.question_text}
                 </p>
 
@@ -172,8 +172,8 @@ export default function SurveyPage() {
                           onClick={() => setRating(q.id, n)}
                           className={`w-13 h-13 min-w-[52px] min-h-[52px] rounded-xl text-lg font-bold border-2 transition-all select-none ${
                             selected
-                              ? "bg-[#0F510F] border-[#0F510F] text-white scale-105 shadow-md"
-                              : "bg-white border-gray-200 text-gray-600 hover:border-[#0F510F] active:scale-95"
+                              ? "bg-brand-blue border-brand-blue text-white scale-105 shadow-md"
+                              : "bg-white border-gray-200 text-gray-600 hover:border-brand-blue active:scale-95"
                           }`}
                         >
                           {n}
@@ -195,7 +195,7 @@ export default function SurveyPage() {
                           className={`py-4 rounded-xl text-base font-bold border-2 transition-all select-none ${
                             selected
                               ? val
-                                ? "bg-[#0F510F] border-[#0F510F] text-white shadow-md"
+                                ? "bg-brand-blue border-brand-blue text-white shadow-md"
                                 : "bg-red-500 border-red-500 text-white shadow-md"
                               : "bg-white border-gray-200 text-gray-700 hover:border-gray-400 active:scale-95"
                           }`}
@@ -214,7 +214,7 @@ export default function SurveyPage() {
                     value={answers[q.id]?.answer_text ?? ""}
                     onChange={(e) => setText(q.id, e.target.value)}
                     placeholder="Your answer… / إجابتك…"
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-[#0F510F] resize-none"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-brand-blue resize-none"
                   />
                 )}
               </div>
@@ -232,7 +232,7 @@ export default function SurveyPage() {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="w-full bg-[#0F510F] text-white py-4 rounded-2xl text-base font-semibold hover:bg-[#0d4510] disabled:opacity-60 transition-colors active:scale-[0.99]"
+              className="w-full bg-brand-blue text-white py-4 rounded-2xl text-base font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors active:scale-[0.99]"
             >
               {submitting ? (
                 <span className="flex items-center justify-center gap-2">

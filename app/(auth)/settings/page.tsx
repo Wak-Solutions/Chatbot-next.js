@@ -33,7 +33,7 @@ function maskToken(token: string): string {
 }
 
 const inputClass =
-  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F510F]/20 focus:border-[#0F510F]/40 transition-colors";
+  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    WhatsApp Panel
@@ -232,7 +232,7 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
             type="button"
             onClick={handleVerify}
             disabled={!canVerify || verifyStatus === "verifying"}
-            className="inline-flex items-center gap-2 bg-[#0F510F] text-white px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-[#0d4510] transition-colors"
+            className="inline-flex items-center gap-2 bg-brand-blue text-white px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-brand-cyan transition-colors"
           >
             {verifyStatus === "verifying" ? (
               <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t("settingsVerifying")}</>
@@ -346,7 +346,7 @@ function BrandingPanel({ t }: { t: (k: string) => string }) {
             type="button"
             onClick={handleSave}
             disabled={!canSave}
-            className="inline-flex items-center gap-2 bg-[#0F510F] text-white px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-[#0d4510] transition-colors"
+            className="inline-flex items-center gap-2 bg-brand-blue text-white px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-brand-cyan transition-colors"
           >
             {saveStatus === "saving" ? (
               <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t("settingsSaving")}</>
@@ -437,8 +437,8 @@ function ChangePasswordPanel({ t }: { t: (k: string) => string }) {
   return (
     <section className="bg-white border border-gray-200 rounded-2xl p-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-[#0F510F]/10 flex items-center justify-center">
-          <Lock className="w-5 h-5 text-[#0F510F]" />
+        <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center">
+          <Lock className="w-5 h-5 text-brand-blue" />
         </div>
         <div>
           <h2 className="text-lg font-semibold text-gray-900">{t("settingsChangePassword")}</h2>
@@ -505,7 +505,7 @@ function ChangePasswordPanel({ t }: { t: (k: string) => string }) {
         <button
           type="submit"
           disabled={!canSubmit}
-          className="bg-[#0F510F] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0d4510] disabled:opacity-50 transition-colors"
+          className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-cyan disabled:opacity-50 transition-colors"
         >
           {status === "saving" ? t("settingsPasswordSaving") : t("settingsChangePassword")}
         </button>
@@ -564,11 +564,11 @@ export default function SettingsPage() {
                     onClick={() => setActiveSection(s.id)}
                     className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors text-start ${
                       activeSection === s.id
-                        ? "bg-[#0F510F]/10 text-[#0F510F]"
+                        ? "bg-brand-blue/10 text-brand-blue"
                         : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                     }`}
                   >
-                    <span className={activeSection === s.id ? "text-[#0F510F]" : "text-gray-400"}>
+                    <span className={activeSection === s.id ? "text-brand-blue" : "text-gray-400"}>
                       {s.icon}
                     </span>
                     {t(s.labelKey)}

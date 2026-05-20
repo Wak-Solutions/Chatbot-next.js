@@ -11,6 +11,7 @@ import { useAuth, useLogout } from "@/hooks/use-auth";
 import { useLanguage } from "@/lib/language-context";
 import { usePushNotifications } from "@/hooks/use-push";
 import { csrfFetch } from "@/lib/queryClient";
+import { Logo } from "@/components/ui/Logo";
 
 interface TrialStatus {
   trialDays: number;
@@ -84,7 +85,7 @@ export default function DashboardLayout({
   if (isAuthLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
   }
@@ -138,20 +139,18 @@ export default function DashboardLayout({
   };
 
   return (
-    <div dir={isRtl ? "rtl" : "ltr"} className="flex h-[100dvh] overflow-hidden bg-white font-sans text-gray-900 antialiased">
+    <div dir={isRtl ? "rtl" : "ltr"} className="flex h-[100dvh] overflow-hidden bg-background font-sans text-foreground antialiased">
 
       {/* ─── Desktop Sidebar ─── */}
-      <aside className="hidden md:flex flex-col w-[232px] bg-[#0F510F] shrink-0">
+      <aside className="hidden md:flex flex-col w-[232px] bg-brand-ink shrink-0 border-r border-white/[0.06]">
         {/* Logo */}
-        <div className="px-4 py-5 flex items-center justify-between border-b border-white/10">
+        <div className="px-4 py-5 flex items-center justify-between border-b border-white/[0.06]">
           <Link href="/dashboard" className="flex items-center gap-2.5 cursor-pointer">
-            <div className="bg-white rounded-lg px-2 py-1 shrink-0">
-              <img src="/logo.png" alt="WAK Solutions" className="h-7 w-auto" />
-            </div>
+            <Logo size="sm" priority className="shrink-0" />
             <span className="text-white/90 font-semibold text-sm tracking-tight">WAK Solutions</span>
           </Link>
           <span
-            className={`w-2.5 h-2.5 rounded-full animate-pulse shrink-0 ${isOnline ? "bg-green-400" : "bg-yellow-400"}`}
+            className={`w-2.5 h-2.5 rounded-full animate-pulse shrink-0 ${isOnline ? "bg-brand-emerald" : "bg-brand-amber"}`}
             title={isOnline ? "Online" : "Reconnecting..."}
           />
         </div>
@@ -233,14 +232,12 @@ export default function DashboardLayout({
       </aside>
 
       {/* ─── Mobile header + menu ─── */}
-      <div className="md:hidden fixed top-0 inset-x-0 z-50 bg-[#0F510F] h-[56px] flex items-center justify-between px-4 shadow-sm">
+      <div className="md:hidden fixed top-0 inset-x-0 z-50 bg-brand-ink h-[56px] flex items-center justify-between px-4 border-b border-white/[0.06]">
         <Link href="/dashboard" className="flex items-center gap-2.5 cursor-pointer">
-          <div className="bg-white rounded-lg px-2 py-0.5 shrink-0">
-            <img src="/logo.png" alt="WAK Solutions" className="h-6 w-auto" />
-          </div>
+          <Logo size={22} className="shrink-0" />
           <span className="text-white/90 font-semibold text-sm">WAK Solutions</span>
           <span
-            className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${isOnline ? "bg-green-400" : "bg-yellow-400"}`}
+            className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${isOnline ? "bg-brand-emerald" : "bg-brand-amber"}`}
             title={isOnline ? "Online" : "Reconnecting..."}
           />
         </Link>
@@ -278,7 +275,7 @@ export default function DashboardLayout({
         <div className="fixed inset-0 z-[60] md:hidden" onClick={() => setMobileOpen(false)}>
           <div className="absolute inset-0 bg-black/40" />
           <div className={`absolute top-0 ${isRtl ? "left-0" : "right-0"} h-full w-80 bg-white shadow-xl flex flex-col`} onClick={e => e.stopPropagation()}>
-            <div className="h-[56px] bg-[#0F510F] flex items-center justify-between px-5">
+            <div className="h-[56px] bg-brand-ink flex items-center justify-between px-5">
               <span className="text-white font-semibold text-sm">{t("menu")}</span>
               <button onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white p-1 rounded transition-colors">
                 <X className="w-5 h-5" />
@@ -291,11 +288,11 @@ export default function DashboardLayout({
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center gap-4 px-5 py-3.5 text-sm font-medium transition-colors min-h-[48px] ${
                       isActive(item.href)
-                        ? "bg-[#0F510F]/10 text-[#0F510F] border-s-4 border-[#0F510F]"
+                        ? "bg-brand-blue/10 text-brand-blue border-s-4 border-brand-cyan"
                         : "text-gray-700 hover:bg-gray-50"
                     }`}
                   >
-                    <span className={isActive(item.href) ? "text-[#0F510F]" : "text-gray-400"}>{item.icon}</span>
+                    <span className={isActive(item.href) ? "text-brand-blue" : "text-gray-400"}>{item.icon}</span>
                     {item.label}
                   </a>
                 </Link>
@@ -338,7 +335,7 @@ export default function DashboardLayout({
             )}
           </span>
           <Link href="/book-demo">
-            <a className="inline-flex items-center gap-1.5 text-[#0F510F] border border-[#0F510F]/40 hover:border-[#0F510F] hover:bg-[#0F510F]/5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+            <a className="inline-flex items-center gap-1.5 text-brand-blue border border-brand-blue/40 hover:border-brand-blue hover:bg-brand-blue/5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
               <CalendarCheck className="w-3.5 h-3.5" /> Book a Demo
             </a>
           </Link>

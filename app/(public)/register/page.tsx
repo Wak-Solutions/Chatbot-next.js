@@ -13,6 +13,7 @@ import {
   Plus, Trash2, AlertTriangle,
 } from "lucide-react";
 import { csrfFetch, queryClient } from "@/lib/queryClient";
+import { Logo } from "@/components/ui/Logo";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    TYPES
@@ -75,10 +76,10 @@ function StepSidebar({
   ];
 
   return (
-    <div className="hidden lg:flex flex-col w-[40%] bg-[#0F510F] text-white p-8 min-h-screen relative">
+    <div className="hidden lg:flex flex-col w-[40%] bg-brand-ink text-white p-8 min-h-screen relative">
       {/* Logo */}
       <div className="flex items-center gap-3 mb-12">
-        <img src="/logo.png" alt="WAK Solutions" className="h-10 w-auto brightness-0 invert" />
+        <Logo size="md" priority />
         <span className="font-bold text-lg">WAK Solutions</span>
       </div>
 
@@ -97,7 +98,7 @@ function StepSidebar({
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 transition-all ${
                     isCompleted
-                      ? "bg-white text-[#0F510F]"
+                      ? "bg-white text-brand-blue"
                       : isActive
                         ? "bg-white/20 text-white ring-2 ring-white"
                         : "bg-white/10 text-white/40"
@@ -146,9 +147,9 @@ function StepSidebar({
 
 function MobileStepBar({ currentStep, t }: { currentStep: number; t: (key: string) => string }) {
   return (
-    <div className="lg:hidden bg-[#0F510F] px-4 py-4">
+    <div className="lg:hidden bg-brand-ink px-4 py-4">
       <div className="flex items-center gap-2 mb-3">
-        <img src="/logo.png" alt="WAK Solutions" className="h-8 w-auto brightness-0 invert" />
+        <Logo size="sm" />
         <span className="font-semibold text-white text-sm">WAK Solutions</span>
       </div>
       <div className="flex gap-1.5">
@@ -193,9 +194,9 @@ function FormField({
 }
 
 const inputClass =
-  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F510F]/20 focus:border-[#0F510F]/40 transition-colors";
+  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors";
 const selectClass =
-  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F510F]/20 focus:border-[#0F510F]/40 transition-colors appearance-none";
+  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors appearance-none";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    STEP 1: ACCOUNT
@@ -311,7 +312,7 @@ function Step1({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
       <div className="pt-2">
         <p className="text-sm text-gray-500">
           {t("regAlreadyHaveAccount")}{" "}
-          <Link href="/login" className="text-[#0F510F] font-semibold hover:underline">
+          <Link href="/login" className="text-brand-blue font-semibold hover:underline">
             {t("regSignIn")}
           </Link>
         </p>
@@ -504,7 +505,7 @@ function Step3({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
       <label className="flex items-start gap-2.5 cursor-pointer select-none">
         <input
           type="checkbox"
-          className="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#0F510F] accent-[#0F510F] shrink-0"
+          className="mt-0.5 w-4 h-4 rounded border-gray-300 text-brand-blue accent-brand-blue shrink-0"
           checked={form.whatsappNumberConfirmed}
           onChange={(e) => setForm({ ...form, whatsappNumberConfirmed: e.target.checked })}
         />
@@ -554,7 +555,7 @@ function Step3({ form, setForm, t }: { form: FormData; setForm: (f: FormData) =>
           type="button"
           onClick={handleVerify}
           disabled={!form.phoneNumberId || !form.wabaId || !form.accessToken || verifying}
-          className="inline-flex items-center gap-2 bg-[#0F510F] text-white px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-[#0d4510] transition-colors"
+          className="inline-flex items-center gap-2 bg-brand-blue text-white px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-brand-cyan transition-colors"
         >
           {verifying ? (
             <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t("regVerifying")}</>
@@ -613,8 +614,8 @@ function Step4({
 
   return (
     <div className="space-y-5">
-      <div className="bg-[#0F510F]/5 border border-[#0F510F]/10 rounded-xl p-4">
-        <p className="text-sm text-[#0F510F]">{t("regInviteNote")}</p>
+      <div className="bg-brand-blue/5 border border-brand-blue/10 rounded-xl p-4">
+        <p className="text-sm text-brand-blue">{t("regInviteNote")}</p>
       </div>
 
       <div className="space-y-4">
@@ -666,7 +667,7 @@ function Step4({
       <button
         type="button"
         onClick={addAgent}
-        className="text-sm text-[#0F510F] font-medium hover:underline flex items-center gap-1"
+        className="text-sm text-brand-blue font-medium hover:underline flex items-center gap-1"
       >
         <Plus className="w-3.5 h-3.5" />{t("regAddAgent")}
       </button>
@@ -692,8 +693,8 @@ function Step5({ currentStep, form, t }: { currentStep: number; form: FormData; 
 
   return (
     <div className="flex flex-col items-center text-center py-8">
-      <div className="w-20 h-20 bg-[#0F510F]/10 rounded-full flex items-center justify-center mb-6">
-        <Rocket className="w-10 h-10 text-[#0F510F]" />
+      <div className="w-20 h-20 bg-brand-blue/10 rounded-full flex items-center justify-center mb-6">
+        <Rocket className="w-10 h-10 text-brand-blue" />
       </div>
       <h2 className="text-2xl font-bold text-gray-900">{t("regGoLiveTitle")}</h2>
       <p className="text-gray-500 mt-2 mb-8">{t("regGoLiveSubtitle")}</p>
@@ -953,7 +954,7 @@ export default function RegisterPage() {
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 lg:px-10 py-4 border-b border-gray-100">
           <Link href="/">
-            <a className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-[#0F510F] transition-colors">
+            <a className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-brand-blue transition-colors">
               <ChevronLeft className="w-4 h-4" />
               Back
             </a>
@@ -1009,7 +1010,7 @@ export default function RegisterPage() {
               type="button"
               onClick={handleNext}
               disabled={!canContinue() || loading}
-              className="inline-flex items-center gap-2 bg-[#0F510F] text-white px-6 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-[#0d4510] transition-colors"
+              className="inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-brand-cyan transition-colors"
             >
               {loading ? (
                 <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t("regSaving")}</>

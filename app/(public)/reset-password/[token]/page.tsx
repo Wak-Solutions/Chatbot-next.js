@@ -8,7 +8,7 @@ import { Lock, Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { csrfFetch } from "@/lib/queryClient";
 
 const inputClass =
-  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F510F]/20 focus:border-[#0F510F]/40 transition-colors";
+  "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 transition-colors";
 
 export default function ResetPasswordPage() {
   const params = useParams<{ token: string }>();
@@ -61,8 +61,8 @@ export default function ResetPasswordPage() {
 
         <section className="bg-white border border-gray-200 rounded-2xl p-6 max-w-2xl">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-[#0F510F]/10 flex items-center justify-center">
-              <Lock className="w-5 h-5 text-[#0F510F]" />
+            <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center">
+              <Lock className="w-5 h-5 text-brand-blue" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900">Choose a new password</h2>
@@ -78,7 +78,7 @@ export default function ResetPasswordPage() {
               </div>
               <button
                 onClick={() => setLocation("/login")}
-                className="bg-[#0F510F] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0d4510] transition-colors"
+                className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-cyan transition-colors"
               >
                 Go to login
               </button>
@@ -123,7 +123,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={!canSubmit}
-                className="bg-[#0F510F] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0d4510] disabled:opacity-50 transition-colors inline-flex items-center gap-2"
+                className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-cyan disabled:opacity-50 transition-colors inline-flex items-center gap-2"
               >
                 {status === "saving" && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
                 {status === "saving" ? "Saving…" : "Reset password"}

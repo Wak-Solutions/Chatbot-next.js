@@ -1,13 +1,13 @@
 {
   "id": "/",
-  "name": "WAK Solutions Agent",
-  "short_name": "WAK Agent",
-  "description": "WAK Solutions Agent Dashboard - Manage WhatsApp escalations",
+  "name": "WAK Solutions — Intelligent Automation & Robotics",
+  "short_name": "WAK Solutions",
+  "description": "Intelligent automation and robotics for a smarter, more efficient, and sustainable future.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "theme_color": "#0F510F",
-  "background_color": "#0F510F",
+  "theme_color": "#0066FF",
+  "background_color": "#0F172A",
   "orientation": "portrait-primary",
   "icons": [
     {

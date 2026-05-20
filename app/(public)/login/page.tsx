@@ -11,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/contracts/routes";
 import { startRegistration, startAuthentication } from "@simplewebauthn/browser";
 import { csrfFetch } from "@/lib/queryClient";
+import { Logo } from "@/components/ui/Logo";
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");
@@ -193,19 +194,19 @@ export default function Login() {
             </div>
             <div className="flex-1 overflow-y-auto mx-4 my-4 border border-gray-200 rounded-xl bg-[#F5F2EC] px-5 py-4 text-center min-h-0">
               <p className="text-sm text-gray-500 mb-3">{t("termsModalSubtitle")}</p>
-              <a href="/terms" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0F510F] underline underline-offset-2 hover:text-[#408440] transition-colors">
+              <a href="/terms" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-blue underline underline-offset-2 hover:text-brand-cyan transition-colors">
                 {t("termsModalReadLink")}
               </a>
             </div>
             <div className="px-6 pb-6 pt-2 space-y-4">
               <label className="flex items-start gap-3 cursor-pointer select-none">
-                <input type="checkbox" checked={termsChecked} onChange={e => setTermsChecked(e.target.checked)} className="mt-0.5 w-4 h-4 accent-[#0F510F] shrink-0" />
+                <input type="checkbox" checked={termsChecked} onChange={e => setTermsChecked(e.target.checked)} className="mt-0.5 w-4 h-4 accent-brand-blue shrink-0" />
                 <span className="text-sm text-gray-700 leading-snug">{t("termsModalCheckbox")}</span>
               </label>
               <button
                 disabled={!termsChecked || termsAccepting}
                 onClick={handleAcceptTerms}
-                className="w-full bg-[#0F510F] text-white py-3 rounded-xl font-semibold text-sm disabled:opacity-50 hover:bg-[#0d4510] transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-brand-blue text-white py-3 rounded-xl font-semibold text-sm disabled:opacity-50 hover:bg-brand-cyan transition-colors flex items-center justify-center gap-2"
               >
                 {termsAccepting ? (
                   <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t("termsModalAccepting")}</>
@@ -233,7 +234,7 @@ export default function Login() {
                   <p className="text-sm text-gray-700">If an account exists for that email or phone, a reset link has been sent. The link is valid for 30 minutes.</p>
                   <button
                     onClick={() => setShowForgotModal(false)}
-                    className="mt-5 w-full bg-[#0F510F] text-white py-3 rounded-xl font-semibold text-sm hover:bg-[#0d4510] transition-colors"
+                    className="mt-5 w-full bg-brand-blue text-white py-3 rounded-xl font-semibold text-sm hover:bg-brand-cyan transition-colors"
                   >
                     Close
                   </button>
@@ -251,14 +252,14 @@ export default function Login() {
                       onChange={e => setForgotIdentifier(e.target.value)}
                       placeholder="email@example.com or +966501234567"
                       autoFocus
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F510F]/20 focus:border-[#0F510F]/40 bg-white"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 bg-white"
                     />
                   </div>
                   {forgotError && <p className="text-sm text-red-500">{forgotError}</p>}
                   <button
                     type="submit"
                     disabled={!forgotIdentifier.trim() || forgotStatus === "sending"}
-                    className="w-full bg-[#0F510F] text-white py-3 rounded-xl font-semibold text-sm disabled:opacity-50 hover:bg-[#0d4510] transition-colors flex items-center justify-center gap-2"
+                    className="w-full bg-brand-blue text-white py-3 rounded-xl font-semibold text-sm disabled:opacity-50 hover:bg-brand-cyan transition-colors flex items-center justify-center gap-2"
                   >
                     {forgotStatus === "sending" && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
                     Send reset link
@@ -274,7 +275,7 @@ export default function Login() {
       <div className={`absolute top-4 ${isRtl ? "right-4" : "left-4"} z-10`}>
         <a
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-[#0F510F] transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-brand-blue transition-colors"
         >
           <ArrowLeft className={`w-4 h-4 ${isRtl ? "rotate-180" : ""}`} />
           Home
@@ -283,14 +284,14 @@ export default function Login() {
 
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#0F510F]/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#408440]/5 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -end-40 w-96 h-96 bg-brand-blue/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -start-40 w-96 h-96 bg-brand-cyan/10 rounded-full blur-3xl" />
       </div>
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <img src="/logo.png" alt="WAK Solutions" className="h-14 w-auto mb-4" />
+          <Logo size="lg" priority className="mb-4" />
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">WAK Solutions</h1>
           <p className="text-sm text-gray-500 mt-1">{t("loginTagline")}</p>
         </div>
@@ -309,10 +310,10 @@ export default function Login() {
                 type="button"
                 onClick={handleBiometricLogin}
                 disabled={biometricPending}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border-2 border-[#0F510F]/20 bg-[#0F510F]/5 hover:bg-[#0F510F]/10 transition-all text-sm font-medium text-[#0F510F] disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border-2 border-brand-blue/20 bg-brand-blue/5 hover:bg-brand-blue/10 transition-all text-sm font-medium text-brand-blue disabled:opacity-50"
               >
                 {biometricPending
-                  ? <><div className="w-4 h-4 border-2 border-[#0F510F]/30 border-t-[#0F510F] rounded-full animate-spin" />{t("loginVerifying")}</>
+                  ? <><div className="w-4 h-4 border-2 border-brand-blue/30 border-t-brand-blue rounded-full animate-spin" />{t("loginVerifying")}</>
                   : <><Fingerprint className="w-5 h-5" />{t("loginSignInBiometric")}</>
                 }
               </button>
@@ -338,7 +339,7 @@ export default function Login() {
                 onChange={e => setIdentifier(e.target.value)}
                 disabled={isPending}
                 autoComplete="username"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F510F]/20 focus:border-[#0F510F]/40 disabled:opacity-50 bg-white"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 disabled:opacity-50 bg-white"
               />
             </div>
             <div className="space-y-1.5">
@@ -354,7 +355,7 @@ export default function Login() {
                 onChange={e => setPassword(e.target.value)}
                 disabled={isPending}
                 autoFocus={!identifier}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F510F]/20 focus:border-[#0F510F]/40 disabled:opacity-50 bg-white"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/40 disabled:opacity-50 bg-white"
               />
               {error && (
                 <p data-testid="text-error" className="text-sm text-red-500 pt-1">
@@ -370,7 +371,7 @@ export default function Login() {
                     setForgotStatus("idle");
                     setForgotError("");
                   }}
-                  className="text-xs font-medium text-[#0F510F] hover:text-[#0d4510] transition-colors"
+                  className="text-xs font-medium text-brand-blue hover:text-brand-cyan transition-colors"
                 >
                   Forgot password?
                 </button>
@@ -380,7 +381,7 @@ export default function Login() {
               data-testid="button-login"
               type="submit"
               disabled={!password || isPending}
-              className="w-full bg-[#0F510F] text-white py-3 rounded-xl font-semibold text-sm hover:bg-[#0d4510] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-brand-blue text-white py-3 rounded-xl font-semibold text-sm hover:bg-brand-cyan transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isPending && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
               {t("loginSignIn")}
@@ -390,7 +391,7 @@ export default function Login() {
 
         <p className="text-center text-sm text-gray-500 mt-5">
           Don't have an account?{" "}
-          <a href="/register" className="font-medium text-[#0F510F] hover:text-[#0d4510] transition-colors">
+          <a href="/register" className="font-medium text-brand-blue hover:text-brand-cyan transition-colors">
             Start free trial
           </a>
         </p>

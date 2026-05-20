@@ -101,7 +101,7 @@ function MeetingModal({ item, onClose }: { item: InboxItem; onClose: () => void 
               href={item.meeting_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#0F510F] hover:bg-[#0d4510] text-white text-sm font-semibold rounded-xl transition-colors"
+              className="w-full flex items-center justify-center gap-2 py-2.5 bg-brand-blue hover:bg-brand-cyan text-white text-sm font-semibold rounded-xl transition-colors"
             >
               <Video className="w-4 h-4" /> {t("inboxJoinMeeting")}
             </a>
@@ -219,7 +219,7 @@ export default function InboxPage() {
                 {tb.key === "all" ? <Users className="w-3.5 h-3.5" /> : <Inbox className="w-3.5 h-3.5" />}
                 {tb.label}
                 <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
-                  tab === tb.key ? "bg-[#0F510F] text-white" : "bg-gray-300/50 text-gray-500"
+                  tab === tb.key ? "bg-brand-blue text-white" : "bg-gray-300/50 text-gray-500"
                 }`}>
                   {tb.count}
                 </span>
@@ -266,8 +266,8 @@ export default function InboxPage() {
                 ) : (
                   <div key={item.customer_phone} className="bg-white border border-gray-200 rounded-xl px-4 py-3 hover:bg-gray-50/50 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-[#0F510F]/10 flex items-center justify-center shrink-0">
-                        <User className="w-4 h-4 text-[#0F510F]" />
+                      <div className="w-9 h-9 rounded-full bg-brand-blue/10 flex items-center justify-center shrink-0">
+                        <User className="w-4 h-4 text-brand-blue" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -292,13 +292,13 @@ export default function InboxPage() {
                           <button
                             onClick={() => claim(item.customer_phone)}
                             disabled={claiming === item.customer_phone}
-                            className="px-3 py-1.5 text-xs font-medium bg-[#0F510F] text-white rounded-lg hover:bg-[#0d4510] disabled:opacity-50 transition-colors"
+                            className="px-3 py-1.5 text-xs font-medium bg-brand-blue text-white rounded-lg hover:bg-brand-cyan disabled:opacity-50 transition-colors"
                           >
                             {claiming === item.customer_phone ? t("inboxClaiming") : t("inboxClaim")}
                           </button>
                         ) : ( */}
                           <Link href={`/dashboard?phone=${encodeURIComponent(item.customer_phone)}`}>
-                            <a className="px-3 py-1.5 text-xs font-medium border border-[#0F510F]/30 text-[#0F510F] rounded-lg hover:bg-[#0F510F]/5 transition-colors">
+                            <a className="px-3 py-1.5 text-xs font-medium border border-brand-blue/30 text-brand-blue rounded-lg hover:bg-brand-blue/5 transition-colors">
                               {t("inboxOpen")}
                             </a>
                           </Link>

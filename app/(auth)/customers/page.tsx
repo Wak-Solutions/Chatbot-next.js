@@ -94,7 +94,7 @@ function FunnelTab() {
   if (loading) {
     return (
       <div className="flex justify-center pt-20">
-        <div className="w-6 h-6 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+        <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
   }
@@ -257,7 +257,7 @@ export default function CustomersPage() {
   if (isAuthLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
   }
@@ -317,7 +317,7 @@ export default function CustomersPage() {
                       placeholder={t("customersSearch")}
                       value={search}
                       onChange={e => setSearch(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-[#0F510F] transition-colors"
+                      className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-blue transition-colors"
                     />
                   </div>
                 </div>
@@ -326,7 +326,7 @@ export default function CustomersPage() {
                 <div className="flex-1 overflow-y-auto">
                   {loading ? (
                     <div className="flex items-center justify-center py-16">
-                      <div className="w-5 h-5 border-[3px] border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+                      <div className="w-5 h-5 border-[3px] border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
                     </div>
                   ) : customers.length === 0 ? (
                     <div className="px-5 py-12 text-center text-sm text-gray-500">
@@ -342,7 +342,7 @@ export default function CustomersPage() {
                             onClick={() => setSelectedPhone(c.phone)}
                             className={`w-full text-left px-5 py-3.5 transition-colors ${
                               isSelected
-                                ? "bg-[#0F510F]/[0.08] border-s-[3px] border-[#0F510F]"
+                                ? "bg-brand-blue/[0.08] border-s-[3px] border-brand-blue"
                                 : "hover:bg-gray-50 border-s-[3px] border-transparent"
                             }`}
                           >
@@ -427,7 +427,7 @@ export default function CustomersPage() {
                 <div className="flex-1 overflow-y-auto px-5 py-6">
                   {journeyLoading ? (
                     <div className="flex justify-center pt-16">
-                      <div className="w-6 h-6 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+                      <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
                     </div>
                   ) : !journeyData || journeyData.timeline.length === 0 ? (
                     <p className="text-sm text-gray-500 text-center pt-16">{t("journeyNoEvents")}</p>

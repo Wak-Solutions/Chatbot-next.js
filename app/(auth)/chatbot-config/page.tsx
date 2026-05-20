@@ -88,7 +88,7 @@ const TONES = ["Professional", "Friendly", "Formal", "Casual", "Custom"];
 
 const inputCls =
   "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 " +
-  "focus:outline-none focus:ring-2 focus:ring-[#0F510F]/40 placeholder:text-gray-400 transition-shadow";
+  "focus:outline-none focus:ring-2 focus:ring-brand-blue/40 placeholder:text-gray-400 transition-shadow";
 
 const labelCls = "block text-xs font-medium text-gray-500 mb-1";
 const hintCls = "text-[11px] text-gray-400 mt-0.5";
@@ -113,7 +113,7 @@ function StepCard({
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <div className="px-5 pt-5 pb-4 border-b border-gray-100 flex items-start gap-3">
-        <div className="w-6 h-6 rounded-full bg-[#0F510F]/10 text-[#0F510F] text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+        <div className="w-6 h-6 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
           {step}
         </div>
         <div>
@@ -314,7 +314,7 @@ function MenuEditor({
                                   <button
                                     type="button"
                                     onClick={() => addSubSubItem(item.id, sub.id)}
-                                    className="flex items-center gap-1 text-xs text-[#0F510F] hover:underline mt-0.5"
+                                    className="flex items-center gap-1 text-xs text-brand-blue hover:underline mt-0.5"
                                   >
                                     <Plus className="w-3 h-3" />
                                     {t("chatbotSetupMenuAddSubSubItem")}
@@ -330,7 +330,7 @@ function MenuEditor({
                     <button
                       type="button"
                       onClick={() => addSubItem(item.id)}
-                      className="flex items-center gap-1.5 text-xs text-[#0F510F] hover:underline mt-1"
+                      className="flex items-center gap-1.5 text-xs text-brand-blue hover:underline mt-1"
                     >
                       <Plus className="w-3 h-3" />
                       {t("chatbotSetupMenuAddSubItem")}
@@ -346,7 +346,7 @@ function MenuEditor({
       <button
         type="button"
         onClick={addItem}
-        className="flex items-center gap-2 text-sm text-[#0F510F] border border-dashed border-[#0F510F]/40 rounded-lg px-4 py-2 w-full hover:bg-[#0F510F]/5 transition-colors"
+        className="flex items-center gap-2 text-sm text-brand-blue border border-dashed border-brand-blue/40 rounded-lg px-4 py-2 w-full hover:bg-brand-blue/5 transition-colors"
       >
         <Plus className="w-4 h-4" />
         {t("chatbotSetupMenuAddItem")}
@@ -643,7 +643,7 @@ export default function ChatbotConfig() {
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
   }
@@ -656,7 +656,7 @@ export default function ChatbotConfig() {
           {/* Page header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <Bot className="w-5 h-5 text-[#0F510F]" />
+              <Bot className="w-5 h-5 text-brand-blue" />
               <h1 className="text-xl font-bold text-gray-900">{t("chatbotSetupTitle")}</h1>
             </div>
             {/* Save button + status */}
@@ -666,7 +666,7 @@ export default function ChatbotConfig() {
                   <><span className="w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0" /><span className="text-gray-400">{t("chatbotSetupSaving")}</span></>
                 )}
                 {saveStatus === "saved" && (
-                  <><span className="w-1.5 h-1.5 rounded-full bg-[#0F510F] flex-shrink-0" /><span className="text-[#0F510F]">{t("chatbotSetupSavedSuccess")}</span></>
+                  <><span className="w-1.5 h-1.5 rounded-full bg-brand-blue flex-shrink-0" /><span className="text-brand-blue">{t("chatbotSetupSavedSuccess")}</span></>
                 )}
                 {saveStatus === "error" && (
                   <><span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" /><span className="text-red-500">Save failed</span></>
@@ -676,7 +676,7 @@ export default function ChatbotConfig() {
                 type="button"
                 onClick={doSave}
                 disabled={saveStatus === "saving"}
-                className="flex items-center gap-1.5 text-sm font-medium bg-[#0F510F] text-white px-4 py-1.5 rounded-lg hover:bg-[#0d4510] disabled:opacity-50 transition-colors"
+                className="flex items-center gap-1.5 text-sm font-medium bg-brand-blue text-white px-4 py-1.5 rounded-lg hover:bg-brand-cyan disabled:opacity-50 transition-colors"
               >
                 {saveStatus === "saving" ? (
                   <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t("chatbotSetupSaving")}</>
@@ -768,7 +768,7 @@ export default function ChatbotConfig() {
                     <button
                       type="button"
                       onClick={() => updateConfig({ faq: [...config.faq, { id: uid(), question: "", answer: "" }] })}
-                      className="flex items-center gap-1 text-xs text-[#0F510F] hover:underline"
+                      className="flex items-center gap-1 text-xs text-brand-blue hover:underline"
                     >
                       <Plus className="w-3 h-3" />
                       {t("chatbotSetupFaqAddBtn")}
@@ -842,8 +842,8 @@ export default function ChatbotConfig() {
                         onClick={() => updateConfig({ tone })}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                           config.tone === tone
-                            ? "bg-[#0F510F] text-white border-[#0F510F]"
-                            : "bg-white text-gray-600 border-gray-200 hover:border-[#0F510F]/40"
+                            ? "bg-brand-blue text-white border-brand-blue"
+                            : "bg-white text-gray-600 border-gray-200 hover:border-brand-blue/40"
                         }`}
                       >
                         {tone}
@@ -880,7 +880,7 @@ export default function ChatbotConfig() {
                     <button
                       type="button"
                       onClick={() => updateConfig({ escalationRules: [...config.escalationRules, { id: uid(), rule: "" }] })}
-                      className="flex items-center gap-1 text-xs text-[#0F510F] hover:underline flex-shrink-0"
+                      className="flex items-center gap-1 text-xs text-brand-blue hover:underline flex-shrink-0"
                     >
                       <Plus className="w-3 h-3" />
                       {t("chatbotSetupEscalationAddBtn")}
@@ -922,7 +922,7 @@ export default function ChatbotConfig() {
               {/* SUGGEST A CHANGE — hidden for now, re-enable when ready */}
               {/* <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
                 <div className="px-5 pt-5 pb-4 border-b border-gray-100 flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#0F510F]/10 text-[#0F510F] text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-6 h-6 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                     ✦
                   </div>
                   <div>
@@ -945,7 +945,7 @@ export default function ChatbotConfig() {
                     </p>
                   )}
                   {suggestSuccess && (
-                    <p className="text-xs text-[#0F510F] bg-[#0F510F]/5 border border-[#0F510F]/20 rounded-lg px-3 py-2">
+                    <p className="text-xs text-brand-blue bg-brand-blue/5 border border-brand-blue/20 rounded-lg px-3 py-2">
                       {t("chatbotSetupSuggestSuccess")}
                     </p>
                   )}
@@ -953,7 +953,7 @@ export default function ChatbotConfig() {
                     type="button"
                     onClick={applySuggestion}
                     disabled={suggesting || !suggestion.trim()}
-                    className="flex items-center justify-center gap-2 w-full text-sm font-medium bg-[#0F510F] text-white px-5 py-2.5 rounded-lg hover:bg-[#0d4510] disabled:opacity-50 transition-colors"
+                    className="flex items-center justify-center gap-2 w-full text-sm font-medium bg-brand-blue text-white px-5 py-2.5 rounded-lg hover:bg-brand-cyan disabled:opacity-50 transition-colors"
                   >
                     {suggesting ? (
                       <>

@@ -11,6 +11,7 @@ import {
   Link2, Settings, Rocket, Zap, Clock, Globe, MessageCircle,
   ChevronDown, Check, Menu, X, ArrowRight, Play,
 } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 
 /* ─── Bilingual copy ──────────────────────────────────────────── */
 const copy = {
@@ -255,7 +256,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-5 text-start gap-4 group"
       >
-        <span className="text-base font-medium text-gray-900 group-hover:text-[#0F510F] transition-colors">{question}</span>
+        <span className="text-base font-medium text-gray-900 group-hover:text-brand-blue transition-colors">{question}</span>
         <ChevronDown className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
       </button>
       <div
@@ -277,11 +278,11 @@ function PricingCard({
   return (
     <div className={`relative rounded-2xl p-8 flex flex-col ${
       highlighted
-        ? "bg-[#0F510F] text-white shadow-2xl shadow-[#0F510F]/30 scale-[1.02] lg:scale-105 z-10"
+        ? "bg-brand-blue text-white shadow-2xl shadow-brand-blue/30 scale-[1.02] lg:scale-105 z-10"
         : "bg-white text-gray-900 shadow-sm border border-gray-200"
     }`}>
       {badge && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#408440] text-white text-xs font-semibold px-4 py-1 rounded-full">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-cyan text-white text-xs font-semibold px-4 py-1 rounded-full">
           {badge}
         </span>
       )}
@@ -300,7 +301,7 @@ function PricingCard({
       <ul className="space-y-3 flex-1">
         {features.map((f, i) => (
           <li key={i} className="flex items-start gap-2.5 text-sm">
-            <Check className={`w-4 h-4 shrink-0 mt-0.5 ${highlighted ? "text-green-300" : "text-[#408440]"}`} />
+            <Check className={`w-4 h-4 shrink-0 mt-0.5 ${highlighted ? "text-green-300" : "text-brand-cyan"}`} />
             <span className={highlighted ? "text-white/90" : "text-gray-600"}>{f}</span>
           </li>
         ))}
@@ -308,8 +309,8 @@ function PricingCard({
       {ctaHref ? (
         <a href={ctaHref} target="_blank" rel="noopener noreferrer" className={`mt-8 block text-center py-3 rounded-xl font-semibold text-sm transition-all ${
           highlighted
-            ? "bg-white text-[#0F510F] hover:bg-gray-100"
-            : "bg-[#0F510F] text-white hover:bg-[#0d440d]"
+            ? "bg-white text-brand-blue hover:bg-gray-100"
+            : "bg-brand-blue text-white hover:bg-[#0d440d]"
         }`}>
           {cta}
         </a>
@@ -317,8 +318,8 @@ function PricingCard({
         <Link href="/register">
           <a className={`mt-8 block text-center py-3 rounded-xl font-semibold text-sm transition-all ${
             highlighted
-              ? "bg-white text-[#0F510F] hover:bg-gray-100"
-              : "bg-[#0F510F] text-white hover:bg-[#0d440d]"
+              ? "bg-white text-brand-blue hover:bg-gray-100"
+              : "bg-brand-blue text-white hover:bg-[#0d440d]"
           }`}>
             {cta}
           </a>
@@ -406,23 +407,23 @@ export default function LandingPage() {
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2.5">
-              <img src="/logo.png" alt="WAK Solutions" className="h-9 w-auto" />
-              <span className="font-bold text-lg text-[#0F510F] hidden sm:inline">WAK Solutions</span>
+              <Logo size="md" priority />
+              <span className="font-bold text-lg text-brand-blue hidden sm:inline">WAK Solutions</span>
             </button>
 
             {/* Desktop links */}
             <div className="hidden lg:flex items-center gap-8">
               {navLinks.map(l => (
-                <button key={l.id} onClick={() => scrollTo(l.id)} className="text-sm text-gray-600 hover:text-[#0F510F] transition-colors font-medium">
+                <button key={l.id} onClick={() => scrollTo(l.id)} className="text-sm text-gray-600 hover:text-brand-blue transition-colors font-medium">
                   {l.label}
                 </button>
               ))}
-              <button onClick={toggleLang} className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-[#0F510F] transition-colors">
+              <button onClick={toggleLang} className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-blue transition-colors">
                 <Globe className="w-4 h-4" />
                 {t.switchLang}
               </button>
               <Link href="/login">
-                <a className="text-sm font-medium text-[#0F510F] border border-[#0F510F]/40 px-4 py-2 rounded-lg hover:border-[#0F510F] hover:bg-[#0F510F]/5 transition-colors">
+                <a className="text-sm font-medium text-brand-blue border border-brand-blue/40 px-4 py-2 rounded-lg hover:border-brand-blue hover:bg-brand-blue/5 transition-colors">
                   {t.login}
                 </a>
               </Link>
@@ -431,7 +432,7 @@ export default function LandingPage() {
             {/* Mobile: Login + hamburger */}
             <div className="lg:hidden flex items-center gap-2">
               <Link href="/login">
-                <a className="text-sm font-medium text-[#0F510F] border border-[#0F510F]/40 px-3 py-1.5 rounded-lg hover:bg-[#0F510F]/5 transition-colors">
+                <a className="text-sm font-medium text-brand-blue border border-brand-blue/40 px-3 py-1.5 rounded-lg hover:bg-brand-blue/5 transition-colors">
                   {t.login}
                 </a>
               </Link>
@@ -453,7 +454,7 @@ export default function LandingPage() {
               ))}
               <div className="pt-3 border-t border-gray-100">
                 <button onClick={toggleLang} className="flex items-center gap-2 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
-                  <Globe className="w-4 h-4 text-[#0F510F]" />
+                  <Globe className="w-4 h-4 text-brand-blue" />
                   {t.switchLang}
                 </button>
               </div>
@@ -482,11 +483,11 @@ export default function LandingPage() {
               <Reveal delay={200}>
                 <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
                   <Link href="/register">
-                    <a className="inline-flex items-center gap-2 bg-[#0F510F] text-white font-semibold px-7 py-3.5 rounded-xl hover:bg-[#0d440d] transition-colors shadow-lg shadow-[#0F510F]/20 text-sm">
+                    <a className="inline-flex items-center gap-2 bg-brand-blue text-white font-semibold px-7 py-3.5 rounded-xl hover:bg-[#0d440d] transition-colors shadow-lg shadow-brand-blue/20 text-sm">
                       {t.startTrial} <ArrowRight className="w-4 h-4" />
                     </a>
                   </Link>
-                  <button onClick={() => setDemoOpen(true)} className="inline-flex items-center gap-2 text-[#0F510F] font-semibold px-4 py-3.5 rounded-xl hover:bg-[#0F510F]/5 transition-colors text-sm">
+                  <button onClick={() => setDemoOpen(true)} className="inline-flex items-center gap-2 text-brand-blue font-semibold px-4 py-3.5 rounded-xl hover:bg-brand-blue/5 transition-colors text-sm">
                     <Play className="w-4 h-4" /> {t.seeDemo}
                   </button>
                 </div>
@@ -534,10 +535,10 @@ export default function LandingPage() {
             {steps.map((s, i) => (
               <Reveal key={i} delay={i * 120}>
                 <div className="relative text-center lg:text-start">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#0F510F]/10 mb-5">
-                    <s.icon className="w-6 h-6 text-[#0F510F]" />
+                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-blue/10 mb-5">
+                    <s.icon className="w-6 h-6 text-brand-blue" />
                   </div>
-                  <span className="block text-xs font-bold text-[#408440] tracking-widest uppercase mb-2">{s.num}</span>
+                  <span className="block text-xs font-bold text-brand-cyan tracking-widest uppercase mb-2">{s.num}</span>
                   <h3 className="text-xl font-semibold mb-2">{s.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{s.desc}</p>
                   {/* Connector arrow (desktop only, not on last) */}
@@ -567,8 +568,8 @@ export default function LandingPage() {
             {features.map((f, i) => (
               <Reveal key={i} delay={i * 80}>
                 <div className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow h-full">
-                  <div className="w-12 h-12 rounded-xl bg-[#0F510F]/10 flex items-center justify-center mb-4">
-                    <f.icon className="w-5 h-5 text-[#0F510F]" />
+                  <div className="w-12 h-12 rounded-xl bg-brand-blue/10 flex items-center justify-center mb-4">
+                    <f.icon className="w-5 h-5 text-brand-blue" />
                   </div>
                   <h3 className="text-base font-semibold mb-2">{f.title}</h3>
                   <p className="text-sm text-gray-600 leading-relaxed">{f.desc}</p>
@@ -580,7 +581,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── STATS ────────────────────────────────────────────── */}
-      <section className="py-16 lg:py-20 bg-[#0F510F]">
+      <section className="py-16 lg:py-20 bg-brand-blue">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {stats.map((s, i) => (
@@ -668,7 +669,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── CTA BANNER ───────────────────────────────────────── */}
-      <section className="py-20 lg:py-24 bg-[#0F510F] relative overflow-hidden">
+      <section className="py-20 lg:py-24 bg-brand-blue relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 start-1/4 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 end-1/4 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
@@ -679,7 +680,7 @@ export default function LandingPage() {
             <p className="mt-4 text-white/70 text-lg">{t.ctaSub}</p>
             <div className="mt-8 flex items-center justify-center">
               <Link href="/register">
-                <a className="inline-flex items-center gap-2 bg-white text-[#0F510F] font-semibold px-7 py-3.5 rounded-xl hover:bg-gray-100 transition-colors text-sm shadow-lg">
+                <a className="inline-flex items-center gap-2 bg-white text-brand-blue font-semibold px-7 py-3.5 rounded-xl hover:bg-gray-100 transition-colors text-sm shadow-lg">
                   {t.startTrial} <ArrowRight className="w-4 h-4" />
                 </a>
               </Link>

@@ -148,13 +148,13 @@ function WorkHoursPanel() {
     update({ days: next });
   };
 
-  const inputCls = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#0F510F]/40 transition-shadow";
+  const inputCls = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-blue/40 transition-shadow";
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <div className="px-5 pt-5 pb-4 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[#0F510F]" />
+          <Clock className="w-4 h-4 text-brand-blue" />
           <div>
             <h2 className="text-sm font-semibold text-gray-900">{t("workHoursTitle")}</h2>
             <p className="text-xs text-gray-400 mt-0.5">{t("workHoursDesc")}</p>
@@ -162,7 +162,7 @@ function WorkHoursPanel() {
         </div>
         <div className="flex items-center gap-1.5 text-xs min-w-[80px] justify-end">
           {saveStatus === "saving" && <><span className="w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0" /><span className="text-gray-400">{t("workHoursSaving")}</span></>}
-          {saveStatus === "saved"  && <><span className="w-1.5 h-1.5 rounded-full bg-[#0F510F] flex-shrink-0" /><span className="text-[#0F510F]">{t("workHoursSaved")}</span></>}
+          {saveStatus === "saved"  && <><span className="w-1.5 h-1.5 rounded-full bg-brand-blue flex-shrink-0" /><span className="text-brand-blue">{t("workHoursSaved")}</span></>}
           {saveStatus === "error"  && <><span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" /><span className="text-red-500">{t("workHoursErrorSave")}</span></>}
         </div>
       </div>
@@ -183,8 +183,8 @@ function WorkHoursPanel() {
                 onClick={() => toggleDay(day)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                   wh.days.includes(day)
-                    ? "bg-[#0F510F] text-white border-[#0F510F]"
-                    : "bg-white text-gray-500 border-gray-200 hover:border-[#0F510F]/40"
+                    ? "bg-brand-blue text-white border-brand-blue"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-brand-blue/40"
                 }`}
               >
                 {day}
@@ -420,7 +420,7 @@ export default function Meetings() {
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-10">
           {loading ? (
             <div className="flex items-center justify-center py-16">
-              <div className="w-6 h-6 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+              <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
             </div>
           ) : meetings.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-gray-400 gap-2">
@@ -499,7 +499,7 @@ export default function Meetings() {
                             <button
                               onClick={() => markComplete(m.id, m.source ?? 'meeting')}
                               disabled={completing === m.id}
-                              className="inline-flex items-center gap-1.5 text-xs font-medium bg-[#0F510F] text-white px-3.5 py-2 rounded-lg hover:bg-[#0d4510] disabled:opacity-50 transition-colors"
+                              className="inline-flex items-center gap-1.5 text-xs font-medium bg-brand-blue text-white px-3.5 py-2 rounded-lg hover:bg-brand-cyan disabled:opacity-50 transition-colors"
                             >
                               Complete
                             </button>
@@ -535,7 +535,7 @@ export default function Meetings() {
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             {loadingSlots ? (
               <div className="flex items-center justify-center py-12">
-                <div className="w-6 h-6 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+                <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -580,7 +580,7 @@ export default function Meetings() {
                                 className={`w-full h-8 rounded-md text-xs font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-1 ${
                                   isBlocked
                                     ? "bg-red-100 text-red-700 hover:bg-red-200 border border-red-200"
-                                    : "bg-[#0F510F]/10 text-[#0F510F] hover:bg-[#0F510F]/20 border border-[#0F510F]/20"
+                                    : "bg-brand-blue/10 text-brand-blue hover:bg-brand-blue/20 border border-brand-blue/20"
                                 }`}
                               >
                                 {isToggling ? (

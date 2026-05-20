@@ -139,7 +139,7 @@ export default function ContactsPage() {
   if (isAuthLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
       </div>
     );
   }
@@ -291,7 +291,7 @@ export default function ContactsPage() {
           {/* Title + action buttons */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-              <BookUser className="w-5 h-5 text-[#0F510F]" />
+              <BookUser className="w-5 h-5 text-brand-blue" />
               <h1 className="text-2xl font-bold text-gray-900">{t("contactsTitle")}</h1>
               <span className="text-sm text-gray-500 ml-1">
                 {contacts.length} {t("contactsTotal")}
@@ -317,7 +317,7 @@ export default function ContactsPage() {
               </button>
               <button
                 onClick={() => { setShowAdd(true); setAddError(""); setAddForm({ name: "", phone: "+966" }); }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#0F510F] text-white rounded-lg text-sm font-semibold hover:bg-[#0d4510] transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 bg-brand-blue text-white rounded-lg text-sm font-semibold hover:bg-brand-cyan transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 {t("contactsAdd")}
@@ -333,7 +333,7 @@ export default function ContactsPage() {
               placeholder={t("contactsSearch")}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-[#0F510F] transition-colors"
+              className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-brand-blue transition-colors"
             />
           </div>
 
@@ -341,7 +341,7 @@ export default function ContactsPage() {
           <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
             {loading ? (
               <div className="flex items-center justify-center py-16">
-                <div className="w-6 h-6 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+                <div className="w-6 h-6 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -435,7 +435,7 @@ export default function ContactsPage() {
                 placeholder="Jane Smith"
                 value={addForm.name}
                 onChange={e => setAddForm(p => ({ ...p, name: e.target.value }))}
-                className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#0F510F] ${nameError(addForm.name) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
+                className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${nameError(addForm.name) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
               />
               {nameError(addForm.name) && <p className="text-xs text-red-500 mt-1">{nameError(addForm.name)}</p>}
             </div>
@@ -448,14 +448,14 @@ export default function ContactsPage() {
                 placeholder={t("contactsFormPhonePlaceholder")}
                 value={addForm.phone}
                 onChange={e => setAddForm(p => ({ ...p, phone: e.target.value }))}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#0F510F]"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-brand-blue"
               />
             </div>
             {addError && <p className="text-sm text-red-600">{addError}</p>}
             <button
               type="submit"
               disabled={addSaving}
-              className="w-full py-2.5 bg-[#0F510F] text-white rounded-lg text-sm font-semibold hover:bg-[#0d4510] disabled:opacity-60 transition-colors"
+              className="w-full py-2.5 bg-brand-blue text-white rounded-lg text-sm font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors"
             >
               {addSaving ? t("saving") : t("contactsBtnAdd")}
             </button>
@@ -479,7 +479,7 @@ export default function ContactsPage() {
                 placeholder="Jane Smith"
                 value={editName}
                 onChange={e => setEditName(e.target.value)}
-                className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#0F510F] ${nameError(editName) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
+                className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-blue ${nameError(editName) ? "border-red-300 focus:border-red-400" : "border-gray-200"}`}
               />
               {nameError(editName) && <p className="text-xs text-red-500 mt-1">{nameError(editName)}</p>}
             </div>
@@ -487,7 +487,7 @@ export default function ContactsPage() {
             <button
               type="submit"
               disabled={editSaving}
-              className="w-full py-2.5 bg-[#0F510F] text-white rounded-lg text-sm font-semibold hover:bg-[#0d4510] disabled:opacity-60 transition-colors"
+              className="w-full py-2.5 bg-brand-blue text-white rounded-lg text-sm font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors"
             >
               {editSaving ? t("saving") : t("contactsBtnSave")}
             </button>
@@ -511,7 +511,7 @@ export default function ContactsPage() {
               /* Step 1: pick file */
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-gray-200 rounded-xl py-10 flex flex-col items-center gap-2 text-gray-500 hover:border-[#0F510F]/50 hover:text-[#0F510F] transition-colors"
+                className="w-full border-2 border-dashed border-gray-200 rounded-xl py-10 flex flex-col items-center gap-2 text-gray-500 hover:border-brand-blue/50 hover:text-brand-blue transition-colors"
               >
                 <Upload className="w-7 h-7" />
                 <span className="text-sm font-medium">{t("contactsImportDrop")}</span>
@@ -529,7 +529,7 @@ export default function ContactsPage() {
                       .replace("{invalid}", String(importResult.invalid))}
                   </p>
                 </div>
-                <button onClick={closeImport} className="w-full py-2.5 bg-[#0F510F] text-white rounded-lg text-sm font-semibold hover:bg-[#0d4510] transition-colors">
+                <button onClick={closeImport} className="w-full py-2.5 bg-brand-blue text-white rounded-lg text-sm font-semibold hover:bg-brand-cyan transition-colors">
                   {t("agentsBtnDone")}
                 </button>
               </div>
@@ -543,7 +543,7 @@ export default function ContactsPage() {
                     <select
                       value={phoneColIdx ?? ""}
                       onChange={e => setPhoneColIdx(e.target.value === "" ? null : Number(e.target.value))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-[#0F510F]"
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-blue"
                     >
                       <option value="">— select —</option>
                       {csvData.headers.map((h, i) => (
@@ -556,7 +556,7 @@ export default function ContactsPage() {
                     <select
                       value={nameColIdx ?? ""}
                       onChange={e => setNameColIdx(e.target.value === "" ? null : Number(e.target.value))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-[#0F510F]"
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-blue"
                     >
                       <option value="">— optional —</option>
                       {csvData.headers.map((h, i) => (
@@ -579,7 +579,7 @@ export default function ContactsPage() {
                             <th
                               key={i}
                               className={`text-left px-2 py-1.5 font-semibold whitespace-nowrap ${
-                                i === phoneColIdx ? "text-[#0F510F]" : i === nameColIdx ? "text-blue-600" : "text-gray-500"
+                                i === phoneColIdx ? "text-brand-blue" : i === nameColIdx ? "text-blue-600" : "text-gray-500"
                               }`}
                             >
                               {h || `Col ${i + 1}`}
@@ -613,7 +613,7 @@ export default function ContactsPage() {
                   <button
                     onClick={handleImport}
                     disabled={importSaving || phoneColIdx === null}
-                    className="flex-[2] py-2 bg-[#0F510F] text-white rounded-lg text-sm font-semibold hover:bg-[#0d4510] disabled:opacity-60 transition-colors"
+                    className="flex-[2] py-2 bg-brand-blue text-white rounded-lg text-sm font-semibold hover:bg-brand-cyan disabled:opacity-60 transition-colors"
                   >
                     {importSaving
                       ? t("contactsImporting")

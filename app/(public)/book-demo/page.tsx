@@ -87,7 +87,7 @@ export default function BookDemoPage() {
         {/* Loading */}
         {state === "loading" && (
           <div className="flex items-center justify-center py-24">
-            <div className="w-8 h-8 border-4 border-[#0F510F]/20 border-t-[#0F510F] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
           </div>
         )}
 
@@ -116,7 +116,7 @@ export default function BookDemoPage() {
             ) : !selectedDate ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <CalendarDays className="w-4 h-4 text-[#0F510F]" />
+                  <CalendarDays className="w-4 h-4 text-brand-blue" />
                   Select a date
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -124,7 +124,7 @@ export default function BookDemoPage() {
                     <button
                       key={d.date}
                       onClick={() => { setSelectedDate(d.date); setSelectedTime(null); setErrorMsg(""); }}
-                      className="bg-white border border-border hover:border-[#0F510F] hover:bg-[#0F510F]/5 text-left px-4 py-3 rounded-xl transition-colors"
+                      className="bg-white border border-border hover:border-brand-blue hover:bg-brand-blue/5 text-left px-4 py-3 rounded-xl transition-colors"
                     >
                       <p className="font-semibold text-sm text-gray-900">{d.label}</p>
                       <p className="text-xs text-gray-500 mt-0.5">{d.slots.length} slot{d.slots.length !== 1 ? "s" : ""} available</p>
@@ -144,7 +144,7 @@ export default function BookDemoPage() {
                 </button>
 
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <Clock className="w-4 h-4 text-[#0F510F]" />
+                  <Clock className="w-4 h-4 text-brand-blue" />
                   Select a time
                 </div>
 
@@ -155,8 +155,8 @@ export default function BookDemoPage() {
                       onClick={() => { setSelectedTime(slot); setErrorMsg(""); }}
                       className={`px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
                         selectedTime === slot
-                          ? "bg-[#0F510F] text-white border-[#0F510F]"
-                          : "bg-white border-border hover:border-[#0F510F] hover:bg-[#0F510F]/5 text-gray-900"
+                          ? "bg-brand-blue text-white border-brand-blue"
+                          : "bg-white border-border hover:border-brand-blue hover:bg-brand-blue/5 text-gray-900"
                       }`}
                     >
                       {slot}
@@ -174,14 +174,14 @@ export default function BookDemoPage() {
                 </div>
 
                 {selectedTime && (
-                  <div className="bg-[#0F510F]/5 border border-[#0F510F]/20 rounded-xl p-4 space-y-3">
+                  <div className="bg-brand-blue/5 border border-brand-blue/20 rounded-xl p-4 space-y-3">
                     <p className="text-sm text-gray-700">
                       <span className="font-semibold">Selected:</span> {selectedDayData?.label} at {selectedTime} KSA time
                     </p>
                     <button
                       onClick={handleConfirm}
                       disabled={confirming}
-                      className="w-full bg-[#0F510F] text-white py-3 rounded-xl font-semibold text-sm hover:bg-[#0d4510] disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
+                      className="w-full bg-brand-blue text-white py-3 rounded-xl font-semibold text-sm hover:bg-brand-cyan disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
                     >
                       {confirming ? (
                         <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Confirming…</>
@@ -199,8 +199,8 @@ export default function BookDemoPage() {
         {/* Success — persists across sessions until meeting is completed */}
         {state === "success" && (
           <div className="bg-white border border-border rounded-xl p-8 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-[#0F510F]/10 flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-8 h-8 text-[#0F510F]" />
+            <div className="w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-8 h-8 text-brand-blue" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">Demo confirmed!</h2>
@@ -217,7 +217,7 @@ export default function BookDemoPage() {
                 href={meetingLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#0F510F] text-white px-6 py-3 rounded-xl font-semibold text-sm hover:bg-[#0d4510] transition-colors"
+                className="inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-3 rounded-xl font-semibold text-sm hover:bg-brand-cyan transition-colors"
               >
                 <Video className="w-4 h-4" /> Join Meeting
               </a>
