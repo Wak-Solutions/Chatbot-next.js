@@ -25,7 +25,7 @@
 import { randomBytes } from 'node:crypto';
 import type { NextRequest } from 'next/server';
 import { api } from '@/lib/contracts/routes';
-import type { SessionData } from './session';
+import { SESSION_TTL_MS, type SessionData } from './session';
 
 export const CSRF_COOKIE_NAME = 'csrf-token';
 export const CSRF_HEADER_NAME = 'x-csrf-token';
@@ -55,12 +55,19 @@ export interface CsrfCookieValue {
     sameSite: 'strict';
     secure: boolean;
     path: '/';
+    maxAge: number;
   };
 }
 
 /**
  * Ensure session.csrfToken exists (mutates `session` in place), and
  * return the cookie payload the caller should set on the response.
+ *
+ * maxAge matches SESSION_TTL_MS so the cookie outlives a browser
+ * restart. Without it, browsers treat the cookie as a session cookie
+ * and wipe it on tab/window close, even though the server-side session
+ * (and its csrfToken) survive — the next POST then hits 403 with an
+ * empty header. Caused the book-a-demo / send-message intermittent 403s.
  */
 export function setCsrfCookie(session: SessionData): CsrfCookieValue {
   if (!session.csrfToken) {
@@ -73,6 +80,7 @@ export function setCsrfCookie(session: SessionData): CsrfCookieValue {
       sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',
       path: '/',
+      maxAge: Math.floor(SESSION_TTL_MS / 1000),
     },
   };
 }

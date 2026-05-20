@@ -4,7 +4,6 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { apiRequest } from "@/lib/queryClient";
 import { CalendarDays, Clock, CheckCircle2, ChevronLeft, AlertCircle, Video } from "lucide-react";
 
 interface DaySlots {
@@ -56,10 +55,26 @@ export default function BookDemoPage() {
     setConfirming(true);
     setErrorMsg("");
     try {
-      const res = await apiRequest("POST", "/api/demo-booking/book", { date: selectedDate, time: selectedTime });
-      const data = await res.json();
+      // Use raw fetch so apiRequest's throwIfResNotOk doesn't swallow the
+      // response body — we want the server's actual message (CSRF, tenant
+      // gate, slot taken, etc.) instead of generic "Network error".
+      const csrfToken =
+        document.cookie.split("; ").find(r => r.startsWith("csrf-token="))?.split("=")[1] ?? "";
+      const res = await fetch("/api/demo-booking/book", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
+        body: JSON.stringify({ date: selectedDate, time: selectedTime }),
+      });
+      let data: { message?: string; ksa_label?: string; meeting_link?: string } = {};
+      try { data = await res.json(); } catch { /* non-JSON body — leave empty */ }
       if (!res.ok) {
-        setErrorMsg(data.message || "Booking failed. Please try another slot.");
+        const sessionExpired = res.status === 403 && /csrf/i.test(data.message ?? "");
+        setErrorMsg(
+          sessionExpired
+            ? "Your session expired. Please refresh the page and try again."
+            : data.message || `Booking failed (HTTP ${res.status}). Please try another slot.`,
+        );
         setSelectedTime(null);
         setConfirming(false);
         return;
@@ -67,8 +82,8 @@ export default function BookDemoPage() {
       setBookedLabel(data.ksa_label || `${selectedDate} at ${selectedTime}`);
       setMeetingLink(data.meeting_link || "");
       setState("success");
-    } catch {
-      setErrorMsg("Network error. Please try again.");
+    } catch (err) {
+      setErrorMsg(`Network error: ${(err as Error)?.message ?? "unknown"}. Please try again.`);
       setConfirming(false);
     }
   };
