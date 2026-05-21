@@ -10,7 +10,8 @@
 import { NextResponse } from 'next/server';
 import { withAdmin, withCsrf } from '@/lib/http/handlers';
 import { createLogger } from '@/lib/logger';
-import { getOpenAI, getOpenAIModel } from '@/lib/llm/openai';
+import { generateText } from 'ai';
+import { getModel } from '@/lib/llm/provider';
 import { openAiLimiter } from '@/lib/http/rateLimit';
 
 const logger = createLogger('chatbot-config');
@@ -80,13 +81,13 @@ export const POST = withCsrf(
         .filter(Boolean)
         .join('\n');
 
-      const completion = await getOpenAI().chat.completions.create({
-        model: getOpenAIModel(),
-        max_tokens: 1000,
+      const completion = await generateText({
+        model: getModel(),
+        maxOutputTokens: 1000,
         messages: [{ role: 'user', content: userPrompt }],
       });
 
-      const raw = completion.choices[0]?.message?.content ?? '[]';
+      const raw = completion.text || '[]';
       const cleaned = raw.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
       const conversation = JSON.parse(cleaned);
 

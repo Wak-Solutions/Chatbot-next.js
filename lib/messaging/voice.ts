@@ -18,7 +18,8 @@
 
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
-import { getOpenAI } from '@/lib/llm/openai';
+import { experimental_transcribe as transcribe } from 'ai';
+import { openai } from '@ai-sdk/openai';
 
 const logger = createLogger('voice');
 
@@ -129,15 +130,12 @@ export async function downloadMediaFromMeta(
 
 export async function transcribeWithWhisper(bytes: Buffer, mime: string): Promise<string> {
   const ext = extFor(mime);
-  logger.info({ sizeBytes: bytes.length, ext }, 'Whisper request');
-
-  // Node 20+ has File globally; OpenAI SDK accepts File.
-  const file = new File([new Uint8Array(bytes)], `voice.${ext}`, { type: mime });
+  logger.info({ sizeBytes: bytes.length, ext, mime }, 'Whisper request');
 
   try {
-    const response = await getOpenAI().audio.transcriptions.create({
-      model: 'whisper-1',
-      file,
+    const response = await transcribe({
+      model: openai.transcription('whisper-1'),
+      audio: new Uint8Array(bytes),
     });
     const text = (response.text ?? '').trim();
     if (text) {

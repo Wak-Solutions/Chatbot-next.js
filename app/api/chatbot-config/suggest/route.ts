@@ -13,7 +13,8 @@ import { withAdmin, withCsrf } from '@/lib/http/handlers';
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
 import { compilePrompt, menuDepthValid } from '@/lib/llm/prompts/compile';
-import { getOpenAI, getOpenAIModel } from '@/lib/llm/openai';
+import { generateText } from 'ai';
+import { getModel } from '@/lib/llm/provider';
 import { openAiLimiter } from '@/lib/http/rateLimit';
 
 const logger = createLogger('chatbot-config');
@@ -64,16 +65,16 @@ Apply the change to whichever field makes semantic sense. If the instruction say
 
       const userPrompt = `Current config:\n${JSON.stringify(currentConfig, null, 2)}\n\nInstruction: ${suggestion.trim()}`;
 
-      const completion = await getOpenAI().chat.completions.create({
-        model: getOpenAIModel(),
-        max_tokens: 2000,
+      const completion = await generateText({
+        model: getModel(),
+        maxOutputTokens: 2000,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
       });
 
-      const raw = completion.choices[0]?.message?.content ?? '';
+      const raw = completion.text ?? '';
       const cleaned = raw.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
 
       let newConfig: Record<string, unknown>;

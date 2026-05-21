@@ -28,12 +28,17 @@ import { maskPhone } from '@/lib/phone';
 import * as memory from '@/lib/messaging/memory';
 import { getPendingMeeting } from '@/lib/meetings/queries';
 import { notifyDashboard } from '@/lib/notifications/dashboard';
-import { getOpenAIModel } from '@/lib/llm/openai';
+import { generateText, stepCountIs, type ModelMessage } from 'ai';
+import { getModel } from '@/lib/llm/provider';
+import { botTools } from '@/lib/llm/tools';
 import * as menu from '@/worker/menu/handler';
 import { buildMessages } from './buildMessages';
-import { OpenAITimeoutError, runOpenAITurn } from './runOpenAITurn';
 import { resolveBookingUrl } from './resolveBookingUrl';
 import { aiSchedulingManually, wantsEscalation, wantsMeeting } from './intent';
+
+const OPENAI_TIMEOUT_MS = 30_000;
+const TIMEOUT_FALLBACK_TEXT =
+  "I'm taking too long to respond. Please try again in a moment.";
 
 const logger = createLogger('orchestrator');
 
@@ -227,10 +232,13 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
     companyId,
   });
 
-  // Step 6+7 — OpenAI call with tool dispatch.
+  // Step 6+7 — OpenAI call with tool dispatch (AI SDK generateText).
+  // Tools are constructed per-request via the botTools(companyId) factory
+  // so each tool's execute() captures companyId in closure — the model
+  // never sees or controls company_id, preventing cross-tenant lookups.
   logger.info(
     {
-      model: getOpenAIModel(),
+      model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
       historyLen: history.length,
       phone: maskPhone(customerPhone),
     },
@@ -239,10 +247,30 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
 
   let finalReply: string | null;
   try {
-    finalReply = await runOpenAITurn(messages, customerPhone, companyId);
+    const result = await generateText({
+      model: getModel(),
+      messages: messages as ModelMessage[],
+      tools: botTools(companyId),
+      // Match the legacy two-turn budget (tool call + follow-up). The
+      // original runOpenAITurn ran one call, dispatched tools, then ran
+      // one follow-up. stepCountIs(5) is conservative headroom.
+      stopWhen: stepCountIs(5),
+      abortSignal: AbortSignal.timeout(OPENAI_TIMEOUT_MS),
+    });
+    finalReply = result.text || null;
   } catch (err) {
-    if (err instanceof OpenAITimeoutError) {
-      return [err.fallback, null];
+    const e = err as { name?: string; message?: string; code?: string };
+    if (
+      e.name === 'AbortError' ||
+      e.name === 'TimeoutError' ||
+      e.code === 'ETIMEDOUT' ||
+      /timeout|aborted/i.test(e.message ?? '')
+    ) {
+      logger.error(
+        { phone: maskPhone(customerPhone) },
+        'OpenAI timeout',
+      );
+      return [TIMEOUT_FALLBACK_TEXT, null];
     }
     throw err;
   }
