@@ -89,3 +89,9 @@ export function createLogger(module: string): Logger {
 export function child(parent: Logger, module: string): Logger {
   return parent.child({ module });
 }
+
+// Default-named logger for callers that want `import { logger }` without
+// picking a module tag (used by Phase 2 queue/worker code per the
+// manager's spec). Tagged as `module:'default'` so it's still
+// distinguishable in logs from a real createLogger() call.
+export const logger: Logger = getRoot().child({ module: 'default' });

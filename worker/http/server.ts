@@ -17,7 +17,6 @@
 
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import type { Logger } from '@/lib/logger';
-import type { Semaphore } from '@/worker/concurrency';
 import { makeHealthHandler } from './health';
 import { makeWebhookVerifyHandler } from './webhookVerify';
 import { makeWebhookReceiveHandler } from './webhookReceive';
@@ -29,13 +28,12 @@ export interface WorkerHttpServer {
 
 export interface CreateWorkerServerInput {
   logger: Logger;
-  sema: Semaphore;
 }
 
-export function createWorkerServer({ logger, sema }: CreateWorkerServerInput): WorkerHttpServer {
+export function createWorkerServer({ logger }: CreateWorkerServerInput): WorkerHttpServer {
   const handleHealth = makeHealthHandler(logger);
   const handleVerify = makeWebhookVerifyHandler(logger);
-  const handleReceive = makeWebhookReceiveHandler(logger, sema);
+  const handleReceive = makeWebhookReceiveHandler(logger);
 
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     const url = req.url ?? '/';

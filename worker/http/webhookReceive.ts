@@ -40,9 +40,9 @@ import {
 import { resolveCompanyByPhoneNumberId } from '@/lib/companies/resolveByPhoneNumberId';
 import { claimMessageId } from '@/lib/inbox/messageIdClaim';
 import { getPool } from '@/lib/db/client';
-import type { Semaphore } from '@/worker/concurrency';
-import { processText } from '@/worker/tasks/processText';
-import { processAudio } from '@/worker/tasks/processAudio';
+import { botQueue } from '@/lib/queue/queues';
+import type { ProcessTextInput } from '@/worker/tasks/processText';
+import type { ProcessAudioInput } from '@/worker/tasks/processAudio';
 
 function send200(res: ServerResponse, body: object = { status: 'ok' }): void {
   res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -80,7 +80,7 @@ async function persistRawInbound(
   }
 }
 
-export function makeWebhookReceiveHandler(logger: Logger, sema: Semaphore) {
+export function makeWebhookReceiveHandler(logger: Logger) {
   return async function handleReceive(
     req: IncomingMessage,
     res: ServerResponse,
@@ -213,26 +213,20 @@ export function makeWebhookReceiveHandler(logger: Logger, sema: Semaphore) {
         { phone: maskPhone(customerPhone), companyId, type: 'text' },
         'Message received',
       );
-      sema
-        .acquire()
-        .then(async (release) => {
-          try {
-            await processText({
-              customerPhone,
-              messageText,
-              companyId: companyId as number,
-              creds: { token: creds.token, phoneId: creds.phoneId },
-            });
-          } finally {
-            release();
-          }
-        })
-        .catch((err: Error) =>
-          logger.error(
-            { phone: maskPhone(customerPhone), err: err.message },
-            'processText dispatch failed',
-          ),
+      try {
+        const data: ProcessTextInput = {
+          customerPhone,
+          messageText,
+          companyId: companyId as number,
+          creds: { token: creds.token, phoneId: creds.phoneId },
+        };
+        await botQueue.add('process-text', data);
+      } catch (err) {
+        logger.error(
+          { phone: maskPhone(customerPhone), err: (err as Error).message },
+          'process-text enqueue failed',
         );
+      }
       return send200(res);
     }
 
@@ -251,27 +245,21 @@ export function makeWebhookReceiveHandler(logger: Logger, sema: Semaphore) {
         { phone: maskPhone(customerPhone), companyId, type: 'audio', mime },
         'Message received',
       );
-      sema
-        .acquire()
-        .then(async (release) => {
-          try {
-            await processAudio({
-              customerPhone,
-              mediaId,
-              mimeType: mime,
-              companyId: companyId as number,
-              creds: { token: creds.token, phoneId: creds.phoneId },
-            });
-          } finally {
-            release();
-          }
-        })
-        .catch((err: Error) =>
-          logger.error(
-            { phone: maskPhone(customerPhone), err: err.message },
-            'processAudio dispatch failed',
-          ),
+      try {
+        const data: ProcessAudioInput = {
+          customerPhone,
+          mediaId,
+          mimeType: mime,
+          companyId: companyId as number,
+          creds: { token: creds.token, phoneId: creds.phoneId },
+        };
+        await botQueue.add('process-audio', data);
+      } catch (err) {
+        logger.error(
+          { phone: maskPhone(customerPhone), err: (err as Error).message },
+          'process-audio enqueue failed',
         );
+      }
       return send200(res);
     }
 

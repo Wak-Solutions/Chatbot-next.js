@@ -82,6 +82,10 @@ export const workerEnvSchema = baseEnvSchema.extend({
   // Worker still needs a port if it exposes a health endpoint.
   PORT: z.coerce.number().int().positive().default(3000),
   HOST: z.string().min(1).default('0.0.0.0'),
+
+  // BullMQ Redis connection (Phase 2). Refuse to start without it — the
+  // worker's queue/dispatch path depends on Redis being reachable.
+  REDIS_URL: z.string().url(),
 });
 
 export type AppEnv = z.infer<typeof appEnvSchema>;
@@ -93,4 +97,13 @@ export function loadAppEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
 
 export function loadWorkerEnv(source: NodeJS.ProcessEnv = process.env): WorkerEnv {
   return workerEnvSchema.parse(source);
+}
+
+// Memoised accessor matching the Phase 2 spec's `getWorkerEnv()` import.
+// Caches the parsed result so repeated calls (from connection.ts,
+// queue/queues.ts, etc.) don't re-run Zod validation on every use.
+let _workerEnv: WorkerEnv | null = null;
+export function getWorkerEnv(): WorkerEnv {
+  if (!_workerEnv) _workerEnv = loadWorkerEnv();
+  return _workerEnv;
 }

@@ -19,7 +19,7 @@
  * claim" / "Reminder tick failed") keeps working through the cutover.
  */
 
-import type { Logger } from '@/lib/logger';
+import { createLogger } from '@/lib/logger';
 import {
   findPendingReminders,
   claimReminder,
@@ -29,7 +29,9 @@ import { sendWhatsAppText } from '@/lib/messaging/whatsapp';
 import { getCompanyBranding } from '@/lib/notifications/email';
 import { maskPhone } from '@/lib/phone';
 
-export async function meetingReminderTick(logger: Logger): Promise<void> {
+const logger = createLogger('meeting-reminder');
+
+export async function meetingReminderTask(): Promise<void> {
   try {
     const pending = await findPendingReminders();
 

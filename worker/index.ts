@@ -1,22 +1,21 @@
 /**
- * Worker entrypoint — orchestrates env validation, pool readiness,
- * HTTP server (with /webhook from PR 13), cron scheduler, and graceful
- * shutdown.
+ * Worker entrypoint — env validation, pool readiness, HTTP server,
+ * BullMQ worker + repeatable jobs, graceful shutdown.
  *
- * The Semaphore singleton (cap = DEFAULT_MAX = 8) is constructed here
- * and passed into the HTTP server so the /webhook receive path can
- * enqueue text/audio dispatches without exceeding the pool / OpenAI
- * concurrency budget.
+ * Phase 2 replaced the in-process Semaphore + setInterval cron with a
+ * BullMQ worker reading from a Redis-backed queue. The webhook now
+ * enqueues a job and returns 200; the queueWorker picks the job up
+ * and runs processText/processAudio with concurrency 8.
  *
- * Shutdown ordering (SIGTERM/SIGINT):
+ * Shutdown ordering (SIGTERM/SIGINT) — manager's spec requires this
+ * exact order:
  *
  *   1. Set shuttingDown flag — idempotent against double signals.
  *   2. server.close() — stop accepting new HTTP, let in-flight finish.
- *   3. cron.stop() — clear the interval so no new ticks start.
- *   4. cron.drain(timeoutMs) — wait for any in-flight cron tick.
- *   5. sema.drain(timeoutMs) — wait for any in-flight bot turns.
- *   6. pool.end() — close pg pool cleanly.
- *   7. process.exit(0).
+ *   3. queueWorker.close() — let BullMQ finish in-flight jobs and stop
+ *      polling Redis.
+ *   4. pool.end() — close pg pool cleanly.
+ *   5. process.exit(0).
  *
  *   Safety net: a 30s setTimeout (unref'd) calls process.exit(1) if
  *   any step above hangs. 30s matches Railway's SIGTERM-to-SIGKILL
@@ -26,12 +25,11 @@
 import { loadWorkerEnv } from '@/lib/env';
 import { createLogger } from '@/lib/logger';
 import { getPool } from '@/lib/db/client';
-import { Semaphore } from './concurrency';
 import { createWorkerServer } from './http/server';
-import { startMeetingReminderCron, type CronHandle } from './cron';
+import { startQueueWorker } from './queueWorker';
+import { registerScheduledJobs } from './scheduledJobs';
 
 const HARD_EXIT_MS = 30_000;
-const DRAIN_BUDGET_MS = 28_000; // 30s minus 2s headroom for pool.end + exit
 
 async function main(): Promise<void> {
   const env = loadWorkerEnv();
@@ -49,18 +47,16 @@ async function main(): Promise<void> {
   }
   logger.info('DB pool ready');
 
-  const sema = new Semaphore();
-  logger.info(
-    { max: 8 },
-    'Concurrency semaphore initialized',
-  );
-
-  const { server, close: closeServer } = createWorkerServer({ logger, sema });
+  const { server, close: closeServer } = createWorkerServer({ logger });
   server.listen(env.PORT, env.HOST, () => {
     logger.info({ host: env.HOST, port: env.PORT }, 'Worker HTTP listening');
   });
 
-  const cron: CronHandle | null = startMeetingReminderCron(logger);
+  const queueWorker = startQueueWorker();
+  logger.info({ concurrency: 8 }, 'BullMQ worker started');
+
+  await registerScheduledJobs();
+  logger.info('Repeatable jobs registered');
 
   let shuttingDown = false;
   const shutdown = async (signal: NodeJS.Signals): Promise<void> => {
@@ -80,19 +76,8 @@ async function main(): Promise<void> {
       logger.info('Closing HTTP server');
       await closeServer();
 
-      cron?.stop();
-      logger.info('Cron stopped');
-
-      if (cron) {
-        const cronDrained = await cron.drain(DRAIN_BUDGET_MS / 2);
-        logger.info({ drained: cronDrained, inflight: cron.inflightCount() }, 'Cron drained');
-      }
-
-      const semaDrained = await sema.drain(DRAIN_BUDGET_MS / 2);
-      logger.info(
-        { drained: semaDrained, inflight: sema.inflightCount, queued: sema.queuedCount },
-        'Bot-turn semaphore drained',
-      );
+      logger.info('Closing BullMQ worker');
+      await queueWorker.close();
 
       logger.info('Closing pg pool');
       await getPool().end();

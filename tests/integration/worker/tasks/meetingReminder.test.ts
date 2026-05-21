@@ -27,7 +27,6 @@ import {
   vi,
 } from 'vitest';
 import type { Pool } from 'pg';
-import { createLogger } from '@/lib/logger';
 import { hasDatabaseUrl, newTestPool } from '@/tests/helpers/db';
 
 const sendMock = vi.hoisted(() =>
@@ -53,7 +52,7 @@ vi.mock('@/lib/notifications/email', async () => {
 });
 
 // Imported AFTER vi.mock so the mocked deps are in place.
-const { meetingReminderTick } = await import('@/worker/tasks/meetingReminder');
+const { meetingReminderTask } = await import('@/worker/tasks/meetingReminder');
 
 const COMPANY_ID = 999_997;
 const PHONE_PREFIX = '+testreminder';
@@ -63,7 +62,6 @@ describe.skipIf(!hasDatabaseUrl())(
   'worker/tasks/meetingReminder (integration)',
   () => {
     let pool: Pool;
-    const logger = createLogger('test-reminder');
 
     beforeAll(() => {
       pool = newTestPool();
@@ -107,7 +105,7 @@ describe.skipIf(!hasDatabaseUrl())(
       const id = await insertPendingMeeting(phone);
       sendMock.mockResolvedValue(true);
 
-      await meetingReminderTick(logger);
+      await meetingReminderTask();
 
       expect(sendMock).toHaveBeenCalledTimes(1);
       const flagged = await pool.query<{ link_sent: boolean }>(
@@ -122,10 +120,10 @@ describe.skipIf(!hasDatabaseUrl())(
       await insertPendingMeeting(phone);
       sendMock.mockResolvedValue(true);
 
-      await meetingReminderTick(logger);
+      await meetingReminderTask();
       expect(sendMock).toHaveBeenCalledTimes(1);
 
-      await meetingReminderTick(logger);
+      await meetingReminderTask();
       // Still 1 — the claim filter (link_sent = FALSE) excludes the row.
       expect(sendMock).toHaveBeenCalledTimes(1);
     });
@@ -135,7 +133,7 @@ describe.skipIf(!hasDatabaseUrl())(
       const id = await insertPendingMeeting(phone);
       sendMock.mockResolvedValue(false);
 
-      await meetingReminderTick(logger);
+      await meetingReminderTask();
 
       const r = await pool.query<{ link_sent: boolean }>(
         `SELECT link_sent FROM meetings WHERE id = $1`,
@@ -145,7 +143,7 @@ describe.skipIf(!hasDatabaseUrl())(
 
       // A later tick can retry once the mock is told to succeed.
       sendMock.mockResolvedValue(true);
-      await meetingReminderTick(logger);
+      await meetingReminderTask();
       expect(sendMock).toHaveBeenCalledTimes(2);
       const r2 = await pool.query<{ link_sent: boolean }>(
         `SELECT link_sent FROM meetings WHERE id = $1`,

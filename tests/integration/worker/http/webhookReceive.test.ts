@@ -5,18 +5,22 @@
  *   200 = ack, do NOT retry      403 = signature failure
  *
  * Verifies eight scenarios:
- *   1. valid HMAC → 200 + processText dispatched
+ *   1. valid HMAC → 200 + 'process-text' enqueued
  *   2. invalid HMAC → 403
  *   3. missing X-Hub-Signature-256 → 403
  *   4. missing app_secret for the phone_number_id → 403 (fail-closed)
  *   5. malformed JSON → 200 (anti-flood)
  *   6. payload with no phone_number_id (status callback) → 200
  *   7. DB error during company lookup → 200 (anti-flood)
- *   8. duplicate message_id → 200 + processText NOT dispatched
+ *   8. duplicate message_id → 200 + NOT enqueued
  *
- * We mock the deep deps (DB lookups, message dispatchers) via vi.hoisted
- * so no real Postgres or external calls happen. The handler itself runs
- * unmodified — this is a contract test, not a unit test of internals.
+ * Phase 2: dispatch is now via BullMQ (botQueue.add) instead of the
+ * in-process Semaphore + processText/processAudio direct calls. The
+ * test mocks botQueue.add so no Redis connection is required.
+ *
+ * We mock the deep deps (DB lookups, queue, etc.) via vi.hoisted
+ * so no real Postgres, Redis, or Meta call happens. The handler itself
+ * runs unmodified — this is a contract test, not a unit test of internals.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createHmac } from 'node:crypto';
@@ -24,14 +28,10 @@ import { EventEmitter } from 'node:events';
 import { Readable } from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { createLogger } from '@/lib/logger';
-import { Semaphore } from '@/worker/concurrency';
 
 // ── Mocks (hoisted so they live in module-load order) ─────────────────────
-const processTextMock = vi.hoisted(() =>
-  vi.fn<(...args: unknown[]) => Promise<void>>(),
-);
-const processAudioMock = vi.hoisted(() =>
-  vi.fn<(...args: unknown[]) => Promise<void>>(),
+const botQueueAddMock = vi.hoisted(() =>
+  vi.fn<(name: string, data: unknown) => Promise<unknown>>(),
 );
 const lookupSecretMock = vi.hoisted(() =>
   vi.fn<(phoneNumberId: string) => Promise<string | null>>(),
@@ -49,8 +49,9 @@ const queryMock = vi.hoisted(() =>
   vi.fn<(...args: unknown[]) => Promise<{ rows: unknown[] }>>(),
 );
 
-vi.mock('@/worker/tasks/processText', () => ({ processText: processTextMock }));
-vi.mock('@/worker/tasks/processAudio', () => ({ processAudio: processAudioMock }));
+vi.mock('@/lib/queue/queues', () => ({
+  botQueue: { add: botQueueAddMock },
+}));
 vi.mock('@/lib/companies/creds', () => ({
   lookupAppSecretByPhoneNumberId: lookupSecretMock,
   getWhatsappCreds: getCredsMock,
@@ -120,10 +121,13 @@ function metaPayload(
   opts: { messageId?: string; phoneNumberId?: string; from?: string } = {},
 ): object {
   return {
+    object: 'whatsapp_business_account',
     entry: [
       {
+        id: 'entry-1',
         changes: [
           {
+            field: 'messages',
             value: {
               metadata: { phone_number_id: opts.phoneNumberId ?? PHONE_ID },
               messages: [
@@ -131,6 +135,7 @@ function metaPayload(
                   id: opts.messageId ?? 'msg-abc',
                   from: opts.from ?? '+15551234567',
                   type: 'text',
+                  timestamp: '1700000000',
                   text: { body: text },
                 },
               ],
@@ -149,16 +154,12 @@ function sign(body: Buffer, secret: string): string {
 // ── Tests ─────────────────────────────────────────────────────────────────
 describe('webhookReceive (contract)', () => {
   const logger = createLogger('test-webhook');
-  let sema: Semaphore;
   let handler: ReturnType<typeof makeWebhookReceiveHandler>;
 
   beforeEach(() => {
-    sema = new Semaphore(4);
-    handler = makeWebhookReceiveHandler(logger, sema);
-    processTextMock.mockReset();
-    processTextMock.mockResolvedValue(undefined);
-    processAudioMock.mockReset();
-    processAudioMock.mockResolvedValue(undefined);
+    handler = makeWebhookReceiveHandler(logger);
+    botQueueAddMock.mockReset();
+    botQueueAddMock.mockResolvedValue({ id: 'job-1' });
     lookupSecretMock.mockReset();
     lookupSecretMock.mockResolvedValue(SECRET);
     resolveCompanyMock.mockReset();
@@ -171,12 +172,11 @@ describe('webhookReceive (contract)', () => {
     queryMock.mockResolvedValue({ rows: [] });
   });
 
-  afterEach(async () => {
-    // Drain pending dispatches so processText assertions are stable.
-    await sema.drain(2000);
+  afterEach(() => {
+    // No queue drain needed — handler awaits botQueue.add inline before 200.
   });
 
-  it('valid HMAC → 200 + processText dispatched', async () => {
+  it('valid HMAC → 200 + process-text enqueued', async () => {
     const body = Buffer.from(JSON.stringify(metaPayload()));
     const sig = sign(body, SECRET);
     const r = fakeRes();
@@ -186,9 +186,15 @@ describe('webhookReceive (contract)', () => {
     );
     await r.done;
     expect(r.status()).toBe(200);
-    // dispatch is fire-and-forget — drain to await it.
-    await sema.drain(2000);
-    expect(processTextMock).toHaveBeenCalledTimes(1);
+    expect(botQueueAddMock).toHaveBeenCalledTimes(1);
+    expect(botQueueAddMock).toHaveBeenCalledWith(
+      'process-text',
+      expect.objectContaining({
+        customerPhone: '+15551234567',
+        messageText: 'hello',
+        companyId: COMPANY_ID,
+      }),
+    );
   });
 
   it('invalid HMAC → 403', async () => {
@@ -200,7 +206,7 @@ describe('webhookReceive (contract)', () => {
     );
     await r.done;
     expect(r.status()).toBe(403);
-    expect(processTextMock).not.toHaveBeenCalled();
+    expect(botQueueAddMock).not.toHaveBeenCalled();
   });
 
   it('missing X-Hub-Signature-256 header → 403', async () => {
@@ -209,7 +215,7 @@ describe('webhookReceive (contract)', () => {
     await handler(fakeReq(body, {}), r.res);
     await r.done;
     expect(r.status()).toBe(403);
-    expect(processTextMock).not.toHaveBeenCalled();
+    expect(botQueueAddMock).not.toHaveBeenCalled();
   });
 
   it('missing app_secret for the phone_number_id → 403 (fail-closed)', async () => {
@@ -222,7 +228,7 @@ describe('webhookReceive (contract)', () => {
     );
     await r.done;
     expect(r.status()).toBe(403);
-    expect(processTextMock).not.toHaveBeenCalled();
+    expect(botQueueAddMock).not.toHaveBeenCalled();
   });
 
   it('malformed JSON → 200 (anti-flood)', async () => {
@@ -235,7 +241,7 @@ describe('webhookReceive (contract)', () => {
     );
     await r.done;
     expect(r.status()).toBe(200);
-    expect(processTextMock).not.toHaveBeenCalled();
+    expect(botQueueAddMock).not.toHaveBeenCalled();
   });
 
   it('payload with no phone_number_id (status callback) → 200', async () => {
@@ -250,7 +256,7 @@ describe('webhookReceive (contract)', () => {
     );
     await r.done;
     expect(r.status()).toBe(200);
-    expect(processTextMock).not.toHaveBeenCalled();
+    expect(botQueueAddMock).not.toHaveBeenCalled();
     // lookupAppSecret should NOT be called — short-circuited before it
     expect(lookupSecretMock).not.toHaveBeenCalled();
   });
@@ -266,10 +272,10 @@ describe('webhookReceive (contract)', () => {
     );
     await r.done;
     expect(r.status()).toBe(200);
-    expect(processTextMock).not.toHaveBeenCalled();
+    expect(botQueueAddMock).not.toHaveBeenCalled();
   });
 
-  it('duplicate message_id → 200 + processText NOT dispatched', async () => {
+  it('duplicate message_id → 200 + NOT enqueued', async () => {
     claimMessageIdMock.mockResolvedValue(false);
     const body = Buffer.from(JSON.stringify(metaPayload()));
     const sig = sign(body, SECRET);
@@ -280,7 +286,6 @@ describe('webhookReceive (contract)', () => {
     );
     await r.done;
     expect(r.status()).toBe(200);
-    await sema.drain(500);
-    expect(processTextMock).not.toHaveBeenCalled();
+    expect(botQueueAddMock).not.toHaveBeenCalled();
   });
 });
