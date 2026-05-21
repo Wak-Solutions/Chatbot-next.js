@@ -7,6 +7,8 @@
     "locales/**/*",
     "scripts/**/*",
     "worker/**/*",
+    "types/**/*",
+    "auth.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],

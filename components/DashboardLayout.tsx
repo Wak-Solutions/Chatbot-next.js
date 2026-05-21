@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { useLocation, Link } from "@/lib/router";
 import {
   Inbox, Users, BookUser, ContactRound, BarChart3, Video, Bot,
-  ClipboardList, BookOpen, LogOut, Globe, Fingerprint, Menu, X,
+  ClipboardList, BookOpen, LogOut, Globe, Menu, X,
   Bell, Share, Headphones, Settings, CalendarCheck, Infinity,
 } from "lucide-react";
-import { startRegistration } from "@simplewebauthn/browser";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth, useLogout } from "@/hooks/use-auth";
 import { useLanguage } from "@/lib/language-context";
@@ -92,25 +91,6 @@ export default function DashboardLayout({
 
   const handleLogout = () => {
     logout(undefined, { onSuccess: () => setLocation("/login") });
-  };
-
-  const handleRegisterBiometric = async () => {
-    try {
-      const optRes = await csrfFetch("/api/auth/webauthn/register/options", { method: "POST", credentials: "include" });
-      if (!optRes.ok) return alert("Failed to start biometric registration");
-      const options = await optRes.json();
-      const attResp = await startRegistration({ optionsJSON: options });
-      const verifyRes = await csrfFetch("/api/auth/webauthn/register/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(attResp),
-        credentials: "include",
-      });
-      if (verifyRes.ok) alert("Biometric registered! You can now log in with Face ID / fingerprint.");
-      else alert("Registration failed. Please try again.");
-    } catch (e: any) {
-      alert(e.message || "Biometric registration failed");
-    }
   };
 
   const navItems: NavItem[] = [
@@ -210,12 +190,6 @@ export default function DashboardLayout({
         {/* Bottom actions */}
         <div className="px-3.5 pb-5 pt-3 border-t border-white/10 space-y-0.5">
           <button
-            onClick={handleRegisterBiometric}
-            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium text-white/55 hover:text-white/85 hover:bg-brand-navy/[0.08] transition-colors"
-          >
-            <Fingerprint className="w-[18px] h-[18px]" /> Biometric
-          </button>
-          <button
             onClick={toggleLang}
             className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-[13.5px] font-medium text-white/55 hover:text-white/85 hover:bg-brand-navy/[0.08] transition-colors"
           >
@@ -297,13 +271,6 @@ export default function DashboardLayout({
                   </a>
                 </Link>
               ))}
-              <button
-                onClick={() => { handleRegisterBiometric(); setMobileOpen(false); }}
-                className="w-full flex items-center gap-4 px-5 py-3.5 text-sm font-medium text-white/90 hover:bg-white/[0.03] transition-colors min-h-[48px]"
-              >
-                <span className="text-brand-slate/70"><Fingerprint className="w-5 h-5" /></span>
-                Biometric
-              </button>
               <button
                 onClick={() => { toggleLang(); setMobileOpen(false); }}
                 className="w-full flex items-center gap-4 px-5 py-3.5 text-sm font-medium text-white/90 hover:bg-white/[0.03] transition-colors min-h-[48px]"

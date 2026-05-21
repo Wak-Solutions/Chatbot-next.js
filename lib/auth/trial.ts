@@ -90,3 +90,15 @@ export async function isCompanyTrialExpired(companyId: number): Promise<boolean>
   const s = await getCompanyTrialStatus(companyId);
   return s.expired;
 }
+
+/**
+ * Throws if the company's trial has expired. Used by the Auth.js
+ * authorize() callback per Phase 3 spec — Auth.js surfaces the error
+ * to the login UI and refuses to issue a session.
+ */
+export async function checkTrial(companyId: number | null | undefined): Promise<void> {
+  if (companyId == null) return;
+  if (await isCompanyTrialExpired(companyId)) {
+    throw new Error('Trial expired. Please contact support.');
+  }
+}

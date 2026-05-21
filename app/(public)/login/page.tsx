@@ -2,27 +2,23 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "@/lib/router";
-import { Lock, Fingerprint, Mail, ArrowLeft } from "lucide-react";
-import { useLogin } from "@/hooks/use-auth";
+import { Lock, Mail, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
 import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/contracts/routes";
-import { startRegistration, startAuthentication } from "@simplewebauthn/browser";
 import { csrfFetch } from "@/lib/queryClient";
 import { Logo } from "@/components/ui/Logo";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [, setLocation] = useLocation();
-  const { mutate: login, isPending, error } = useLogin();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const [biometricAvailable, setBiometricAvailable] = useState(false);
-  const [biometricRegistered, setBiometricRegistered] = useState(false);
-  const [biometricError, setBiometricError] = useState("");
-  const [biometricPending, setBiometricPending] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
   const [termsAccepting, setTermsAccepting] = useState(false);
@@ -32,9 +28,6 @@ export default function Login() {
   const [forgotError, setForgotError] = useState("");
   const { t, lang } = useLanguage();
   const isRtl = lang === "ar";
-
-  // No auto-redirect: login page always shows the form.
-  // Navigation only happens after explicit user action (login button / biometric).
 
   const handleAcceptTerms = async () => {
     setTermsAccepting(true);
@@ -51,94 +44,6 @@ export default function Login() {
       // accept-terms failures leave the user on the modal; no client-side feedback needed
     }
     setTermsAccepting(false);
-  };
-
-  useEffect(() => {
-    const check = async () => {
-      if (!window.PublicKeyCredential) return;
-      const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-      if (!available) return;
-      setBiometricAvailable(true);
-    };
-    check();
-  }, []);
-
-  // Re-check passkey registration whenever the identifier changes.
-  // Only fires when biometrics are available — skips the fetch entirely on
-  // devices that don't support passkeys, eliminating unnecessary requests.
-  useEffect(() => {
-    if (!biometricAvailable) return;
-    const id = identifier.trim();
-    if (!id) {
-      setBiometricRegistered(false);
-      return;
-    }
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await csrfFetch(`/api/auth/webauthn/registered?email=${encodeURIComponent(id)}`);
-        const data = await res.json();
-        if (!cancelled) setBiometricRegistered(!!data.registered);
-      } catch {
-        if (!cancelled) setBiometricRegistered(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [identifier, biometricAvailable]);
-
-  const handleBiometricLogin = async () => {
-    setBiometricError("");
-    setBiometricPending(true);
-    try {
-      const optRes = await csrfFetch("/api/auth/webauthn/login/options", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: identifier.trim() }),
-      });
-      if (!optRes.ok) throw new Error(t("loginErrorNoBiometric"));
-      const options = await optRes.json();
-      const assertion = await startAuthentication({ optionsJSON: options });
-      const verifyRes = await csrfFetch("/api/auth/webauthn/login/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(assertion),
-        credentials: "include",
-      });
-      if (!verifyRes.ok) {
-        // PR 10 behavior change — surface WEBAUTHN_RP_MISMATCH as a
-        // distinct re-registration prompt. Phase 2 plan.
-        let errCode: string | undefined;
-        try {
-          const errBody = await verifyRes.clone().json();
-          errCode = (errBody as { code?: string })?.code;
-        } catch {
-          // body wasn't JSON — fall through to generic error
-        }
-        if (errCode === "WEBAUTHN_RP_MISMATCH") {
-          throw new Error(
-            "Your biometric login is no longer valid for this domain. Please sign in with your password, then re-register your biometric in Settings.",
-          );
-        }
-        throw new Error(t("loginErrorBiometricFailed"));
-      }
-      const verifyData = await verifyRes.json();
-      queryClient.setQueryData([api.auth.me.path], {
-        authenticated: true,
-        role: verifyData.role,
-        agentId: verifyData.agentId,
-        agentName: verifyData.agentName,
-        termsAcceptedAt: verifyData.termsAcceptedAt ?? null,
-      });
-      if (!verifyData.termsAcceptedAt) {
-        setShowTermsModal(true);
-      } else {
-        setLocation("/dashboard");
-      }
-    } catch (e: any) {
-      setBiometricError(e.message || t("loginErrorBiometricLogin"));
-    } finally {
-      setBiometricPending(false);
-    }
   };
 
   const handleForgotSubmit = async (e: React.FormEvent) => {
@@ -165,21 +70,22 @@ export default function Login() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!password) return;
-    login(
-      { identifier: identifier.trim(), password },
-      {
-        onSuccess: (data) => {
-          if (!data.termsAcceptedAt) {
-            setShowTermsModal(true);
-          } else {
-            setLocation("/dashboard");
-          }
-        },
-      }
-    );
+    setIsPending(true);
+    setError(null);
+    try {
+      await signIn('credentials', {
+        email: identifier.trim(),
+        password,
+        redirectTo: '/dashboard',
+      });
+    } catch (e: any) {
+      setError(e?.message || t("loginErrorCredentials"));
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -303,29 +209,6 @@ export default function Login() {
             <p className="text-sm text-brand-slate mt-1">{t("loginSubtitle")}</p>
           </div>
 
-          {/* Biometric */}
-          {biometricAvailable && biometricRegistered && (
-            <div className="mb-5">
-              <button
-                type="button"
-                onClick={handleBiometricLogin}
-                disabled={biometricPending}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border-2 border-brand-blue/20 bg-brand-blue/5 hover:bg-brand-blue/10 transition-all text-sm font-medium text-brand-blue disabled:opacity-50"
-              >
-                {biometricPending
-                  ? <><div className="w-4 h-4 border-2 border-brand-blue/30 border-t-brand-blue rounded-full animate-spin" />{t("loginVerifying")}</>
-                  : <><Fingerprint className="w-5 h-5" />{t("loginSignInBiometric")}</>
-                }
-              </button>
-              {biometricError && <p className="text-sm text-red-400 mt-2 text-center">{biometricError}</p>}
-              <div className="flex items-center gap-3 mt-5 mb-1">
-                <div className="flex-1 h-px bg-white/[0.08]" />
-                <span className="text-xs text-brand-slate/70">{t("loginDivider")}</span>
-                <div className="flex-1 h-px bg-white/[0.08]" />
-              </div>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-white/90 flex items-center gap-2">
@@ -359,7 +242,7 @@ export default function Login() {
               />
               {error && (
                 <p data-testid="text-error" className="text-sm text-red-400 pt-1">
-                  {error.message || t("loginErrorCredentials")}
+                  {error || t("loginErrorCredentials")}
                 </p>
               )}
               <div className="flex justify-end pt-1">

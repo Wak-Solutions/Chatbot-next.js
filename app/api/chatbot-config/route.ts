@@ -14,8 +14,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { withAdmin, withCsrf } from '@/lib/http/handlers';
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
-import { SESSION_COOKIE_NAME, readSession } from '@/lib/auth/session';
-import { verifySidFromEnv } from '@/lib/auth/cookies';
+import { auth } from '@/auth';
 import { resolveCompanyBySecret } from '@/lib/companies/resolveBySecret';
 import { compilePrompt, menuDepthValid } from '@/lib/llm/prompts/compile';
 import { invalidatePromptCache } from '@/lib/llm/prompts/cache';
@@ -29,23 +28,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     let companyId: number | null = null;
 
     // Try session first
-    const raw = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-    if (raw) {
-      const sid = verifySidFromEnv(raw);
-      if (sid) {
-        const record = await readSession(sid);
-        if (record?.data.authenticated) {
-          const cid = Number(record.data.companyId);
-          if (!Number.isInteger(cid) || cid <= 0) {
-            logger.warn(
-              { agentId: record.data.agentId },
-              'getChatbotConfig — authenticated but no companyId in session',
-            );
-            return NextResponse.json({ message: 'Session missing companyId' }, { status: 401 });
-          }
-          companyId = cid;
-        }
+    const session = await auth();
+    if (session?.user) {
+      const cid = Number(session.user.companyId);
+      if (!Number.isInteger(cid) || cid <= 0) {
+        logger.warn(
+          { agentId: session.user.id },
+          'getChatbotConfig — authenticated but no companyId in session',
+        );
+        return NextResponse.json({ message: 'Session missing companyId' }, { status: 401 });
       }
+      companyId = cid;
     }
 
     if (companyId === null) {

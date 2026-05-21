@@ -23,15 +23,6 @@ import { z } from 'zod';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
-import {
-  SESSION_COOKIE_NAME,
-  generateSid,
-  sessionCookieAttrs,
-  writeSession,
-  type SessionData,
-} from '@/lib/auth/session';
-import { signSidFromEnv } from '@/lib/auth/cookies';
-import { setCsrfCookie, CSRF_COOKIE_NAME } from '@/lib/auth/csrf';
 import { authEntryLimiter } from '@/lib/http/rateLimit';
 
 const logger = createLogger('register');
@@ -145,26 +136,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     await client.query('COMMIT');
 
-    const session: SessionData = {
-      authenticated: true,
-      agentId,
-      companyId,
-      role: 'admin',
-      agentName: `${firstName} ${lastName}`,
-      isActive: true,
-      lastActiveCheck: Date.now(),
-      termsAcceptedAt: null,
-    };
-    const csrf = setCsrfCookie(session);
-
-    const sid = generateSid();
-    await writeSession(sid, session);
-
-    const response = NextResponse.json({ success: true, companyId, agentId });
-    response.cookies.set(SESSION_COOKIE_NAME, signSidFromEnv(sid), sessionCookieAttrs());
-    response.cookies.set(CSRF_COOKIE_NAME, csrf.value, csrf.options);
+    // Auth.js v5 owns sessions — registration no longer mints one inline.
+    // Frontend signs the new agent in via signIn('credentials', ...) after
+    // a successful response.
     logger.info({ companyId, agentId }, 'Registration complete');
-    return response;
+    return NextResponse.json({ success: true, companyId, agentId });
   } catch (err) {
     await client.query('ROLLBACK').catch(() => {});
     const pgErr = err as { code?: string; constraint?: string; message?: string };

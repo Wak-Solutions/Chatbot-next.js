@@ -549,3 +549,36 @@ export const contact_companies = pgTable('contact_companies', {
   primaryKey({ columns: [table.contact_id, table.company_id] }),
   index('contact_companies_company_idx').on(table.company_id),
 ]);
+
+// ────────────────────────────────────────────────────────────────────────────
+// AUTH.JS (Phase 3) — added per manager spec verbatim.
+// ────────────────────────────────────────────────────────────────────────────
+
+// userId is `integer` (not the spec's `text`) because agents.id is `serial`
+// — Postgres rejects text→integer foreign keys. Adapter handles the
+// type coercion when reading session.user.id (string) vs. the int FK.
+export const authAccounts = pgTable('auth_accounts', {
+  userId:            integer('user_id').notNull().references(() => agents.id, { onDelete: 'cascade' }),
+  type:              text('type').notNull(),
+  provider:          text('provider').notNull(),
+  providerAccountId: text('provider_account_id').notNull(),
+  refresh_token:     text('refresh_token'),
+  access_token:      text('access_token'),
+  expires_at:        integer('expires_at'),
+  token_type:        text('token_type'),
+  scope:             text('scope'),
+  id_token:          text('id_token'),
+  session_state:     text('session_state'),
+}, (t) => ({ pk: primaryKey({ columns: [t.provider, t.providerAccountId] }) }));
+
+export const authSessions = pgTable('auth_sessions', {
+  sessionToken: text('session_token').primaryKey(),
+  userId:       integer('user_id').notNull().references(() => agents.id, { onDelete: 'cascade' }),
+  expires:      timestamp('expires', { mode: 'date' }).notNull(),
+});
+
+export const authVerificationTokens = pgTable('auth_verification_tokens', {
+  identifier: text('identifier').notNull(),
+  token:      text('token').notNull(),
+  expires:    timestamp('expires', { mode: 'date' }).notNull(),
+}, (t) => ({ pk: primaryKey({ columns: [t.identifier, t.token] }) }));

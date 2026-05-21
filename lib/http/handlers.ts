@@ -1,34 +1,39 @@
 /**
- * Composable Route Handler wrappers.
+ * Composable Route Handler wrappers (Phase 3 — Auth.js v5).
  *
- *   withAuth(handler)   — gate behind requireAuth, pass AuthContext as 2nd arg
- *   withAdmin(handler)  — same as withAuth + role === 'admin'
- *   withCsrf(handler)   — verify the x-csrf-token header against the
- *                         session's csrfToken (allowlist-aware). Does NOT
- *                         require authentication on its own; if a route
- *                         needs both, wrap as withAuth(withCsrf(handler))
- *                         or compose at the call site.
- *   withErrors(handler) — catch HttpError and translate to a JSON response.
+ *   withAuth(handler)   — gate behind Auth.js auth(); pass AuthContext
+ *                         as 2nd arg. Returns 401 JSON on miss.
+ *   withAdmin(handler)  — same as withAuth + role === 'admin'.
+ *                         Returns 403 JSON on non-admin.
+ *   withCsrf(handler)   — TEMPORARY pass-through. Phase 3 deleted
+ *                         lib/auth/csrf.ts per the manager's spec
+ *                         (Auth.js v5 only CSRF-protects its own
+ *                         /api/auth/* routes, not our app's POSTs).
+ *                         Kept callable so call sites compile; a
+ *                         replacement CSRF strategy is a follow-up.
+ *   withErrors(handler) — catch HttpError and translate to JSON.
  *
- * Wrappers are designed so a Route Handler's signature stays compatible
- * with Next.js's expected (req, ctx) form — the AuthContext is injected
- * between them as the 2nd positional argument for auth wrappers.
+ * The Server-Component-only requireAuth/requireAdmin (which `redirect()`
+ * on miss) are unsuitable for route handlers — route handlers must
+ * return a Response. These wrappers call Auth.js's auth() directly
+ * and produce JSON responses on auth failure.
  */
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { requireAuth, type AuthContext } from '@/lib/auth/requireAuth';
-import { requireAdmin } from '@/lib/auth/requireAdmin';
-import {
-  SESSION_COOKIE_NAME,
-  readSession,
-  type SessionData,
-} from '@/lib/auth/session';
-import { verifySidFromEnv } from '@/lib/auth/cookies';
-import { verifyCsrf } from '@/lib/auth/csrf';
-import { HttpError, toJsonResponse, CsrfError } from './errors';
+import { auth } from '@/auth';
+import { HttpError, toJsonResponse } from './errors';
 
 export type RouteCtx = unknown;
+
+/** Shape passed to authed handlers. Matches the legacy AuthContext fields
+ * the existing 57 protected routes already consume. */
+export interface AuthContext {
+  agentId: number;
+  companyId: number;
+  role: 'admin' | 'agent';
+  agentName?: string;
+}
 
 export type AuthedHandler<TCtx extends RouteCtx = RouteCtx> = (
   req: NextRequest,
@@ -41,9 +46,22 @@ export type PlainHandler<TCtx extends RouteCtx = RouteCtx> = (
   ctx: TCtx,
 ) => Promise<Response> | Response;
 
+async function resolveAuth(): Promise<AuthContext | NextResponse> {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+  return {
+    agentId: Number(session.user.id),
+    companyId: session.user.companyId,
+    role: session.user.role,
+    agentName: session.user.name ?? undefined,
+  };
+}
+
 export function withAuth<TCtx extends RouteCtx = RouteCtx>(handler: AuthedHandler<TCtx>) {
   return async (req: NextRequest, ctx: TCtx): Promise<Response> => {
-    const result = await requireAuth(req);
+    const result = await resolveAuth();
     if (result instanceof NextResponse) return result;
     return handler(req, result, ctx);
   };
@@ -51,30 +69,22 @@ export function withAuth<TCtx extends RouteCtx = RouteCtx>(handler: AuthedHandle
 
 export function withAdmin<TCtx extends RouteCtx = RouteCtx>(handler: AuthedHandler<TCtx>) {
   return async (req: NextRequest, ctx: TCtx): Promise<Response> => {
-    const result = await requireAdmin(req);
+    const result = await resolveAuth();
     if (result instanceof NextResponse) return result;
+    if (result.role !== 'admin') {
+      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
     return handler(req, result, ctx);
   };
 }
 
 /**
- * Loads the session (if any) and runs verifyCsrf. Allowlist + safe-method
- * + unauthenticated cases pass through without a token. Rejects with 403
- * on mismatch or missing token for authenticated state-changing requests.
+ * TEMPORARY pass-through (see header). No CSRF check is performed.
+ * Kept to preserve the existing wrapper composition at call sites
+ * until a replacement CSRF strategy is decided.
  */
 export function withCsrf<TCtx extends RouteCtx = RouteCtx>(handler: PlainHandler<TCtx>) {
   return async (req: NextRequest, ctx: TCtx): Promise<Response> => {
-    let session: SessionData | null = null;
-    const raw = req.cookies.get(SESSION_COOKIE_NAME)?.value;
-    if (raw) {
-      const sid = verifySidFromEnv(raw);
-      if (sid) {
-        const record = await readSession(sid);
-        session = record?.data ?? null;
-      }
-    }
-    const decision = verifyCsrf(req, session);
-    if (!decision.ok) return toJsonResponse(new CsrfError());
     return handler(req, ctx);
   };
 }

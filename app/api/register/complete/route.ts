@@ -14,17 +14,12 @@ import { NextResponse } from 'next/server';
 import { withAdmin } from '@/lib/http/handlers';
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
-import {
-  SESSION_COOKIE_NAME,
-  readSession,
-} from '@/lib/auth/session';
-import { verifySidFromEnv } from '@/lib/auth/cookies';
 
 const logger = createLogger('register');
 
 export const dynamic = 'force-dynamic';
 
-export const POST = withAdmin(async (request, auth) => {
+export const POST = withAdmin(async (_request, auth) => {
   const companyId = auth.companyId;
 
   try {
@@ -50,16 +45,17 @@ export const POST = withAdmin(async (request, auth) => {
     );
     logger.info({ companyId }, 'Onboarding complete');
 
-    // Read termsAcceptedAt from session for the response payload — matches
-    // register.routes.ts:445 ((req.session as any).termsAcceptedAt ?? null).
+    // Auth.js v5 doesn't cache termsAcceptedAt on the session — fetch from DB.
     let termsAcceptedAt: string | null = null;
-    const raw = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-    if (raw) {
-      const sid = verifySidFromEnv(raw);
-      if (sid) {
-        const record = await readSession(sid);
-        termsAcceptedAt = record?.data.termsAcceptedAt ?? null;
-      }
+    try {
+      const r = await getPool().query<{ terms_accepted_at: Date | null }>(
+        'SELECT terms_accepted_at FROM agents WHERE id = $1',
+        [auth.agentId],
+      );
+      const raw = r.rows[0]?.terms_accepted_at;
+      termsAcceptedAt = raw ? new Date(raw).toISOString() : null;
+    } catch {
+      // best-effort — frontend can re-fetch
     }
 
     return NextResponse.json({

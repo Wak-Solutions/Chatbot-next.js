@@ -1,44 +1,25 @@
 /**
- * POST /api/logout — port of server/routes/auth.routes.ts:162-178.
+ * POST /api/logout — Auth.js v5 signOut.
  *
- * Destroys whatever session row the cookie points at (if any), then clears
- * the connect.sid cookie on the response. Always 200 with `{ success: true }`.
- * Errors during destroy are logged and swallowed — matches the original's
- * fire-and-forget logout semantic.
+ * Uses the signOut() helper from @/auth with redirect:false so we can
+ * keep the legacy `{ success: true }` JSON response shape the frontend
+ * already expects.
  */
 
-import { NextResponse, type NextRequest } from 'next/server';
-import {
-  SESSION_COOKIE_NAME,
-  destroySession,
-  clearedSessionCookieAttrs,
-} from '@/lib/auth/session';
-import { verifySidFromEnv } from '@/lib/auth/cookies';
+import { NextResponse } from 'next/server';
+import { signOut } from '@/auth';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('auth');
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  const raw = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  let agentId: number | null | undefined;
-  if (raw) {
-    const sid = verifySidFromEnv(raw);
-    if (sid) {
-      try {
-        await destroySession(sid);
-      } catch (err) {
-        logger.warn(
-          { err: (err as Error)?.message },
-          'Session destroy error (non-fatal)',
-        );
-      }
-    }
+export async function POST(): Promise<NextResponse> {
+  try {
+    await signOut({ redirect: false });
+  } catch (err) {
+    logger.warn({ err: (err as Error)?.message }, 'signOut error (non-fatal)');
   }
-
-  const response = NextResponse.json({ success: true });
-  response.cookies.set(SESSION_COOKIE_NAME, '', clearedSessionCookieAttrs());
-  logger.info({ agentId }, 'Logout complete');
-  return response;
+  logger.info('Logout complete');
+  return NextResponse.json({ success: true });
 }
