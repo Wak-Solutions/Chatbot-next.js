@@ -50,8 +50,8 @@ export const GET = withAdmin<{ params: Promise<{ id: string }> }>(
       const { total_sent, total_submitted } = totalRes.rows[0];
 
       const questionsRes = await getPool().query<QuestionRow>(
-        'SELECT * FROM survey_questions WHERE survey_id=$1 ORDER BY order_index',
-        [id],
+        'SELECT * FROM survey_questions WHERE survey_id=$1 AND company_id=$2 ORDER BY order_index',
+        [id, auth.companyId],
       );
 
       const answersRes = await getPool().query<AnswerRow>(

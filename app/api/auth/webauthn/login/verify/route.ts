@@ -41,8 +41,16 @@ const logger = createLogger('auth');
 export const dynamic = 'force-dynamic';
 
 function clientIp(request: NextRequest): string {
+  // Trust the RIGHTMOST X-Forwarded-For value. Railway terminates TLS at
+  // exactly one proxy hop before the container, so the real client IP is
+  // appended at the right end of the chain. Values on the left are
+  // attacker-controlled — taking the leftmost lets a single client rotate
+  // the key per request and defeat per-IP rate limits.
   const fwd = request.headers.get('x-forwarded-for');
-  if (fwd) return fwd.split(',')[0].trim();
+  if (fwd) {
+    const parts = fwd.split(',').map((s) => s.trim()).filter(Boolean);
+    if (parts.length > 0) return parts[parts.length - 1];
+  }
   return request.headers.get('x-real-ip') ?? 'unknown';
 }
 
@@ -100,6 +108,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const challenge = record?.data.webauthnChallenge;
     if (!challenge) {
       return NextResponse.json({ message: 'No pending login challenge' }, { status: 400 });
+    }
+
+    // Clear the challenge BEFORE verification so a failed attempt can never
+    // be replayed. If the session write fails (DB blip), proceed with
+    // verification anyway and log the write failure — losing a legitimate
+    // login to a transient DB error is worse UX than the residual
+    // single-replay window. On success the session is rotated below
+    // (destroySession + new sid), which would have invalidated it anyway;
+    // this clear is what protects the failure path.
+    record.data.webauthnChallenge = undefined;
+    try {
+      await writeSession(oldSid, record.data);
+    } catch (writeErr) {
+      logger.error(
+        { err: (writeErr as Error)?.message },
+        'WebAuthn challenge clear failed — proceeding with verification',
+      );
     }
 
     const credRow = await getPool().query<CredentialRow>(

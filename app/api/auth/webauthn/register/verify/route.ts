@@ -51,6 +51,22 @@ export const POST = withAuth(async (request, auth) => {
     const challenge = record?.data.webauthnChallenge;
     if (!challenge) return NextResponse.json({ message: 'No pending registration challenge' }, { status: 400 });
 
+    // Clear the challenge BEFORE verification so a failed attempt can never
+    // be replayed. If the session write fails (DB blip), proceed with
+    // verification anyway and log the write failure — losing a legitimate
+    // registration to a transient DB error is worse UX than the residual
+    // single-replay window. The challenge is single-use whether we clear it
+    // here or not; clearing makes that guarantee explicit on the failure path.
+    record.data.webauthnChallenge = undefined;
+    try {
+      await writeSession(sid, record.data);
+    } catch (writeErr) {
+      logger.error(
+        { agentId: auth.agentId, err: (writeErr as Error)?.message },
+        'WebAuthn challenge clear failed — proceeding with verification',
+      );
+    }
+
     const rp = deriveRpFromRequest(rpHints(request));
     const result = await verifyRegistration({ rp, expectedChallenge: challenge, response: body });
 
@@ -76,11 +92,6 @@ export const POST = withAuth(async (request, auth) => {
        ON CONFLICT (credential_id) DO UPDATE SET public_key=$3, counter=$4`,
       [auth.agentId, credential.id, pubKeyHex, credential.counter],
     );
-
-    if (record) {
-      record.data.webauthnChallenge = undefined;
-      await writeSession(sid, record.data);
-    }
 
     logger.info({ agentId: auth.agentId }, 'WebAuthn credential registered');
     return NextResponse.json({ verified: true });

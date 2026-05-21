@@ -22,8 +22,16 @@ const TIMING_DUMMY_HASH = '$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWX
 export const dynamic = 'force-dynamic';
 
 function clientIp(request: NextRequest): string {
+  // Trust the RIGHTMOST X-Forwarded-For value. Railway terminates TLS at
+  // exactly one proxy hop before the container, so the real client IP is
+  // appended at the right end of the chain. Values on the left are
+  // attacker-controlled — taking the leftmost lets a single client rotate
+  // the key per request and defeat per-IP rate limits.
   const fwd = request.headers.get('x-forwarded-for');
-  if (fwd) return fwd.split(',')[0].trim();
+  if (fwd) {
+    const parts = fwd.split(',').map((s) => s.trim()).filter(Boolean);
+    if (parts.length > 0) return parts[parts.length - 1];
+  }
   return request.headers.get('x-real-ip') ?? 'unknown';
 }
 
