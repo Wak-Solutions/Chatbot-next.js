@@ -72,6 +72,7 @@ export function compilePrompt(cfg: any): string {
   const escalations: any[] = cfg.escalationRules || [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const menuItems: any[] = cfg.menuConfig || [];
+  const servicesText: string = typeof cfg.servicesText === 'string' ? cfg.servicesText.trim() : '';
 
   let prompt = `You are a ${toneLabel} customer service assistant for ${businessName}${industry}. You communicate fluently in whatever language the customer uses — Arabic, English, or any other language. Always match their dialect and tone naturally.\n`;
 
@@ -117,6 +118,10 @@ export function compilePrompt(cfg: any): string {
             : '[Free text]';
       prompt += `${i + 1}. ${q.text} ${typeHint}\n`;
     });
+  }
+
+  if (servicesText) {
+    prompt += `\nSERVICES & ADDITIONAL INFO\nThe following describes what ${businessName} offers and any extra context the business has provided. Treat this as the source of truth when the customer asks what you do, what's available, pricing, or any related details. Never invent services or details not listed here.\n${servicesText}\n`;
   }
 
   if (faqItems.length > 0) {
