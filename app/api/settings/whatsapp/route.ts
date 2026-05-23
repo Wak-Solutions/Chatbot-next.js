@@ -20,6 +20,48 @@ import { invalidateWhatsappCreds } from '@/lib/companies/creds';
 
 const logger = createLogger('settings');
 
+/**
+ * Mask a sensitive credential for the GET response. Keeps the first 4
+ * and last 4 characters visible so an admin can recognise which value
+ * is set, replaces the middle with asterisks. The PUT handler's
+ * masked-value passthrough (`isMasked = v.includes('*')`) treats any
+ * value containing '*' as "unchanged" and skips updating that column.
+ */
+function maskSecret(value: string | null): string {
+  if (!value) return '';
+  if (value.length <= 8) return '*'.repeat(value.length);
+  return `${value.slice(0, 4)}${'*'.repeat(Math.max(4, value.length - 8))}${value.slice(-4)}`;
+}
+
+export const GET = withAdmin(async (_request, auth) => {
+  try {
+    const r = await getPool().query<{
+      whatsapp_phone_number_id: string | null;
+      whatsapp_waba_id: string | null;
+      whatsapp_token: string | null;
+      whatsapp_app_secret: string | null;
+    }>(
+      `SELECT whatsapp_phone_number_id, whatsapp_waba_id,
+              whatsapp_token, whatsapp_app_secret
+       FROM companies WHERE id = $1`,
+      [auth.companyId],
+    );
+    const row = r.rows[0];
+    return NextResponse.json({
+      phoneNumberId: row?.whatsapp_phone_number_id ?? '',
+      wabaId: row?.whatsapp_waba_id ?? '',
+      accessToken: maskSecret(row?.whatsapp_token ?? null),
+      appSecret: maskSecret(row?.whatsapp_app_secret ?? null),
+    });
+  } catch (err) {
+    logger.error(
+      { companyId: auth.companyId, err: (err as Error)?.message },
+      'getWhatsAppSettings failed',
+    );
+    return NextResponse.json({ message: 'Internal error' }, { status: 500 });
+  }
+});
+
 const phoneIdSchema = z.coerce.string().min(1).max(64);
 const wabaIdSchema = z.coerce.string().min(1).max(64);
 const tokenSchema = z.coerce.string().min(1).max(512);
