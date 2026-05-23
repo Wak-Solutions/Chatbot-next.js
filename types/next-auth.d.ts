@@ -25,3 +25,13 @@ declare module '@auth/core/adapters' {
     role?:      'admin' | 'agent';
   }
 }
+
+// JWT payload extension — carries companyId/role from authorize() across
+// requests since we use session.strategy = 'jwt' (required by Credentials).
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id?:        string;
+    companyId?: number;
+    role?:      'admin' | 'agent';
+  }
+}

@@ -11,7 +11,11 @@ import { recheckIsActive } from '@/lib/auth/isActive';
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   adapter: DrizzleAdapter(getDb()) as any,
-  session: { strategy: 'database' },
+  // Auth.js v5 requires JWT strategy when using the Credentials provider
+  // (it refuses to issue a DB session for credential logins — throws
+  // UnsupportedStrategy). With JWT, companyId/role are carried in the
+  // signed token via the jwt() callback below.
+  session: { strategy: 'jwt' },
   providers: [
     Credentials({
       credentials: { email: {}, password: {} },
@@ -35,12 +39,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async session({ session, user }) {
-      await recheckIsActive(Number(user.id));
+    async jwt({ token, user }) {
+      // user is only set on initial sign-in. Persist the extra fields
+      // into the JWT so the session callback below can read them.
+      if (user) {
+        token.id        = user.id;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        token.companyId = (user as any).companyId;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        token.role      = (user as any).role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token.id) {
+        await recheckIsActive(Number(token.id));
+      }
+      session.user.id        = String(token.id ?? '');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      session.user.companyId = (user as any).companyId;
+      session.user.companyId = token.companyId as any;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      session.user.role      = (user as any).role;
+      session.user.role      = token.role as any;
       return session;
     },
   },
