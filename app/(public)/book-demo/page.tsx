@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { CalendarDays, Clock, CheckCircle2, ChevronLeft, AlertCircle, Video } from "lucide-react";
+import { getCsrfToken } from "next-auth/react";
 
 interface DaySlots {
   date: string;
@@ -58,8 +59,10 @@ export default function BookDemoPage() {
       // Use raw fetch so apiRequest's throwIfResNotOk doesn't swallow the
       // response body — we want the server's actual message (CSRF, tenant
       // gate, slot taken, etc.) instead of generic "Network error".
-      const csrfToken =
-        document.cookie.split("; ").find(r => r.startsWith("csrf-token="))?.split("=")[1] ?? "";
+      // CSRF token comes from Auth.js v5's /api/auth/csrf endpoint — the
+      // old `csrf-token` cookie was set by lib/auth/csrf.ts which Phase 3
+      // deleted.
+      const csrfToken = (await getCsrfToken()) ?? "";
       const res = await fetch("/api/demo-booking/book", {
         method: "POST",
         credentials: "include",
