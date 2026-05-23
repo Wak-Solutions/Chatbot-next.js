@@ -15,6 +15,7 @@ import { NextResponse } from 'next/server';
 import { withAdmin, withCsrf } from '@/lib/http/handlers';
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
+import { sendEmail, getCompanyBranding, esc } from '@/lib/notifications/email';
 
 const logger = createLogger('agents');
 
@@ -90,6 +91,41 @@ export const POST = withCsrf(
         [name, email, hash, role, auth.companyId],
       );
       logger.info({ agentId: result.rows[0].id, role }, 'Agent created');
+
+      // Best-effort welcome email. Failures must NOT roll back the agent
+      // row — the admin already created the account and can share the
+      // credentials manually if delivery breaks.
+      try {
+        let brandName = 'your team';
+        let appUrl = process.env.AUTH_URL ?? process.env.APP_URL ?? '';
+        try {
+          const branding = await getCompanyBranding(auth.companyId);
+          brandName = branding.brandName;
+          appUrl = branding.appUrl;
+        } catch {
+          // companies.brand_name / app_url not set — fall back to env URL.
+        }
+        const loginUrl = appUrl ? `${appUrl.replace(/\/$/, '')}/login` : '/login';
+        const body = `
+          <p>Hi ${esc(name)},</p>
+          <p>An account has been created for you on <strong>${esc(brandName)}</strong> with the role <strong>${esc(role)}</strong>.</p>
+          <p>Sign in with these credentials:</p>
+          <ul>
+            <li>Email: <strong>${esc(email)}</strong></li>
+            <li>Password: <strong>${esc(password)}</strong></li>
+          </ul>
+          <p><a href="${esc(loginUrl)}">${esc(loginUrl)}</a></p>
+          <p>You can change your password after signing in.</p>
+        `;
+        await sendEmail(email, `Welcome to ${brandName}`, body);
+        logger.info({ agentId: result.rows[0].id, email }, 'Welcome email sent');
+      } catch (mailErr) {
+        logger.error(
+          { agentId: result.rows[0].id, err: (mailErr as Error)?.message },
+          'Welcome email failed (non-fatal)',
+        );
+      }
+
       return NextResponse.json(result.rows[0], { status: 201 });
     } catch (err) {
       if (err instanceof z.ZodError) {
