@@ -173,8 +173,10 @@ export const agents = pgTable('agents', {
   is_active: boolean('is_active').default(true),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
   last_login: timestamp('last_login', { withTimezone: true }),
-  // Vestigial single-credential blob. Active store is webauthn_credentials.
-  webauthn_credential: jsonb('webauthn_credential'),
+  // webauthn_credential column was vestigial and never materialised in
+  // prod — Drizzle's SELECT-* via findFirst() errors with "column does
+  // not exist" if we keep it declared. WebAuthn is also gone as of
+  // Phase 3 fb892cd, so there are no callers.
   terms_accepted_at: timestamp('terms_accepted_at', { withTimezone: true }),
   // DEFAULT 1: multi-tenant retrofit; tenant id 1 = WAK Solutions.
   // Not a permanent default — see header comment.
