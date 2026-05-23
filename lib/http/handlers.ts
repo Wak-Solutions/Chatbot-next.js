@@ -79,12 +79,51 @@ export function withAdmin<TCtx extends RouteCtx = RouteCtx>(handler: AuthedHandl
 }
 
 /**
- * TEMPORARY pass-through (see header). No CSRF check is performed.
- * Kept to preserve the existing wrapper composition at call sites
- * until a replacement CSRF strategy is decided.
+ * CSRF guard backed by Auth.js v5's own csrf-token cookie. Auth.js
+ * issues the cookie at first visit (HttpOnly, signed `<token>|<hmac>`
+ * with AUTH_SECRET) and exposes the raw token via /api/auth/csrf.
+ * Client picks the token up via next-auth/react.getCsrfToken() and
+ * sends it on state-changing requests as `x-csrf-token`. This wrapper
+ * compares the header against the cookie's token portion — double-
+ * submit, same cookie, same secret, no extra storage.
+ *
+ * GET / HEAD / OPTIONS are pass-through (browsers don't pre-flight CSRF
+ * on safe methods; nothing state-changing happens).
  */
+const CSRF_COOKIE_NAMES = ['__Host-authjs.csrf-token', 'authjs.csrf-token'] as const;
+
+function safeStringEq(a: string, b: string): boolean {
+  const ba = Buffer.from(a, 'utf8');
+  const bb = Buffer.from(b, 'utf8');
+  if (ba.length !== bb.length) return false;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  return require('node:crypto').timingSafeEqual(ba, bb);
+}
+
 export function withCsrf<TCtx extends RouteCtx = RouteCtx>(handler: PlainHandler<TCtx>) {
   return async (req: NextRequest, ctx: TCtx): Promise<Response> => {
+    const method = req.method.toUpperCase();
+    if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') {
+      return handler(req, ctx);
+    }
+
+    let cookieValue: string | undefined;
+    for (const name of CSRF_COOKIE_NAMES) {
+      cookieValue = req.cookies.get(name)?.value;
+      if (cookieValue) break;
+    }
+    if (!cookieValue) {
+      return NextResponse.json({ message: 'CSRF cookie missing' }, { status: 403 });
+    }
+
+    // Auth.js stores the cookie as "<token>|<hmac-hex>" — the token is
+    // what /api/auth/csrf returns to the client. Compare that portion.
+    const cookieToken = cookieValue.split('|')[0] ?? '';
+    const headerToken = req.headers.get('x-csrf-token') ?? '';
+    if (!cookieToken || !headerToken || !safeStringEq(cookieToken, headerToken)) {
+      return NextResponse.json({ message: 'CSRF token mismatch' }, { status: 403 });
+    }
+
     return handler(req, ctx);
   };
 }

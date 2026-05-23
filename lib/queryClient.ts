@@ -8,6 +8,7 @@
  */
 
 import { QueryClient, type QueryFunction } from '@tanstack/react-query';
+import { getCsrfToken } from 'next-auth/react';
 
 async function throwIfResNotOk(res: Response): Promise<void> {
   if (!res.ok) {
@@ -16,13 +17,16 @@ async function throwIfResNotOk(res: Response): Promise<void> {
   }
 }
 
-function getCsrfToken(): string {
-  return (
-    document.cookie
-      .split('; ')
-      .find((r) => r.startsWith('csrf-token='))
-      ?.split('=')[1] ?? ''
-  );
+// Cache the Auth.js CSRF token per page load. /api/auth/csrf returns the
+// raw token portion of the HttpOnly __Host-authjs.csrf-token cookie —
+// safe to memoise because the cookie itself is rotated by Auth.js, not
+// the token shape.
+let _csrfTokenCache: string | null = null;
+async function csrfToken(): Promise<string> {
+  if (_csrfTokenCache) return _csrfTokenCache;
+  const t = (await getCsrfToken()) ?? '';
+  _csrfTokenCache = t;
+  return t;
 }
 
 export async function apiRequest(
@@ -35,7 +39,7 @@ export async function apiRequest(
     method,
     headers: {
       ...(data ? { 'Content-Type': 'application/json' } : {}),
-      ...(isStateChanging ? { 'x-csrf-token': getCsrfToken() } : {}),
+      ...(isStateChanging ? { 'x-csrf-token': await csrfToken() } : {}),
     },
     body: data ? JSON.stringify(data) : undefined,
     credentials: 'include',
@@ -54,7 +58,7 @@ export async function csrfFetch(url: string, init: RequestInit = {}): Promise<Re
   const isStateChanging = method !== 'GET' && method !== 'HEAD';
   const headers = new Headers(init.headers);
   if (isStateChanging && !headers.has('x-csrf-token')) {
-    headers.set('x-csrf-token', getCsrfToken());
+    headers.set('x-csrf-token', await csrfToken());
   }
   return fetch(url, { credentials: 'include', ...init, headers });
 }
