@@ -35,8 +35,8 @@ export const GET = withAuth<{ params: Promise<{ id: string }> }>(
         return NextResponse.json({ message: 'Survey not found' }, { status: 404 });
       }
       const questionsRes = await getPool().query(
-        'SELECT * FROM survey_questions WHERE survey_id = $1 ORDER BY order_index',
-        [id],
+        'SELECT * FROM survey_questions WHERE survey_id = $1 AND company_id = $2 ORDER BY order_index',
+        [id, auth.companyId],
       );
       return NextResponse.json({ ...surveyRes.rows[0], questions: questionsRes.rows });
     } catch (err) {
