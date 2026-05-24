@@ -21,6 +21,9 @@
   "dependencies": {
     "@ai-sdk/openai": "^3.0.64",
     "@auth/drizzle-adapter": "^1.11.2",
+    "@bull-board/api": "^7.1.5",
+    "@bull-board/h3": "^7.1.5",
+    "@bull-board/ui": "^7.1.5",
     "@getbrevo/brevo": "^5.0.4",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
@@ -67,6 +70,7 @@
     "drizzle-zod": "^0.7.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^11.13.1",
+    "h3": "^1.15.11",
     "input-otp": "^1.4.2",
     "ioredis": "^5.10.1",
     "lucide-react": "^0.453.0",
