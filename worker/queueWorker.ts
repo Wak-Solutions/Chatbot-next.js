@@ -43,11 +43,11 @@ export function startQueueWorker(): QueueWorkers {
     'bot-turns',
     async (job: Job) => {
       if (job.name === 'process-text') {
-        await processText(job.data as ProcessTextInput);
+        await processText(job.data as ProcessTextInput, job.id ?? '');
         return;
       }
       if (job.name === 'process-audio') {
-        await processAudio(job.data as ProcessAudioInput);
+        await processAudio(job.data as ProcessAudioInput, job.id ?? '');
         return;
       }
       throw new Error(`Unknown bot job name: ${job.name}`);

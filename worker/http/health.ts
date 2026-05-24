@@ -1,35 +1,34 @@
 /**
- * Worker /health handler. Same shape as app/api/health/route.ts:
+ * Worker /health handler — Fastify route handler shape.
  *
  *   200 OK   { status: 'ok',       database: 'connected',   service: 'worker' }
- *   503 SU   { status: 'degraded', database: 'unreachable', service: 'worker' }
+ *   503      { status: 'degraded', database: 'unreachable', service: 'worker' }
  *
- * Adds `service: 'worker'` so a single load-balanced /health probe can
- * distinguish dashboard-next from the worker without DNS / port checks.
+ * `service: 'worker'` distinguishes this from the dashboard /health probe.
  */
 
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { FastifyRequest, FastifyReply } from 'fastify';
 import { getPool } from '@/lib/db/client';
 import type { Logger } from '@/lib/logger';
 
 export function makeHealthHandler(logger: Logger) {
   return async function handleHealth(
-    _req: IncomingMessage,
-    res: ServerResponse,
+    _req: FastifyRequest,
+    reply: FastifyReply,
   ): Promise<void> {
     try {
       await getPool().query('SELECT 1');
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ status: 'ok', database: 'connected', service: 'worker' }));
+      await reply.send({ status: 'ok', database: 'connected', service: 'worker' });
     } catch (err) {
       logger.error(
         { err: (err as Error)?.message },
         'Health check DB probe failed',
       );
-      res.writeHead(503, { 'Content-Type': 'application/json' });
-      res.end(
-        JSON.stringify({ status: 'degraded', database: 'unreachable', service: 'worker' }),
-      );
+      await reply.status(503).send({
+        status: 'degraded',
+        database: 'unreachable',
+        service: 'worker',
+      });
     }
   };
 }

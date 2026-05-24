@@ -22,6 +22,7 @@
  *   grace.
  */
 
+import 'dotenv/config';
 import { loadWorkerEnv } from '@/lib/env';
 import { createLogger } from '@/lib/logger';
 import { getPool } from '@/lib/db/client';
@@ -47,10 +48,9 @@ async function main(): Promise<void> {
   }
   logger.info('DB pool ready');
 
-  const { server, close: closeServer } = createWorkerServer({ logger });
-  server.listen(env.PORT, env.HOST, () => {
-    logger.info({ host: env.HOST, port: env.PORT }, 'Worker HTTP listening');
-  });
+  const { listen, close: closeServer } = await createWorkerServer({ logger });
+  await listen(env.PORT, env.HOST);
+  logger.info({ host: env.HOST, port: env.PORT }, 'Worker HTTP listening');
 
   const { botWorker, cronWorker } = startQueueWorker();
   logger.info({ bot: 8, cron: 2 }, 'BullMQ workers started (bot + cron)');

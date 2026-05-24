@@ -22,7 +22,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { loadMenuConfig, type MenuNode } from './config';
-import { clearState, getState, setState } from './state';
+import { clearState, getState, setState } from './session';
 
 const logger = createLogger('menu-handler');
 

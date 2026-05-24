@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: { worker: 'worker/index.ts' },
   outDir: 'dist',
-  format: ['cjs'],
+  format: ['esm'],
   target: 'node20',
   platform: 'node',
   // Keep dist/ contents from the old Express build (script/build.ts writes

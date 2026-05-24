@@ -89,8 +89,84 @@ async function getWebHandler(): Promise<(req: Request) => Promise<Response>> {
   return _webHandler;
 }
 
+// Two Windows-specific issues require special handling in delegate():
+//
+// 1. Trailing-slash mismatch
+//    Bull Board registers the entry route as `${basePath}/` (with slash).
+//    Browsers navigate to /api/admin/queues (no slash).  h3 finds no
+//    match → "Cannot find any path matching /." 404.
+//    Fix: 302-redirect the bare base-path to itself + '/'.
+//
+// 2. Static-file 404 on Windows  (@bull-board/h3 bug)
+//    H3Adapter.getStaticPath() calls node:path.normalize() on the URL
+//    path.  On Windows, normalize() converts forward-slashes to
+//    backslashes, so the subsequent .replace(forwardSlashPrefix, '')
+//    never matches → getStaticPath returns '' → readFileSync throws
+//    → getMeta returns undefined → serveStatic returns 404.
+//    Fix: intercept /…/static/* here and read from the UI package
+//    directly via path.resolve (backslash-safe + traversal-safe).
+
+import { readFileSync } from 'node:fs';
+import nodePath from 'node:path';
+
+const BULL_BASE  = '/api/admin/queues';
+const STATIC_PFX = `${BULL_BASE}/static/`;
+
+const UI_STATIC_DIR = nodePath.resolve(
+  process.cwd(),
+  'node_modules/@bull-board/ui/dist/static',
+);
+
+const MIME: Record<string, string> = {
+  '.css':   'text/css; charset=utf-8',
+  '.js':    'application/javascript; charset=utf-8',
+  '.mjs':   'application/javascript; charset=utf-8',
+  '.svg':   'image/svg+xml',
+  '.png':   'image/png',
+  '.ico':   'image/x-icon',
+  '.json':  'application/json; charset=utf-8',
+  '.woff':  'font/woff',
+  '.woff2': 'font/woff2',
+};
+
+function serveStaticFile(pathname: string): Response {
+  const rel = pathname.slice(STATIC_PFX.length);          // 'css/main.abc.css'
+  const abs = nodePath.resolve(UI_STATIC_DIR, rel);       // native OS path
+  // Guard: never escape the static directory.
+  if (!abs.startsWith(UI_STATIC_DIR + nodePath.sep) && abs !== UI_STATIC_DIR) {
+    return new Response('Forbidden', { status: 403 });
+  }
+  try {
+    const body = readFileSync(abs);
+    const ext  = nodePath.extname(rel).toLowerCase();
+    return new Response(body, {
+      headers: { 'Content-Type': MIME[ext] ?? 'application/octet-stream' },
+    });
+  } catch {
+    return new Response('Not Found', { status: 404 });
+  }
+}
+
 async function delegate(req: Request): Promise<Response> {
+  const { pathname } = new URL(req.url);
+
+  // Serve static assets directly (bypasses the Windows path bug — see above).
+  if (pathname.startsWith(STATIC_PFX)) {
+    return serveStaticFile(pathname);
+  }
+
   const handler = await getWebHandler();
+
+  // Bull Board's entry route is registered at `${basePath}/` (trailing slash).
+  // Next.js normalises URLs by stripping trailing slashes before our handler
+  // sees them, so the browser redirect trick creates an infinite loop.
+  // Instead, rewrite the URL internally so h3 sees the slash it needs.
+  if (pathname === BULL_BASE) {
+    const url = new URL(req.url);
+    url.pathname = `${BULL_BASE}/`;
+    return handler(new Request(url, req));
+  }
+
   return handler(req);
 }
 

@@ -10,10 +10,15 @@
  *      tells the text orchestrator not to re-save).
  *   5. Run transcription through the normal text orchestrator
  *      (getReply with saveInbound: false).
+ *   6. claimOutbound(jobId) — skip send if a previous attempt already
+ *      delivered this reply (idempotency guard, lib/messaging/outboundGuard).
  *
  * Each failure mode (too-large, download error, transcription failure,
  * empty transcription) sends a customer-friendly apology so the
  * customer is never left in silence.
+ *
+ * jobId defaults to '' so the function is safe to call outside a BullMQ
+ * context — the guard becomes a no-op when empty.
  */
 
 import { createLogger } from '@/lib/logger';
@@ -26,6 +31,7 @@ import {
 } from '@/lib/messaging/voice';
 import { saveMessage } from '@/lib/messaging/memory';
 import { sendWhatsAppTextWithCreds } from '@/lib/messaging/whatsapp';
+import { claimOutbound } from '@/lib/messaging/outboundGuard';
 import { getCompanyAppUrl } from '@/lib/companies/appUrl';
 import { getReply } from '@/worker/orchestrator/getReply';
 
@@ -46,7 +52,7 @@ const APOLOGY_TOO_LARGE =
 const APOLOGY_NO_SPEECH =
   "I received your voice message but couldn't make out any words. Could you type your question instead?";
 
-export async function processAudio(input: ProcessAudioInput): Promise<void> {
+export async function processAudio(input: ProcessAudioInput, jobId = ''): Promise<void> {
   const { customerPhone, mediaId, mimeType, companyId, creds } = input;
 
   try {
@@ -164,7 +170,13 @@ export async function processAudio(input: ProcessAudioInput): Promise<void> {
     });
 
     if (reply) {
-      await sendWhatsAppTextWithCreds({ phone: customerPhone, body: reply, creds });
+      // Step 6 — Idempotency guard before send.
+      const safe = await claimOutbound(jobId);
+      if (safe) {
+        await sendWhatsAppTextWithCreds({ phone: customerPhone, body: reply, creds });
+      } else {
+        logger.info({ phone: maskPhone(customerPhone) }, 'Outbound already sent — skipping duplicate send');
+      }
       await saveMessage({
         customerPhone,
         companyId,
@@ -179,11 +191,18 @@ export async function processAudio(input: ProcessAudioInput): Promise<void> {
     }
 
     if (meetingMessage) {
-      await sendWhatsAppTextWithCreds({
-        phone: customerPhone,
-        body: meetingMessage,
-        creds,
-      });
+      // Distinct key prevents a main-reply retry from suppressing the invite,
+      // and a meeting-invite retry from duplicating it.
+      const safeMeeting = await claimOutbound(jobId ? `${jobId}:meeting` : '');
+      if (safeMeeting) {
+        await sendWhatsAppTextWithCreds({
+          phone: customerPhone,
+          body: meetingMessage,
+          creds,
+        });
+      } else {
+        logger.info({ phone: maskPhone(customerPhone) }, 'Meeting invite already sent — skipping duplicate send');
+      }
       await saveMessage({
         customerPhone,
         companyId,

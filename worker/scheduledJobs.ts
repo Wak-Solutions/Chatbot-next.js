@@ -13,9 +13,18 @@
  * Express+worker overlap protection.
  */
 
-import { cronQueue } from '@/lib/queue/queues';
+import { botQueue, cronQueue } from '@/lib/queue/queues';
 
 export async function registerScheduledJobs(): Promise<void> {
+  // Remove any meeting-reminder repeatable jobs that were previously
+  // mis-registered on the bot-turns queue (wrong queue — belongs on cron-tasks).
+  const staleRepeatables = await botQueue.getRepeatableJobs();
+  for (const job of staleRepeatables) {
+    if (job.name === 'meeting-reminder') {
+      await botQueue.removeRepeatableByKey(job.key);
+    }
+  }
+
   await cronQueue.add(
     'meeting-reminder',
     {},

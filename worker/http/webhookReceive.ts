@@ -1,5 +1,15 @@
 /**
- * Meta inbound-message webhook — port of Chatbot/routes/webhook.py:49.
+ * Meta inbound-message webhook — Fastify route handler shape.
+ *
+ * Replaces the bare node:http version. Behaviour is identical — only the
+ * handler signature and raw-body access change:
+ *
+ *   Before: readRawBody(req: IncomingMessage) → Buffer  (manual stream concat)
+ *   After:  req.rawBody as Buffer              (fastify-raw-body plugin,
+ *            registered with encoding:false in server.ts, opted-in via
+ *            config: { rawBody: true } on the POST /webhook route)
+ *
+ * Original port of Chatbot/routes/webhook.py:49.
  *
  * Contract surface (Phase 1 §10):
  *
@@ -29,7 +39,8 @@
  *     background so Meta's webhook timeout is never hit.
  */
 
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { FastifyRequest, FastifyReply } from 'fastify';
+import 'fastify-raw-body';
 import type { Logger } from '@/lib/logger';
 import { maskPhone } from '@/lib/phone';
 import { verifyMetaSignature } from '@/lib/messaging/whatsapp';
@@ -43,23 +54,6 @@ import { getPool } from '@/lib/db/client';
 import { botQueue } from '@/lib/queue/queues';
 import type { ProcessTextInput } from '@/worker/tasks/processText';
 import type { ProcessAudioInput } from '@/worker/tasks/processAudio';
-
-function send200(res: ServerResponse, body: object = { status: 'ok' }): void {
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(body));
-}
-function send403(res: ServerResponse, body: object = { error: 'Forbidden' }): void {
-  res.writeHead(403, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(body));
-}
-
-async function readRawBody(req: IncomingMessage): Promise<Buffer> {
-  const chunks: Buffer[] = [];
-  for await (const chunk of req) {
-    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : (chunk as Buffer));
-  }
-  return Buffer.concat(chunks);
-}
 
 async function persistRawInbound(
   phoneNumberId: string,
@@ -82,28 +76,29 @@ async function persistRawInbound(
 
 export function makeWebhookReceiveHandler(logger: Logger) {
   return async function handleReceive(
-    req: IncomingMessage,
-    res: ServerResponse,
+    req: FastifyRequest,
+    reply: FastifyReply,
   ): Promise<void> {
-    // ── Read raw body once — needed for signature verification ──────────
-    const rawBody = await readRawBody(req);
+    // fastify-raw-body sets rawBody when config.rawBody: true on the route.
+    // The import 'fastify-raw-body' above augments FastifyRequest with rawBody.
+    const rawBody = req.rawBody as Buffer;
 
     const signatureHeader = req.headers['x-hub-signature-256'];
     const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
     if (!signature) {
       logger.warn('Webhook POST rejected — missing X-Hub-Signature-256 header');
-      return send403(res);
+      await reply.status(403).send({ error: 'Forbidden' });
+      return;
     }
 
-    // Parse preliminarily to extract phone_number_id (signature target).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let prelim: any;
     try {
       prelim = JSON.parse(rawBody.toString('utf8'));
     } catch {
-      // Anti-flood: malformed JSON → 200 OK (no processing, no Meta retry storm).
       logger.warn('Webhook POST dropped — malformed JSON body');
-      return send200(res);
+      await reply.send({ status: 'ok' });
+      return;
     }
 
     const entry = prelim?.entry ?? [];
@@ -112,47 +107,39 @@ export function makeWebhookReceiveHandler(logger: Logger) {
     const phoneNumberId: string = value?.metadata?.phone_number_id ?? '';
 
     if (!phoneNumberId) {
-      // Status-update callbacks without messages — accept silently.
       logger.info('Webhook with no phone_number_id — likely a status update, accepting');
-      return send200(res);
+      await reply.send({ status: 'ok' });
+      return;
     }
 
-    // ── Resolve app_secret for this phone_number_id ─────────────────────
     let appSecret: string | null;
     try {
       appSecret = await lookupAppSecretByPhoneNumberId(phoneNumberId);
     } catch (err) {
-      // Anti-flood (FINAL-024): DB error → 200 so Meta doesn't retry the
-      // same webhook in a storm. The customer can retry via WhatsApp.
       logger.error(
         { phoneNumberId, err: (err as Error)?.message },
         'Webhook POST dropped — DB lookup failed for phone_number_id',
       );
-      return send200(res);
+      await reply.send({ status: 'ok' });
+      return;
     }
     if (!appSecret) {
-      // FAIL-CLOSED (FINAL-033): missing app_secret → 403. No fallback to
-      // an empty string or shared default.
       logger.warn(
         { phoneNumberId },
         'Webhook POST rejected — no app_secret registered for phone_number_id',
       );
-      return send403(res);
+      await reply.status(403).send({ error: 'Forbidden' });
+      return;
     }
 
-    // ── HMAC verify ─────────────────────────────────────────────────────
     if (!verifyMetaSignature(rawBody, signature, appSecret)) {
-      logger.warn(
-        { phoneNumberId },
-        'Webhook POST rejected — signature mismatch',
-      );
-      return send403(res);
+      logger.warn({ phoneNumberId }, 'Webhook POST rejected — signature mismatch');
+      await reply.status(403).send({ error: 'Forbidden' });
+      return;
     }
 
-    // ── Verified — persist raw payload (best-effort) ────────────────────
     await persistRawInbound(phoneNumberId, prelim, logger);
 
-    // ── Resolve company + creds ─────────────────────────────────────────
     let companyId: number | null;
     try {
       companyId = await resolveCompanyByPhoneNumberId(phoneNumberId);
@@ -161,23 +148,26 @@ export function makeWebhookReceiveHandler(logger: Logger) {
         { phoneNumberId, err: (err as Error)?.message },
         'Webhook POST — DB lookup failed for company',
       );
-      return send200(res);
+      await reply.send({ status: 'ok' });
+      return;
     }
     if (companyId === null) {
-      return send200(res, { status: 'unroutable' });
+      await reply.send({ status: 'unroutable' });
+      return;
     }
 
     const creds = await getWhatsappCreds(companyId);
     if (!creds) {
       logger.error({ companyId }, 'Company has no WhatsApp credentials — cannot reply');
-      return send200(res, { status: 'no_creds' });
+      await reply.send({ status: 'no_creds' });
+      return;
     }
 
-    // ── Extract message ─────────────────────────────────────────────────
     const messagesList = value?.messages ?? [];
     if (messagesList.length === 0) {
       logger.info('No messages in payload — likely a status update, ignoring');
-      return send200(res);
+      await reply.send({ status: 'ok' });
+      return;
     }
 
     const message = messagesList[0];
@@ -187,27 +177,25 @@ export function makeWebhookReceiveHandler(logger: Logger) {
 
     if (!customerPhone) {
       logger.warn("Webhook message missing 'from' field — ignoring");
-      return send200(res);
+      await reply.send({ status: 'ok' });
+      return;
     }
 
-    // ── Idempotency ─────────────────────────────────────────────────────
     if (messageId) {
       const claimed = await claimMessageId(messageId);
       if (!claimed) {
         logger.info({ messageId }, 'Duplicate webhook delivery — skipping');
-        return send200(res);
+        await reply.send({ status: 'ok' });
+        return;
       }
     }
 
-    // ── Dispatch (concurrency-capped, fire-and-forget) ──────────────────
     if (msgType === 'text') {
       const messageText = message?.text?.body as string | undefined;
       if (!messageText) {
-        logger.warn(
-          { phone: maskPhone(customerPhone) },
-          'Text message with empty body',
-        );
-        return send200(res);
+        logger.warn({ phone: maskPhone(customerPhone) }, 'Text message with empty body');
+        await reply.send({ status: 'ok' });
+        return;
       }
       logger.info(
         { phone: maskPhone(customerPhone), companyId, type: 'text' },
@@ -227,7 +215,8 @@ export function makeWebhookReceiveHandler(logger: Logger) {
           'process-text enqueue failed',
         );
       }
-      return send200(res);
+      await reply.send({ status: 'ok' });
+      return;
     }
 
     if (msgType === 'audio') {
@@ -235,11 +224,9 @@ export function makeWebhookReceiveHandler(logger: Logger) {
       const mediaId = audioData?.id as string | undefined;
       const mime = (audioData?.mime_type as string | undefined) ?? 'audio/ogg';
       if (!mediaId) {
-        logger.warn(
-          { phone: maskPhone(customerPhone) },
-          'Audio message missing media ID',
-        );
-        return send200(res);
+        logger.warn({ phone: maskPhone(customerPhone) }, 'Audio message missing media ID');
+        await reply.send({ status: 'ok' });
+        return;
       }
       logger.info(
         { phone: maskPhone(customerPhone), companyId, type: 'audio', mime },
@@ -260,13 +247,11 @@ export function makeWebhookReceiveHandler(logger: Logger) {
           'process-audio enqueue failed',
         );
       }
-      return send200(res);
+      await reply.send({ status: 'ok' });
+      return;
     }
 
-    logger.info(
-      { phone: maskPhone(customerPhone), type: msgType },
-      'Unsupported message type',
-    );
-    return send200(res);
+    logger.info({ phone: maskPhone(customerPhone), type: msgType }, 'Unsupported message type');
+    await reply.send({ status: 'ok' });
   };
 }
