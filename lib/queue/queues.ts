@@ -1,18 +1,18 @@
 /**
- * Shared BullMQ queue handles. The worker, the webhook producer, and
- * the repeatable-job scheduler all reference these singletons.
+ * Shared BullMQ queue handles.
  *
- * Single queue `bot-turns` carries three job types, dispatched on
- * job.name in worker/queueWorker.ts:
- *   - 'process-text'      → worker/tasks/processText (WhatsApp text in)
- *   - 'process-audio'     → worker/tasks/processAudio (WhatsApp voice in)
- *   - 'meeting-reminder'  → worker/tasks/meetingReminder (cron tick)
+ *   botQueue ('bot-turns')   — WhatsApp message processing.
+ *                              Jobs: 'process-text', 'process-audio'.
+ *                              Consumed by botWorker (concurrency 8).
+ *   cronQueue ('cron-tasks') — scheduled / repeatable jobs.
+ *                              Jobs: 'meeting-reminder'.
+ *                              Consumed by cronWorker (concurrency 2).
  *
- * Default job options:
- *   - 3 attempts with exponential backoff starting at 2s — matches the
- *     Phase 2 spec verbatim.
- *   - Retain last 1k completed / 5k failed jobs in Redis so the Bull
- *     Board (PR-Phase-2 Step 7) has history to render.
+ * Split per manager directive: a burst of webhook jobs on the shared
+ * queue was delaying the minute-tick meeting-reminder repeatable by
+ * minutes. Separate queues isolate the two workloads — bot bursts no
+ * longer starve the cron, and cron ticks don't fight for slots that
+ * should be serving customers.
  */
 
 import { Queue } from 'bullmq';
@@ -25,5 +25,15 @@ export const botQueue = new Queue('bot-turns', {
     backoff: { type: 'exponential', delay: 2_000 },
     removeOnComplete: { count: 1_000 },
     removeOnFail: { count: 5_000 },
+  },
+});
+
+export const cronQueue = new Queue('cron-tasks', {
+  connection: getConnection(),
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: { type: 'exponential', delay: 2_000 },
+    removeOnComplete: { count: 100 },
+    removeOnFail: { count: 500 },
   },
 });

@@ -1,26 +1,26 @@
 /**
- * BullMQ worker. Replaces the in-process Semaphore (deleted in Phase 2)
- * with a distributed job queue backed by Redis. Started once from
- * worker/index.ts at boot.
+ * BullMQ workers — one per queue, per manager directive.
  *
- * Concurrency: 8 — matches the legacy Semaphore.DEFAULT_MAX so the
- * per-process load profile on Postgres + OpenAI doesn't change.
+ *   botWorker  ('bot-turns', concurrency 8)
+ *     Handles WhatsApp message processing. Dispatched on job.name:
+ *       'process-text'  → worker/tasks/processText.processText
+ *       'process-audio' → worker/tasks/processAudio.processAudio
+ *     Concurrency 8 matches the legacy Semaphore.DEFAULT_MAX so the
+ *     per-process load profile on Postgres + OpenAI doesn't change.
  *
- * Job dispatch is by `job.name`:
- *   - 'meeting-reminder'  → worker/tasks/meetingReminder.meetingReminderTask
- *   - 'process-text'      → worker/tasks/processText.processText
- *   - 'process-audio'     → worker/tasks/processAudio.processAudio
+ *     (Spec shorthand showed `await getReply(job.data)` directly. Kept
+ *     the process-text/audio wrappers same as Phase 2 — getReply only
+ *     computes the reply text; the wrappers do the send + outbound row
+ *     persist + apology fallback that the bot actually needs.)
  *
- * The spec sketched `await getReply(job.data)` as the bot-turn handler,
- * but getReply only COMPUTES a reply — it doesn't send it back via
- * WhatsApp or persist the outbound row. processText / processAudio are
- * the existing wrappers that do the full inbound→reply→send cycle, and
- * the webhook already produced payloads matching their input shapes.
- * Routing here preserves the bot's send behavior end-to-end.
+ *   cronWorker ('cron-tasks', concurrency 2)
+ *     Handles scheduled / repeatable jobs. Dispatched on job.name:
+ *       'meeting-reminder' → worker/tasks/meetingReminder.meetingReminderTask
+ *     Concurrency 2 is a comfortable upper bound for the minute-tick
+ *     and keeps contention on the meetings table low.
  *
- * Unknown job.name → throw, which lets BullMQ apply the queue's default
- * retry policy (3 attempts, exponential backoff) and surface it via
- * the 'failed' listener below.
+ * Unknown job.name → throw, lets BullMQ apply the default retry policy
+ * and surface via the 'failed' listener.
  */
 
 import { Worker, type Job } from 'bullmq';
@@ -30,16 +30,18 @@ import { processAudio, type ProcessAudioInput } from '@/worker/tasks/processAudi
 import { meetingReminderTask } from '@/worker/tasks/meetingReminder';
 import { logger } from '@/lib/logger';
 
-const CONCURRENCY = 8;
+const BOT_CONCURRENCY = 8;
+const CRON_CONCURRENCY = 2;
 
-export function startQueueWorker(): Worker {
-  const worker = new Worker(
+export interface QueueWorkers {
+  botWorker: Worker;
+  cronWorker: Worker;
+}
+
+export function startQueueWorker(): QueueWorkers {
+  const botWorker = new Worker(
     'bot-turns',
     async (job: Job) => {
-      if (job.name === 'meeting-reminder') {
-        await meetingReminderTask();
-        return;
-      }
       if (job.name === 'process-text') {
         await processText(job.data as ProcessTextInput);
         return;
@@ -48,17 +50,35 @@ export function startQueueWorker(): Worker {
         await processAudio(job.data as ProcessAudioInput);
         return;
       }
-      throw new Error(`Unknown job name: ${job.name}`);
+      throw new Error(`Unknown bot job name: ${job.name}`);
     },
     {
       connection: getConnection(),
-      concurrency: CONCURRENCY,
+      concurrency: BOT_CONCURRENCY,
     },
   );
 
-  worker.on('failed', (job, err) => {
-    logger.error({ jobId: job?.id, jobName: job?.name, err }, 'Job failed');
-  });
+  const cronWorker = new Worker(
+    'cron-tasks',
+    async (job: Job) => {
+      if (job.name === 'meeting-reminder') {
+        await meetingReminderTask();
+        return;
+      }
+      logger.warn({ jobName: job.name }, 'Unknown cron job');
+    },
+    {
+      connection: getConnection(),
+      concurrency: CRON_CONCURRENCY,
+    },
+  );
 
-  return worker;
+  botWorker.on('failed', (job, err) =>
+    logger.error({ jobId: job?.id, jobName: job?.name, err }, 'Bot job failed'),
+  );
+  cronWorker.on('failed', (job, err) =>
+    logger.error({ jobId: job?.id, jobName: job?.name, err }, 'Cron job failed'),
+  );
+
+  return { botWorker, cronWorker };
 }

@@ -315,14 +315,12 @@ function PricingCard({
           {cta}
         </a>
       ) : (
-        <Link href="/register">
-          <a className={`mt-8 block text-center py-3 rounded-xl font-semibold text-sm transition-all ${
-            highlighted
-              ? "bg-white text-brand-blue hover:brightness-95"
-              : "border border-brand-cyan text-brand-cyan hover:bg-brand-cyan/10"
-          }`}>
-            {cta}
-          </a>
+        <Link href="/register" className={`mt-8 block text-center py-3 rounded-xl font-semibold text-sm transition-all ${
+          highlighted
+            ? "bg-white text-brand-blue hover:brightness-95"
+            : "border border-brand-cyan text-brand-cyan hover:bg-brand-cyan/10"
+        }`}>
+          {cta}
         </Link>
       )}
     </div>
@@ -422,19 +420,15 @@ export default function LandingPage() {
                 <Globe className="w-4 h-4 text-brand-cyan" />
                 {t.switchLang}
               </button>
-              <Link href="/login">
-                <a className="text-sm font-medium text-brand-cyan border border-brand-cyan/60 px-4 py-2 rounded-lg hover:bg-brand-cyan/10 transition-colors">
-                  {t.login}
-                </a>
+              <Link href="/login" className="text-sm font-medium text-brand-cyan border border-brand-cyan/60 px-4 py-2 rounded-lg hover:bg-brand-cyan/10 transition-colors">
+                {t.login}
               </Link>
             </div>
 
             {/* Mobile: Login + hamburger */}
             <div className="lg:hidden flex items-center gap-2">
-              <Link href="/login">
-                <a className="text-sm font-medium text-brand-cyan border border-brand-cyan/60 px-3 py-1.5 rounded-lg hover:bg-brand-cyan/10 transition-colors">
-                  {t.login}
-                </a>
+              <Link href="/login" className="text-sm font-medium text-brand-cyan border border-brand-cyan/60 px-3 py-1.5 rounded-lg hover:bg-brand-cyan/10 transition-colors">
+                {t.login}
               </Link>
               <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 text-white/80">
                 {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -485,10 +479,8 @@ export default function LandingPage() {
               </Reveal>
               <Reveal delay={200}>
                 <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
-                  <Link href="/register">
-                    <a className="inline-flex items-center gap-2 bg-gradient-primary text-white font-semibold px-7 py-3.5 rounded-xl hover:brightness-110 transition-all shadow-glow-cyan text-sm">
-                      {t.startTrial} <ArrowRight className="w-4 h-4 icon-directional" />
-                    </a>
+                  <Link href="/register" className="inline-flex items-center gap-2 bg-gradient-primary text-white font-semibold px-7 py-3.5 rounded-xl hover:brightness-110 transition-all shadow-glow-cyan text-sm">
+                    {t.startTrial} <ArrowRight className="w-4 h-4 icon-directional" />
                   </Link>
                   <button onClick={() => setDemoOpen(true)} className="inline-flex items-center gap-2 text-brand-cyan font-semibold px-4 py-3.5 rounded-xl hover:bg-brand-cyan/10 transition-colors text-sm">
                     <Play className="w-4 h-4 text-brand-cyan" /> {t.seeDemo}
@@ -681,10 +673,8 @@ export default function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-semibold text-white tracking-tight">{t.ctaTitle}</h2>
             <p className="mt-4 text-white/80 text-lg">{t.ctaSub}</p>
             <div className="mt-8 flex items-center justify-center">
-              <Link href="/register">
-                <a className="inline-flex items-center gap-2 bg-white text-brand-blue font-semibold px-7 py-3.5 rounded-xl hover:brightness-95 transition-all text-sm shadow-lg">
-                  {t.startTrial} <ArrowRight className="w-4 h-4 icon-directional" />
-                </a>
+              <Link href="/register" className="inline-flex items-center gap-2 bg-white text-brand-blue font-semibold px-7 py-3.5 rounded-xl hover:brightness-95 transition-all text-sm shadow-lg">
+                {t.startTrial} <ArrowRight className="w-4 h-4 icon-directional" />
               </Link>
             </div>
           </Reveal>
@@ -703,8 +693,8 @@ export default function LandingPage() {
 
             {/* Links */}
             <div className="flex items-center gap-6 text-sm text-brand-slate">
-              <Link href="/terms"><a className="hover:text-brand-cyan transition-colors">{t.terms}</a></Link>
-              <Link href="/terms"><a className="hover:text-brand-cyan transition-colors">{t.privacy}</a></Link>
+              <Link href="/terms" className="hover:text-brand-cyan transition-colors">{t.terms}</Link>
+              <Link href="/terms" className="hover:text-brand-cyan transition-colors">{t.privacy}</Link>
               <button onClick={toggleLang} className="flex items-center gap-1.5 hover:text-brand-cyan transition-colors">
                 <Globe className="w-3.5 h-3.5" />
                 {t.switchLang}

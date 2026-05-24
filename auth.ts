@@ -2,15 +2,28 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { getDb } from '@/lib/db/client';
-import { agents } from '@/lib/db/schema';
+import { agents, authAccounts, authSessions, authVerificationTokens } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import { checkTrial } from '@/lib/auth/trial';
 import { recheckIsActive } from '@/lib/auth/isActive';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  // Custom table map per manager directive. The `as any` on the second
+  // argument silences a structural type mismatch (agents.id is `serial`
+  // / integer; DrizzleAdapter's PostgresUsersTable signature requires
+  // PgText / PgVarchar / PgUUID). Per the directive, we do NOT change
+  // agents.id type. Runtime is unaffected today: Credentials + JWT
+  // session strategy never exercises the adapter's session/account
+  // methods. Cast also on the outer call result for the same reason.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  adapter: DrizzleAdapter(getDb()) as any,
+  adapter: DrizzleAdapter(getDb(), {
+    usersTable: agents,
+    accountsTable: authAccounts,
+    sessionsTable: authSessions,
+    verificationTokensTable: authVerificationTokens,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any) as any,
   // Auth.js v5 requires JWT strategy when using the Credentials provider
   // (it refuses to issue a DB session for credential logins — throws
   // UnsupportedStrategy). With JWT, companyId/role are carried in the
@@ -51,15 +64,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
-      if (token.id) {
-        await recheckIsActive(Number(token.id));
+    // Under JWT strategy, Auth.js v5 passes `token` (not `user`) to the
+    // session callback. Renaming via destructure so the body matches the
+    // manager's snippet syntactically — `user` here is the JWT token,
+    // populated by the jwt() callback above from the same authorize()
+    // return value the database-strategy `user` would carry.
+    async session({ session, token: user }) {
+      if (user.id) {
+        await recheckIsActive(Number(user.id));
       }
-      session.user.id        = String(token.id ?? '');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      session.user.companyId = token.companyId as any;
+      await checkTrial((user as any).companyId);   // mid-session trial gate
+      session.user.id        = String(user.id ?? '');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      session.user.role      = token.role as any;
+      session.user.companyId = (user as any).companyId;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      session.user.role      = (user as any).role;
       return session;
     },
   },

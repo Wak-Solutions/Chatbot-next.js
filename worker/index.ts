@@ -52,8 +52,8 @@ async function main(): Promise<void> {
     logger.info({ host: env.HOST, port: env.PORT }, 'Worker HTTP listening');
   });
 
-  const queueWorker = startQueueWorker();
-  logger.info({ concurrency: 8 }, 'BullMQ worker started');
+  const { botWorker, cronWorker } = startQueueWorker();
+  logger.info({ bot: 8, cron: 2 }, 'BullMQ workers started (bot + cron)');
 
   await registerScheduledJobs();
   logger.info('Repeatable jobs registered');
@@ -76,8 +76,8 @@ async function main(): Promise<void> {
       logger.info('Closing HTTP server');
       await closeServer();
 
-      logger.info('Closing BullMQ worker');
-      await queueWorker.close();
+      logger.info('Closing BullMQ workers (bot + cron)');
+      await Promise.all([botWorker.close(), cronWorker.close()]);
 
       logger.info('Closing pg pool');
       await getPool().end();

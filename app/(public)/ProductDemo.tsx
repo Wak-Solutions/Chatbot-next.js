@@ -991,10 +991,8 @@ export default function ProductDemo({ open, onClose }: { open: boolean; onClose:
             </button>
           </div>
 
-          <Link href="/register">
-            <a className="bg-brand-blue text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#0d440d] transition-colors flex items-center gap-1.5 shrink-0">
-              Start free trial <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+          <Link href="/register" className="bg-brand-blue text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#0d440d] transition-colors flex items-center gap-1.5 shrink-0">
+            Start free trial <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>

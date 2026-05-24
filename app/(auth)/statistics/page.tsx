@@ -395,9 +395,7 @@ export default function Statistics() {
                       </p>
                     </div>
                     {surveyOverview.survey_id && (
-                      <Link href="/surveys">
-                        <a className="text-xs text-brand-blue hover:underline font-medium">{t("statisticsViewResults")}</a>
-                      </Link>
+                      <Link href="/surveys" className="text-xs text-brand-blue hover:underline font-medium">{t("statisticsViewResults")}</Link>
                     )}
                   </div>
 

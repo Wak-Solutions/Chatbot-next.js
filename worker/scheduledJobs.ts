@@ -13,10 +13,10 @@
  * Express+worker overlap protection.
  */
 
-import { botQueue } from '@/lib/queue/queues';
+import { cronQueue } from '@/lib/queue/queues';
 
 export async function registerScheduledJobs(): Promise<void> {
-  await botQueue.add(
+  await cronQueue.add(
     'meeting-reminder',
     {},
     {

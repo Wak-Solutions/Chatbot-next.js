@@ -297,10 +297,8 @@ export default function InboxPage() {
                             {claiming === item.customer_phone ? t("inboxClaiming") : t("inboxClaim")}
                           </button>
                         ) : ( */}
-                          <Link href={`/dashboard?phone=${encodeURIComponent(item.customer_phone)}`}>
-                            <a className="px-3 py-1.5 text-xs font-medium border border-brand-blue/30 text-brand-blue rounded-lg hover:bg-brand-blue/5 transition-colors">
-                              {t("inboxOpen")}
-                            </a>
+                          <Link href={`/dashboard?phone=${encodeURIComponent(item.customer_phone)}`} className="px-3 py-1.5 text-xs font-medium border border-brand-blue/30 text-brand-blue rounded-lg hover:bg-brand-blue/5 transition-colors">
+                            {t("inboxOpen")}
                           </Link>
                         {/* )} */}
                       </div>
