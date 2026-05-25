@@ -28,6 +28,8 @@ import { maskPhone } from '@/lib/phone';
 import * as memory from '@/lib/messaging/memory';
 import { getPendingMeeting } from '@/lib/meetings/queries';
 import { notifyDashboard } from '@/lib/notifications/dashboard';
+import { getPauseState, isPauseActive } from '@/lib/conversations/pauseState';
+import { CONNECTING_TO_AGENT } from '@/lib/messaging/strings';
 import { generateText, stepCountIs, type ModelMessage } from 'ai';
 import { getModel } from '@/lib/llm/provider';
 import { botTools } from '@/lib/llm/tools';
@@ -145,6 +147,16 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
     companyId,
   });
 
+  // Pause gate. Save + notifyDashboard above ALWAYS run; everything below
+  // (digit router, menu nav, intents, LLM) is suppressed while the agent
+  // has the conversation paused. Auto-expire is read-time only — paused_at
+  // older than PAUSE_TTL is treated as unpaused without touching the row.
+  const pauseRow = await getPauseState(customerPhone, companyId);
+  if (isPauseActive(pauseRow)) {
+    logger.info({ phone: maskPhone(customerPhone) }, 'AI paused — suppressing auto-reply');
+    return [null, null];
+  }
+
   // Step 2a — deterministic 1/2 router.
   const choice = isNextStepChoice(newMessage);
   if (choice !== null && botJustOfferedNextStepMenu(history)) {
@@ -177,7 +189,7 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
         messageText: newMessage,
         companyId,
       });
-      return ['Connecting you to an agent now — please hold on a moment.', null];
+      return [CONNECTING_TO_AGENT, null];
     }
   }
 

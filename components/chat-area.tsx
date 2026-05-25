@@ -15,6 +15,11 @@ import { useSendMessage, useMessages } from "@/hooks/use-messages";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from "@/components/ui/Logo";
+import {
+  AiPauseBanner,
+  AiPauseToggle,
+  useAiPauseState,
+} from "@/components/ai-pause-toggle";
 
 function formatDateSeparator(date: Date): string {
   if (isToday(date)) return "TODAY";
@@ -189,6 +194,7 @@ function ActiveChat({ conversation, onClose }: { conversation: Conversation; onC
   const inputRef = useRef<HTMLInputElement>(null);
   const [, setAgents] = useState<Agent[]>([]);
   const { t } = useLanguage();
+  const pause = useAiPauseState(conversation.customer_phone);
 
   useEffect(() => {
     if (isAdmin) {
@@ -251,15 +257,20 @@ function ActiveChat({ conversation, onClose }: { conversation: Conversation; onC
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/[0.06] transition-colors">
-            <Search className="w-[18px] h-[18px] text-brand-slate" />
-          </button>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/[0.06] transition-colors">
-            <MoreVertical className="w-[18px] h-[18px] text-brand-slate" />
-          </button>
+        <div className="flex items-center gap-3">
+          <AiPauseToggle pause={pause} />
+          <div className="flex items-center gap-1">
+            <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/[0.06] transition-colors">
+              <Search className="w-[18px] h-[18px] text-brand-slate" />
+            </button>
+            <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/[0.06] transition-colors">
+              <MoreVertical className="w-[18px] h-[18px] text-brand-slate" />
+            </button>
+          </div>
         </div>
       </div>
+
+      <AiPauseBanner pause={pause} />
 
       {/* Messages area — brand ink with a soft top-centered brand-blue glow */}
       <div className="flex-1 min-h-0 overflow-y-auto px-[6%] md:px-[10%] lg:px-[14%] py-3 relative">

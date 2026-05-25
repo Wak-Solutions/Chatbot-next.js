@@ -300,6 +300,22 @@ export const voice_notes = pgTable('voice_notes', {
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
+// Per-(customer_phone, company_id) AI pause state. When ai_paused = true
+// and paused_at is within the last hour, the worker's getReply gate
+// suppresses ALL automatic replies (LLM + menu router). Inbound save and
+// dashboard notification still run while paused. Auto-expire is a
+// read-time timestamp check — there is no background job.
+export const conversation_ai_state = pgTable('conversation_ai_state', {
+  customer_phone: text('customer_phone').notNull(),
+  company_id: integer('company_id').notNull().references(() => companies.id),
+  ai_paused: boolean('ai_paused').notNull().default(false),
+  paused_at: timestamp('paused_at', { withTimezone: true }),
+  paused_by_agent_id: integer('paused_by_agent_id').references(() => agents.id),
+  updated_at: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  primaryKey({ columns: [table.customer_phone, table.company_id] }),
+]);
+
 // HAND-PORT: reconcile against introspect.
 // Only INSERT/ON CONFLICT at Chatbot/_db_inbox.py:23. Idempotency table —
 // stores Meta message_id to dedupe webhook retries.
