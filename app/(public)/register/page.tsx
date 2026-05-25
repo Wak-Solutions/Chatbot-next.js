@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
+import { signIn } from "next-auth/react";
 import { useLocation, Link } from "@/lib/router";
 import { nameError } from "@/lib/validate-name";
 import { useLanguage } from "@/lib/language-context";
@@ -812,6 +813,17 @@ export default function RegisterPage() {
         const data = await resp.json();
         if (!resp.ok) {
           setError(data.error || "Registration failed");
+          setLoading(false);
+          return;
+        }
+        // Auto sign-in so subsequent onboarding steps (which require auth) work.
+        const signInResult = await signIn("credentials", {
+          email: form.email,
+          password: form.password,
+          redirect: false,
+        });
+        if (signInResult?.error) {
+          setError("Account created but sign-in failed. Please log in manually.");
           setLoading(false);
           return;
         }
