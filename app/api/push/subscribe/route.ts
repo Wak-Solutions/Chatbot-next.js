@@ -2,10 +2,8 @@
  * POST /api/push/subscribe — port of server/routes/push.routes.ts:19-33.
  *
  * Authenticated. Upserts a Web Push subscription into push_subscriptions,
- * scoped by the UNIQUE (endpoint) constraint named
- * push_subscriptions_endpoint_key from the PR 2 schema. Re-subscribing
- * from the same endpoint rebinds agent_id / company_id and bumps
- * updated_at.
+ * scoped by the UNIQUE (endpoint) constraint. Re-subscribing from the same
+ * endpoint rebinds agent_id / company_id and bumps updated_at.
  *
  *   400: { message: 'Invalid subscription object' }   missing endpoint
  *   500: { message: 'Internal error' }

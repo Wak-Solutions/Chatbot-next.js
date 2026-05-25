@@ -117,7 +117,7 @@ export async function registerSubscription(
   await getPool().query(
     `INSERT INTO push_subscriptions (agent_id, endpoint, subscription, company_id)
      VALUES ($1, $2, $3, $4)
-     ON CONFLICT ON CONSTRAINT push_subscriptions_endpoint_key
+     ON CONFLICT (endpoint)
      DO UPDATE SET agent_id = $1, subscription = $3, company_id = $4, updated_at = NOW()`,
     [agentId, subscription.endpoint, JSON.stringify(subscription), companyId],
   );
