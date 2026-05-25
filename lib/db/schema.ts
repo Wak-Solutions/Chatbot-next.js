@@ -43,7 +43,6 @@
  *       blocked_slots.blocked_at
  *       chatbot_config.business_name, .tone, .greeting, .faq,
  *                     .escalation_rules        (superseded by structured_config)
- *       companies.whatsapp_waba_id             (read by companies_decrypted view)
  *       subscriptions.trial_starts_at, .next_billing_date
  *       survey_answers.answer_choice           (superseded by answer_text/answer_rating)
  *       survey_questions.options               (superseded by normalized question rows)
@@ -137,6 +136,7 @@ export const companies = pgTable('companies', {
   whatsapp_token: text('whatsapp_token'),
   whatsapp_phone_number_id: text('whatsapp_phone_number_id'),
   whatsapp_app_secret: text('whatsapp_app_secret'),
+  whatsapp_waba_id: text('whatsapp_waba_id'),
   industry: text('industry'),
   country: text('country'),
   website: text('website'),

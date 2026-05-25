@@ -36,6 +36,13 @@
       "when": 1800000060000,
       "tag": "0004_true_blazing_skull",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1779710883220,
+      "tag": "0005_add_whatsapp_waba_id",
+      "breakpoints": true
     }
   ]
 }
