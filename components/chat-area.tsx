@@ -273,7 +273,7 @@ function ActiveChat({ conversation, onClose }: { conversation: Conversation; onC
       <AiPauseBanner pause={pause} />
 
       {/* Messages area — brand ink with a soft top-centered brand-blue glow */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-[6%] md:px-[10%] lg:px-[14%] py-3 relative">
+      <div className="flex-1 min-h-0 overflow-y-auto px-[4%] md:px-[6%] lg:px-[8%] py-3 relative">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(0,102,255,0.06),transparent_60%)]" />
         <div className="relative">
           {messages.map((msg, idx) => {
@@ -363,7 +363,7 @@ function MessageBubble({ message, showTail }: { message: Message; showTail: bool
       isCustomer ? "justify-start" : "justify-end",
       showTail ? "mt-2" : "mt-[2px]"
     )}>
-      <div className={cn("relative max-w-[65%]", showTail ? "" : (isCustomer ? "ms-2" : "me-2"))}>
+      <div className="relative max-w-[75%]">
         <div
           className={cn(
             "rounded-2xl px-3 pb-1.5 pt-2 relative shadow-sm",
