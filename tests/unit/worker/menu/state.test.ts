@@ -16,7 +16,7 @@ import {
   clearState,
   getState,
   setState,
-} from '@/worker/menu/state';
+} from '@/worker/menu/session';
 
 const CID = 'conv-1';
 const CID2 = 'conv-2';

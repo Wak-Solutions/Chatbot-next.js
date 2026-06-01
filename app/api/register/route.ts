@@ -104,7 +104,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const companyName = `${firstName} ${lastName}'s Company`;
-    const appUrl = process.env.APP_URL || request.headers.get('origin') || '';
+    // Normalize app_url on write: validate it's a well-formed URL and strip
+    // the trailing slash so stored links never become `//path` (which a
+    // client router reads as protocol-relative → same-origin crash). Value
+    // still derives from APP_URL/origin — no hardcoded domain. Malformed →
+    // store '' (the same missing-app_url state the rest of the flow already
+    // handles; no new error UX).
+    const rawAppUrl = process.env.APP_URL || request.headers.get('origin') || '';
+    let appUrl = '';
+    if (rawAppUrl) {
+      try {
+        appUrl = new URL(rawAppUrl).href.replace(/\/+$/, '');
+      } catch {
+        appUrl = '';
+      }
+    }
     const companyRes = await client.query<{ id: number }>(
       `INSERT INTO companies (name, email, phone, onboarding_step, webhook_secret, brand_name, app_url)
        VALUES ($1, $2, $3, 2, encode(gen_random_bytes(32), 'hex'), $1, $4)

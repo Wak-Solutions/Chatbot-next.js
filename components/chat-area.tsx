@@ -389,7 +389,7 @@ function MessageBubble({ message, showTail }: { message: Message; showTail: bool
           ) : (
             <span
               className={cn(
-                "text-[14.5px] leading-[20px] whitespace-pre-wrap break-words block",
+                "text-[14.5px] leading-[20px] whitespace-pre-wrap break-words inline",
                 isCustomer ? "text-white" : "text-white"
               )}
               dir={isRTL ? "rtl" : "ltr"}

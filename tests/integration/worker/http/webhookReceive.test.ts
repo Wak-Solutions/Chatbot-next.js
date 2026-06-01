@@ -75,6 +75,10 @@ function fakeReq(rawBody: Buffer, headers: Record<string, string> = {}): Incomin
   const stream = Readable.from([rawBody]) as unknown as IncomingMessage;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (stream as any).headers = headers;
+  // fastify-raw-body exposes the raw bytes as req.rawBody in prod; the
+  // handler reads that (not the stream) for HMAC verify + JSON parse.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (stream as any).rawBody = rawBody;
   return stream;
 }
 
@@ -85,21 +89,32 @@ interface CapturedRes {
   done: Promise<void>;
 }
 function fakeRes(): CapturedRes {
-  let status = 0;
+  // Fastify defaults an un-set reply to 200; the handler's success paths
+  // call bare reply.send(...) without a prior .status(), so mirror that.
+  let status = 200;
   let body = '';
   let resolve: () => void = () => {};
   const done = new Promise<void>((r) => {
     resolve = r;
   });
   const e = new EventEmitter() as unknown as ServerResponse;
+  // Fastify-style reply: .status(code)/.code(code) set the status and return
+  // the reply for chaining; .send(payload) captures the body and resolves.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (e as any).writeHead = (s: number) => {
+  (e as any).status = (s: number) => {
     status = s;
     return e;
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (e as any).end = (chunk?: string) => {
-    if (typeof chunk === 'string') body = chunk;
+  (e as any).code = (s: number) => {
+    status = s;
+    return e;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (e as any).send = (payload?: unknown) => {
+    if (payload !== undefined) {
+      body = typeof payload === 'string' ? payload : JSON.stringify(payload);
+    }
     resolve();
     return e;
   };

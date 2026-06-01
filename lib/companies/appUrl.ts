@@ -19,7 +19,7 @@ export async function getCompanyAppUrl(companyId: number): Promise<string | null
       [companyId],
     );
     const v = r.rows[0]?.app_url;
-    return v ? v.replace(/\/$/, '') : null;
+    return v ? v.replace(/\/+$/, '') : null;
   } catch {
     return null;
   }

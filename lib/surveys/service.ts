@@ -58,7 +58,7 @@ export async function sendSurveyToCustomer(
       logger.warn({ companyId }, 'getCompanyBranding failed for survey — sending without link');
     }
 
-    const surveyLink = appUrl ? `${appUrl}/survey/${token}` : null;
+    const surveyLink = appUrl ? `${appUrl.replace(/\/+$/, '')}/survey/${token}` : null;
     const message =
       `Thank you for contacting ${brandName}! 😊\n` +
       `We'd love to hear your feedback — it only takes 1 minute:\n` +
