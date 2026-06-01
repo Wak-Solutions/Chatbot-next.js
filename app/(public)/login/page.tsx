@@ -76,13 +76,18 @@ export default function Login() {
     setIsPending(true);
     setError(null);
     try {
-      await signIn('credentials', {
+      const result = await signIn('credentials', {
         email: identifier.trim(),
         password,
-        redirectTo: '/dashboard',
+        redirect: false,
       });
-    } catch (e: any) {
-      setError(e?.message || t("loginErrorCredentials"));
+      if (result?.error) {
+        setError(t("loginErrorCredentials"));
+        return;
+      }
+      setLocation('/dashboard');
+    } catch {
+      setError(t("loginErrorCredentials"));
     } finally {
       setIsPending(false);
     }

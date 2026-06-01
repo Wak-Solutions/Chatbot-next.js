@@ -1,15 +1,27 @@
 /**
- * app/api/login — integration test.
+ * Auth trial/active gates — integration test.
  *
- * Exercises the four key response codes through the real handler:
- *   200 — valid creds → success + connect.sid cookie set
- *   401 — wrong password
- *   403 — is_active = false (deactivated account)
- *   402 — trial expired (created_at older than trial_days)
+ * Retargets the former app/api/login HTTP test. That endpoint was removed;
+ * login is now Auth.js v5 signIn (credentials provider). The trial/active
+ * invariant is enforced by two functions auth.ts delegates to:
  *
- * Hits a real Postgres via DATABASE_URL. Each test seeds its own agent
- * + company, runs the handler, asserts on the NextResponse, and cleans
- * up by deleting only its own fixtures.
+ *   - checkTrial      (lib/auth/trial.ts)    — throws on an expired trial.
+ *       Called in BOTH authorize() (login) AND the session callback
+ *       (mid-session). Maps to the old 402.
+ *   - recheckIsActive (lib/auth/isActive.ts) — throws on a deactivated
+ *       account. Called in the session callback. Maps to the old 403.
+ *
+ * We exercise those functions directly against a real Postgres: the trial
+ * decision is computed in SQL from companies.created_at + config.trial_days,
+ * so a mocked DB could not produce a genuine pass. A separate, DB-free
+ * "wiring" check asserts auth.ts still calls checkTrial in BOTH call sites —
+ * the "in both places" half of the invariant that a behavior test can't
+ * prove on its own.
+ *
+ * Not retargeted: the old 401 (wrong password) is authorize()'s bcrypt
+ * branch — plain Auth.js credential failure, not a trial/active gate, so it
+ * has no standalone surface to assert here. The old 200 maps to "both gates
+ * resolve", covered below.
  */
 import {
   afterAll,
@@ -20,44 +32,33 @@ import {
   expect,
   it,
 } from 'vitest';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import type { Pool } from 'pg';
 import bcrypt from 'bcrypt';
-import { NextRequest } from 'next/server';
 import { hasDatabaseUrl, newTestPool } from '@/tests/helpers/db';
+import { checkTrial } from '@/lib/auth/trial';
+import { recheckIsActive } from '@/lib/auth/isActive';
 
 const EMAIL_PREFIX = 'testlogin+';
 const COMPANY_NAME_PREFIX = 'TestLoginCo-';
 const PASSWORD = 'correct-horse-battery-staple';
 
-describe.skipIf(!hasDatabaseUrl())('app/api/login (integration)', () => {
+describe.skipIf(!hasDatabaseUrl())('auth trial/active gates (integration)', () => {
   let pool: Pool;
-  let POST: (req: NextRequest) => Promise<Response>;
 
   beforeAll(() => {
     pool = newTestPool();
   });
 
   beforeEach(async () => {
-    // Re-import per test so the route handler picks up env (notably
-    // SESSION_SECRET from tests/helpers/setup.ts).
-    const mod = await import('@/app/api/login/route');
-    POST = mod.POST as unknown as (req: NextRequest) => Promise<Response>;
-    // Clean up any leftover fixtures from prior runs.
-    await pool.query(`DELETE FROM agents WHERE email LIKE $1`, [
-      `${EMAIL_PREFIX}%`,
-    ]);
-    await pool.query(`DELETE FROM companies WHERE name LIKE $1`, [
-      `${COMPANY_NAME_PREFIX}%`,
-    ]);
+    await pool.query(`DELETE FROM agents WHERE email LIKE $1`, [`${EMAIL_PREFIX}%`]);
+    await pool.query(`DELETE FROM companies WHERE name LIKE $1`, [`${COMPANY_NAME_PREFIX}%`]);
   });
 
   afterEach(async () => {
-    await pool.query(`DELETE FROM agents WHERE email LIKE $1`, [
-      `${EMAIL_PREFIX}%`,
-    ]);
-    await pool.query(`DELETE FROM companies WHERE name LIKE $1`, [
-      `${COMPANY_NAME_PREFIX}%`,
-    ]);
+    await pool.query(`DELETE FROM agents WHERE email LIKE $1`, [`${EMAIL_PREFIX}%`]);
+    await pool.query(`DELETE FROM companies WHERE name LIKE $1`, [`${COMPANY_NAME_PREFIX}%`]);
   });
 
   afterAll(async () => {
@@ -69,9 +70,12 @@ describe.skipIf(!hasDatabaseUrl())('app/api/login (integration)', () => {
     const createdAt = opts.trialExpired
       ? "NOW() - INTERVAL '90 days'"
       : 'NOW()';
+    // webhook_secret is NOT NULL on companies — seed a unique throwaway.
+    const webhookSecret = `whsec_test_${Math.random().toString(36).slice(2)}`;
     const r = await pool.query<{ id: number }>(
-      `INSERT INTO companies (name, is_active, created_at) VALUES ($1, TRUE, ${createdAt}) RETURNING id`,
-      [name],
+      `INSERT INTO companies (name, is_active, created_at, webhook_secret)
+       VALUES ($1, TRUE, ${createdAt}, $2) RETURNING id`,
+      [name, webhookSecret],
     );
     return r.rows[0].id;
   }
@@ -90,55 +94,64 @@ describe.skipIf(!hasDatabaseUrl())('app/api/login (integration)', () => {
     return r.rows[0].id;
   }
 
-  function makeReq(email: string, password: string): NextRequest {
-    return new NextRequest('http://localhost/api/login', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-forwarded-for': `127.0.0.${Math.floor(Math.random() * 250) + 1}`,
-      },
-      body: JSON.stringify({ email, password }),
-    });
-  }
-
-  it('valid creds → 200 + connect.sid cookie set', async () => {
+  // ── checkTrial (old 402) — the gate run in BOTH authorize() and session ──
+  it('checkTrial resolves for an active, in-trial company (old 200 path)', async () => {
     const cid = await makeCompany();
-    const email = `${EMAIL_PREFIX}happy-${Date.now()}@test.local`;
-    await makeAgent({ email, companyId: cid, isActive: true });
-    const res = await POST(makeReq(email, PASSWORD));
-    expect(res.status).toBe(200);
-    const setCookie = res.headers.get('set-cookie') ?? '';
-    expect(setCookie).toContain('connect.sid=');
-    const body = (await res.json()) as { success: boolean; authenticated: boolean };
-    expect(body.success).toBe(true);
-    expect(body.authenticated).toBe(true);
+    await expect(checkTrial(cid)).resolves.toBeUndefined();
   });
 
-  it('wrong password → 401', async () => {
-    const cid = await makeCompany();
-    const email = `${EMAIL_PREFIX}badpwd-${Date.now()}@test.local`;
-    await makeAgent({ email, companyId: cid, isActive: true });
-    const res = await POST(makeReq(email, 'wrong-password'));
-    expect(res.status).toBe(401);
-  });
-
-  it('deactivated account (is_active = FALSE) → 403 with error key', async () => {
-    const cid = await makeCompany();
-    const email = `${EMAIL_PREFIX}deact-${Date.now()}@test.local`;
-    await makeAgent({ email, companyId: cid, isActive: false });
-    const res = await POST(makeReq(email, PASSWORD));
-    expect(res.status).toBe(403);
-    const body = (await res.json()) as { error?: string };
-    expect(body.error).toBeDefined();
-  });
-
-  it('trial expired (created_at older than trial_days) → 402', async () => {
+  it('checkTrial throws for an expired-trial company (old 402)', async () => {
     const cid = await makeCompany({ trialExpired: true });
-    const email = `${EMAIL_PREFIX}trial-${Date.now()}@test.local`;
-    await makeAgent({ email, companyId: cid, isActive: true });
-    const res = await POST(makeReq(email, PASSWORD));
-    expect(res.status).toBe(402);
-    const body = (await res.json()) as { trialExpired?: boolean };
-    expect(body.trialExpired).toBe(true);
+    await expect(checkTrial(cid)).rejects.toThrow(/trial expired/i);
+  });
+
+  it('checkTrial is a no-op for a null companyId (no tenant → no gate)', async () => {
+    await expect(checkTrial(null)).resolves.toBeUndefined();
+  });
+
+  // ── recheckIsActive (old 403) — the gate run in the session callback ──
+  it('recheckIsActive resolves for an active agent (old 200 path)', async () => {
+    const cid = await makeCompany();
+    const id = await makeAgent({
+      email: `${EMAIL_PREFIX}active-${Date.now()}@test.local`,
+      companyId: cid,
+      isActive: true,
+    });
+    await expect(recheckIsActive(id)).resolves.toBeUndefined();
+  });
+
+  it('recheckIsActive throws for a deactivated agent (old 403)', async () => {
+    const cid = await makeCompany();
+    const id = await makeAgent({
+      email: `${EMAIL_PREFIX}deact-${Date.now()}@test.local`,
+      companyId: cid,
+      isActive: false,
+    });
+    await expect(recheckIsActive(id)).rejects.toThrow(/deactivated/i);
+  });
+});
+
+// ── Wiring guard (no DB): the invariant requires checkTrial in BOTH the
+//    authorize() callback and the session callback. A behavior test can't
+//    prove the call sites exist, so assert it against auth.ts source. This
+//    runs even without a DATABASE_URL, so the "both sites" clause is always
+//    checked. (Reads the file as text — does not import/initialize Auth.js.)
+describe('auth.ts wires checkTrial into both call sites', () => {
+  const src = readFileSync(path.resolve(process.cwd(), 'auth.ts'), 'utf8');
+
+  it('calls checkTrial inside authorize()', () => {
+    const authorizeStart = src.indexOf('authorize:');
+    const callbacksStart = src.indexOf('callbacks:');
+    expect(authorizeStart).toBeGreaterThan(-1);
+    expect(callbacksStart).toBeGreaterThan(authorizeStart);
+    const authorizeBody = src.slice(authorizeStart, callbacksStart);
+    expect(authorizeBody).toContain('checkTrial(');
+  });
+
+  it('calls checkTrial inside the session callback', () => {
+    const sessionStart = src.indexOf('async session(');
+    expect(sessionStart).toBeGreaterThan(-1);
+    const sessionBody = src.slice(sessionStart);
+    expect(sessionBody).toContain('checkTrial(');
   });
 });

@@ -116,7 +116,7 @@ export async function getCompanyBranding(companyId: number): Promise<CompanyBran
   const row = res.rows[0];
   if (!row?.app_url) throw new Error(`companies.app_url is not set for companyId=${companyId}`);
   if (!row?.brand_name) throw new Error(`companies.brand_name is not set for companyId=${companyId}`);
-  return { appUrl: row.app_url, brandName: row.brand_name };
+  return { appUrl: row.app_url.replace(/\/+$/, ''), brandName: row.brand_name };
 }
 
 export async function sendEmail(to: string, subject: string, body: string): Promise<void> {

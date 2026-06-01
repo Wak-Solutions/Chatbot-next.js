@@ -605,10 +605,10 @@ export default function Meetings() {
             )}
           </div>
         </div>
-      </div>
-      {/* Work Hours */}
-      <div className="mb-10">
-        <WorkHoursPanel />
+        {/* Work Hours */}
+        <div className="mb-10">
+          <WorkHoursPanel />
+        </div>
       </div>
     </DashboardLayout>
   );
