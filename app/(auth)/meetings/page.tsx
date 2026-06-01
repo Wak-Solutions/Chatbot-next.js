@@ -338,8 +338,11 @@ export default function Meetings() {
     }
   };
 
-  const fetchMeetings = useCallback(async () => {
-    setLoading(true);
+  // background: skip the loading spinner so interval/refocus polls update
+  // the list in place (stable row keys reconcile without flashing). The
+  // spinner still shows on the initial load and on explicit filter changes.
+  const fetchMeetings = useCallback(async (opts?: { background?: boolean }) => {
+    if (!opts?.background) setLoading(true);
     setError(null);
     try {
       const res = await csrfFetch(`/api/meetings?filter=${filter}`, { credentials: "include" });
@@ -348,19 +351,19 @@ export default function Meetings() {
     } catch (e: any) {
       setError(e.message);
     } finally {
-      setLoading(false);
+      if (!opts?.background) setLoading(false);
     }
   }, [filter]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
     fetchMeetings();
-    const interval = setInterval(fetchMeetings, 20000);
+    const interval = setInterval(() => fetchMeetings({ background: true }), 20000);
     return () => clearInterval(interval);
   }, [isAuthenticated, fetchMeetings]);
 
   useEffect(() => {
-    const hv = () => { if (document.visibilityState === "visible" && isAuthenticated) { fetchMeetings(); fetchSlots(); } };
+    const hv = () => { if (document.visibilityState === "visible" && isAuthenticated) { fetchMeetings({ background: true }); fetchSlots(); } };
     document.addEventListener("visibilitychange", hv);
     return () => document.removeEventListener("visibilitychange", hv);
   }, [fetchMeetings, fetchSlots, isAuthenticated]);
