@@ -1,16 +1,20 @@
 /**
- * PUT /api/settings/work-hours — port of server/routes/settings.routes.ts:113-150.
- *
- * Per-field Zod validation with the original error messages preserved.
- * IANA timezone validated via Intl.DateTimeFormat throw-on-unknown.
+ * GET /api/settings/work-hours — returns the caller's work hours
+ *      { days, start, end, timezone } for the meetings/settings panel.
+ *      Readable by any authenticated user (withAuth); falls back to the
+ *      defaults getWorkHours() supplies when none are stored.
+ * PUT /api/settings/work-hours — admin-only. Port of
+ *      server/routes/settings.routes.ts:113-150. Per-field Zod validation
+ *      with the original error messages preserved. IANA timezone validated
+ *      via Intl.DateTimeFormat throw-on-unknown.
  */
 
 import { z } from 'zod';
 import { NextResponse } from 'next/server';
-import { withAdmin, withCsrf } from '@/lib/http/handlers';
+import { withAdmin, withAuth, withCsrf } from '@/lib/http/handlers';
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
-import type { WorkHours } from '@/lib/companies/workHours';
+import { getWorkHours, type WorkHours } from '@/lib/companies/workHours';
 
 const logger = createLogger('settings');
 
@@ -21,6 +25,19 @@ const timeSchema = z.string().regex(TIME);
 const tzSchema = z.string().min(1).max(64);
 
 export const dynamic = 'force-dynamic';
+
+export const GET = withAuth(async (_request, auth) => {
+  try {
+    const wh = await getWorkHours(auth.companyId);
+    return NextResponse.json(wh);
+  } catch (err) {
+    logger.error(
+      { companyId: auth.companyId, err: (err as Error)?.message },
+      'getWorkHours failed',
+    );
+    return NextResponse.json({ message: 'Internal error' }, { status: 500 });
+  }
+});
 
 export const PUT = withCsrf(
   withAdmin(async (request, auth) => {
