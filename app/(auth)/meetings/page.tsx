@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/lib/language-context";
 import DashboardLayout from "@/components/DashboardLayout";
 import { csrfFetch } from "@/lib/queryClient";
+import { isWithinWorkHours } from "@/lib/meetings/slots";
 
 type MeetingStatus = "pending" | "in_progress" | "completed";
 type FilterType = "all" | "upcoming" | "completed";
@@ -264,7 +265,7 @@ export default function Meetings() {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const { t } = useLanguage();
 
-  const [filter, setFilter] = useState<FilterType>("all");
+  const [filter, setFilter] = useState<FilterType>("upcoming");
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState<number | null>(null);
@@ -275,6 +276,7 @@ export default function Meetings() {
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set());
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [togglingSlot, setTogglingSlot] = useState<string | null>(null);
+  const [gridWh, setGridWh] = useState<WorkHours>(DEFAULT_WORK_HOURS);
 
   useEffect(() => {
     if (!isAuthLoading && !isAuthenticated) setLocation("/login");
@@ -304,6 +306,20 @@ export default function Meetings() {
   useEffect(() => {
     if (isAuthenticated) fetchSlots();
   }, [isAuthenticated, fetchSlots]);
+
+  // Load this company's Work Hours so the grid can grey out closed slots.
+  // Evaluated in KSA-local time, matching the booking enforcement in
+  // app/api/book/[token]. (work_hours.timezone is not yet honored — a
+  // single-region assumption shared with lib/meetings/slots.ts.)
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    fetch("/api/settings/work-hours", { credentials: "include" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => {
+        if (data?.days && data?.start && data?.end && data?.timezone) setGridWh(data as WorkHours);
+      })
+      .catch(() => {});
+  }, [isAuthenticated]);
 
   const toggleSlot = async (date: string, time: string) => {
     const key = `${date}|${time}`;
@@ -564,12 +580,28 @@ export default function Meetings() {
                           const isBlocked = blockedSlots.has(key);
                           const isBooked = bookedSlots.has(key);
                           const isToggling = togglingSlot === key;
+                          const isClosed = !isWithinWorkHours(dateStr, hour, gridWh);
                           if (isBooked) {
                             return (
                               <td key={di} className="px-2 py-1 text-center">
                                 <div title={t("meetingsSlotBookedTitle")} className="w-full h-8 rounded-md text-xs font-medium flex items-center justify-center gap-1 bg-brand-blue/15 text-brand-cyan border border-brand-cyan/30 cursor-default">
                                   <span className="hidden sm:inline">{t("meetingsSlotBooked")}</span>
                                   <span className="sm:hidden">●</span>
+                                </div>
+                              </td>
+                            );
+                          }
+                          if (isClosed) {
+                            // Outside this company's Work Hours: display-only and
+                            // non-interactive. Booking already rejects these
+                            // slots (app/api/book/[token]); this just reflects it.
+                            return (
+                              <td key={di} className="px-2 py-1 text-center">
+                                <div
+                                  aria-label="Outside work hours"
+                                  className="w-full h-8 rounded-md flex items-center justify-center bg-white/[0.015] text-brand-slate/30 border border-white/[0.04] cursor-default select-none"
+                                >
+                                  <span className="text-[10px]">·</span>
                                 </div>
                               </td>
                             );
