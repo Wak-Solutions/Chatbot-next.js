@@ -43,6 +43,13 @@
       "when": 1779710883220,
       "tag": "0005_add_whatsapp_waba_id",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1779710943220,
+      "tag": "0006_add_ai_message_logs",
+      "breakpoints": true
     }
   ]
 }

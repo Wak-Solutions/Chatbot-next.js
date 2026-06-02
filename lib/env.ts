@@ -22,10 +22,13 @@ const logLevelSchema = z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal
 
 const baseEnvSchema = z.object({
   DATABASE_URL: z.string().min(1),
-  OPENAI_API_KEY: z.string().min(1),
-  // The chatbot's default model. The app's chatbot-config AI editor also
-  // honors this when no override is passed.
-  OPENAI_MODEL: z.string().min(1).default('gpt-4o-mini'),
+  // All LLM calls (chat, dashboard helpers, voice transcription) route
+  // through OpenRouter. No direct OpenAI dependency.
+  OPENROUTER_API_KEY: z.string().min(1),
+  // Chat model (OpenRouter-namespaced). Transcription uses a separate
+  // audio-capable model — see OPENROUTER_TRANSCRIBE_MODEL / lib/llm/provider.ts.
+  OPENROUTER_MODEL: z.string().min(1).default('openai/gpt-4o-mini'),
+  OPENROUTER_TRANSCRIBE_MODEL: z.string().min(1).default('google/gemini-2.5-flash'),
   NODE_ENV: nodeEnvSchema.default('development'),
   LOG_LEVEL: logLevelSchema.default('info'),
 });

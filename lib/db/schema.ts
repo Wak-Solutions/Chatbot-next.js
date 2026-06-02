@@ -600,3 +600,26 @@ export const authVerificationTokens = pgTable('auth_verification_tokens', {
   token:      text('token').notNull(),
   expires:    timestamp('expires', { mode: 'date' }).notNull(),
 }, (t) => ({ pk: primaryKey({ columns: [t.identifier, t.token] }) }));
+
+// ────────────────────────────────────────────────────────────────────────────
+// AI MESSAGE LOG: persistent record of each AI exchange (per company).
+// Pino output is ephemeral on the host; this is the queryable record.
+// Written from worker/orchestrator/getReply via logAiTurn(). company_id is
+// always taken from the worker context, never from user input.
+// ────────────────────────────────────────────────────────────────────────────
+export const aiMessageLogs = pgTable('ai_message_logs', {
+  id:                serial('id').primaryKey(),
+  company_id:        integer('company_id').notNull(),
+  customer_phone:    text('customer_phone'),
+  conversation_id:   text('conversation_id'),
+  user_message:      text('user_message'),
+  ai_response:       text('ai_response'),
+  // 'complete' | 'hand-off' | 'in_progress'
+  status:            text('status').notNull(),
+  // null for deterministic replies (menu / booking / hand-off)
+  model:             text('model'),
+  prompt_tokens:     integer('prompt_tokens'),
+  completion_tokens: integer('completion_tokens'),
+  total_tokens:      integer('total_tokens'),
+  created_at:        timestamp('created_at', { withTimezone: true }).defaultNow(),
+});

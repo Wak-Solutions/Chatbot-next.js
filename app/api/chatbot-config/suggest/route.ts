@@ -41,9 +41,9 @@ export const POST = withCsrf(
       if (!suggestion || typeof suggestion !== 'string' || !suggestion.trim()) {
         return NextResponse.json({ message: 'suggestion is required' }, { status: 400 });
       }
-      if (!process.env.OPENAI_API_KEY) {
+      if (!process.env.OPENROUTER_API_KEY) {
         return NextResponse.json(
-          { message: 'OPENAI_API_KEY is not configured on this server.' },
+          { message: 'OPENROUTER_API_KEY is not configured on this server.' },
           { status: 503 },
         );
       }

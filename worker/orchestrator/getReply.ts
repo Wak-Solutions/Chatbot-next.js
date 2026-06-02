@@ -29,9 +29,10 @@ import * as memory from '@/lib/messaging/memory';
 import { getPendingMeeting } from '@/lib/meetings/queries';
 import { notifyDashboard } from '@/lib/notifications/dashboard';
 import { getPauseState, isPauseActive } from '@/lib/conversations/pauseState';
+import { logAiTurn } from '@/lib/conversations/aiLog';
 import { CONNECTING_TO_AGENT } from '@/lib/messaging/strings';
 import { generateText, stepCountIs, type ModelMessage } from 'ai';
-import { getModel } from '@/lib/llm/provider';
+import { getModel, getModelId } from '@/lib/llm/provider';
 import { botTools } from '@/lib/llm/tools';
 import * as menu from '@/worker/menu/handler';
 import { buildMessages } from './buildMessages';
@@ -125,6 +126,9 @@ export type GetReplyResult = readonly [reply: string | null, meetingMessage: str
 export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
   const { customerPhone, newMessage, companyId } = input;
   const saveInbound = input.saveInbound ?? true;
+  // Set when the existing human-handoff path fires this turn (escalation
+  // intent, or next-step option 2). Used to tag the AI-exchange log.
+  let handoffTriggered = false;
 
   // Step 1.
   const history = await memory.loadHistory(customerPhone, companyId);
@@ -172,10 +176,9 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
           { phone: maskPhone(customerPhone) },
           'Next-step 1 → booking link sent',
         );
-        return [
-          `Here's your personal booking link — valid for 24 hours: ${bookingUrl}`,
-          null,
-        ];
+        const reply1 = `Here's your personal booking link — valid for 24 hours: ${bookingUrl}`;
+        await logAiTurn({ companyId, customerPhone, userMessage: newMessage, response: reply1, status: 'complete' });
+        return [reply1, null];
       }
       // Booking URL unavailable — fall through to LLM so it can apologise.
     } else {
@@ -189,6 +192,7 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
         messageText: newMessage,
         companyId,
       });
+      await logAiTurn({ companyId, customerPhone, userMessage: newMessage, response: CONNECTING_TO_AGENT, status: 'hand-off' });
       return [CONNECTING_TO_AGENT, null];
     }
   }
@@ -203,12 +207,14 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
   );
   if (menuReply !== null) {
     logger.info({ phone: maskPhone(customerPhone) }, 'Menu level sent');
+    await logAiTurn({ companyId, customerPhone, conversationId: convId, userMessage: newMessage, response: menuReply, status: 'in_progress' });
     return [menuReply, null];
   }
 
   // Step 3 — escalation.
   if (wantsEscalation(newMessage, history)) {
     logger.info({ phone: maskPhone(customerPhone) }, 'Human agent requested');
+    handoffTriggered = true;
     await notifyDashboard({
       event: 'human_requested',
       customerPhone,
@@ -227,10 +233,9 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
     });
     if (bookingUrl) {
       logger.info({ phone: maskPhone(customerPhone) }, 'Booking link sent');
-      return [
-        `Here's your personal booking link — valid for 24 hours: ${bookingUrl}`,
-        null,
-      ];
+      const reply = `Here's your personal booking link — valid for 24 hours: ${bookingUrl}`;
+      await logAiTurn({ companyId, customerPhone, userMessage: newMessage, response: reply, status: handoffTriggered ? 'hand-off' : 'complete' });
+      return [reply, null];
     }
   }
 
@@ -250,7 +255,7 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
   // never sees or controls company_id, preventing cross-tenant lookups.
   logger.info(
     {
-      model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
+      model: getModelId(),
       historyLen: history.length,
       phone: maskPhone(customerPhone),
     },
@@ -258,6 +263,7 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
   );
 
   let finalReply: string | null;
+  let usage: { promptTokens?: number; completionTokens?: number; totalTokens?: number } | null = null;
   try {
     const result = await generateText({
       model: getModel(),
@@ -270,6 +276,11 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
       abortSignal: AbortSignal.timeout(OPENAI_TIMEOUT_MS),
     });
     finalReply = result.text || null;
+    usage = {
+      promptTokens: result.usage?.inputTokens,
+      completionTokens: result.usage?.outputTokens,
+      totalTokens: result.usage?.totalTokens,
+    };
   } catch (err) {
     const e = err as { name?: string; message?: string; code?: string };
     if (
@@ -282,6 +293,7 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
         { phone: maskPhone(customerPhone) },
         'OpenAI timeout',
       );
+      await logAiTurn({ companyId, customerPhone, userMessage: newMessage, response: TIMEOUT_FALLBACK_TEXT, status: 'complete', model: getModelId() });
       return [TIMEOUT_FALLBACK_TEXT, null];
     }
     throw err;
@@ -335,5 +347,24 @@ export async function getReply(input: GetReplyInput): Promise<GetReplyResult> {
     }
   }
 
-  return [finalReply ? normaliseMenuNumbers(finalReply) : finalReply, null];
+  const normalisedReply = finalReply ? normaliseMenuNumbers(finalReply) : finalReply;
+  // Tag from existing signals: hand-off if the human-handoff path fired this
+  // turn; in_progress if the reply ends by offering the 1/2 next-step menu
+  // (conversation continues); otherwise complete.
+  const status = handoffTriggered
+    ? 'hand-off'
+    : replyEndsWithNextStepMenu(normalisedReply)
+      ? 'in_progress'
+      : 'complete';
+  await logAiTurn({
+    companyId,
+    customerPhone,
+    userMessage: newMessage,
+    response: normalisedReply,
+    status,
+    model: getModelId(),
+    usage,
+  });
+
+  return [normalisedReply, null];
 }
