@@ -18,8 +18,8 @@
 
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
-import { experimental_transcribe as transcribe } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { generateText } from 'ai';
+import { getProvider, getTranscribeModelId } from '@/lib/llm/provider';
 
 const logger = createLogger('voice');
 
@@ -128,29 +128,47 @@ export async function downloadMediaFromMeta(
   return { bytes, mimeType };
 }
 
+/**
+ * Transcribe a voice note. OpenRouter has no dedicated transcription
+ * endpoint, so we send the audio to a multimodal chat model (audio input)
+ * routed through OpenRouter — Gemini Flash by default (see
+ * getTranscribeModelId). Function name kept for caller compatibility.
+ */
 export async function transcribeWithWhisper(bytes: Buffer, mime: string): Promise<string> {
   const ext = extFor(mime);
-  logger.info({ sizeBytes: bytes.length, ext, mime }, 'Whisper request');
+  logger.info({ sizeBytes: bytes.length, ext, mime, model: getTranscribeModelId() }, 'Transcription request');
 
   try {
-    const response = await transcribe({
-      model: openai.transcription('whisper-1'),
-      audio: new Uint8Array(bytes),
+    const result = await generateText({
+      model: getProvider().chat(getTranscribeModelId()),
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: 'Transcribe this audio verbatim in its original language. Output only the transcription text — no translation, no commentary, no quotes.',
+            },
+            { type: 'file', data: new Uint8Array(bytes), mediaType: mime },
+          ],
+        },
+      ],
+      abortSignal: AbortSignal.timeout(30_000),
     });
-    const text = (response.text ?? '').trim();
+    const text = (result.text ?? '').trim();
     if (text) {
       logger.info(
         { sizeBytes: bytes.length, resultChars: text.length },
-        'Whisper success',
+        'Transcription success',
       );
     } else {
-      logger.info({ sizeBytes: bytes.length }, 'Whisper returned empty transcription');
+      logger.info({ sizeBytes: bytes.length }, 'Transcription returned empty');
     }
     return text;
   } catch (err) {
     logger.error(
       { sizeBytes: bytes.length, err: (err as Error)?.message },
-      'Whisper failed',
+      'Transcription failed',
     );
     throw err;
   }

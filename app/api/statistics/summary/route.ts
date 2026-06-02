@@ -11,7 +11,7 @@
  *   { from: 'YYYY-MM-DD', to: 'YYYY-MM-DD' } → { summary: string }
  *
  * Constraints match the original (≤ 366 days, valid dates).
- * OPENAI_API_KEY missing → 503. OpenAI upstream non-2xx → 502.
+ * OPENROUTER_API_KEY missing → 503. OpenRouter upstream non-2xx → 502.
  *
  * Tenant-scoping comes from AuthContext.companyId — body has no such field.
  */
@@ -49,12 +49,12 @@ export const POST = withCsrf(
         );
       }
 
-      const apiKey = process.env.OPENAI_API_KEY;
+      const apiKey = process.env.OPENROUTER_API_KEY;
       if (!apiKey) {
         return NextResponse.json(
           {
             message:
-              'OPENAI_API_KEY is not configured. Add it to wak-dash/.env and restart.',
+              'OPENROUTER_API_KEY is not configured. Add it to the server env and restart.',
           },
           { status: 503 },
         );
@@ -114,13 +114,13 @@ export const POST = withCsrf(
         msgBlock,
       ].join('\n');
 
-      const model = process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
+      const model = process.env.OPENROUTER_MODEL ?? 'openai/gpt-4o-mini';
       logger.info(
         { model, messages: msgs.length, from: parsed.from, to: parsed.to },
-        'OpenAI summary request',
+        'OpenRouter summary request',
       );
 
-      const openAiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      const openAiRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
