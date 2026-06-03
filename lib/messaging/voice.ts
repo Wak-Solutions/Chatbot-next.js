@@ -16,12 +16,47 @@
  *     legacy code uses (CR-017 acknowledges S3 as a future migration).
  */
 
+import { spawn } from 'node:child_process';
+import ffmpegPath from 'ffmpeg-static';
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
 import { generateText } from 'ai';
 import { getProvider, getTranscribeModelId } from '@/lib/llm/provider';
 
 const logger = createLogger('voice');
+
+/**
+ * Transcode arbitrary input audio (WhatsApp sends OGG/Opus) to mono 16 kHz
+ * MP3. The transcription model is reached via OpenRouter's OpenAI-compatible
+ * chat-audio path, which only accepts wav/mp3 — OGG is rejected before it
+ * even sends. MP3 mono 16 kHz is the standard speech-recognition format and
+ * loses no detail the model needs. Streams via stdin/stdout (no temp files).
+ */
+async function transcodeToMp3(input: Buffer): Promise<Buffer> {
+  if (!ffmpegPath) throw new Error('ffmpeg binary not found (ffmpeg-static)');
+  return new Promise<Buffer>((resolve, reject) => {
+    const proc = spawn(ffmpegPath as string, [
+      '-i', 'pipe:0',
+      '-ac', '1',
+      '-ar', '16000',
+      '-f', 'mp3',
+      'pipe:1',
+    ]);
+    const out: Buffer[] = [];
+    const err: Buffer[] = [];
+    proc.stdout.on('data', (d: Buffer) => out.push(d));
+    proc.stderr.on('data', (d: Buffer) => err.push(d));
+    proc.on('error', reject);
+    proc.on('close', (code) => {
+      if (code === 0) resolve(Buffer.concat(out));
+      else reject(new Error(`ffmpeg exited ${code}: ${Buffer.concat(err).toString().slice(-300)}`));
+    });
+    // Ignore EPIPE if ffmpeg exits before we finish writing.
+    proc.stdin.on('error', () => {});
+    proc.stdin.write(input);
+    proc.stdin.end();
+  });
+}
 
 const GRAPH_VERSION = 'v21.0';
 const MAX_AUDIO_BYTES = 20 * 1024 * 1024; // 20 MB; Whisper hard limit is 25 MB.
@@ -139,6 +174,11 @@ export async function transcribeWithWhisper(bytes: Buffer, mime: string): Promis
   logger.info({ sizeBytes: bytes.length, ext, mime, model: getTranscribeModelId() }, 'Transcription request');
 
   try {
+    // Convert OGG/Opus (and anything else) → MP3 so the OpenRouter chat-audio
+    // path accepts it; sending the original OGG fails before it leaves here.
+    const mp3 = await transcodeToMp3(bytes);
+    logger.info({ inBytes: bytes.length, mp3Bytes: mp3.length }, 'Audio transcoded to mp3');
+
     const result = await generateText({
       model: getProvider().chat(getTranscribeModelId()),
       messages: [
@@ -149,7 +189,7 @@ export async function transcribeWithWhisper(bytes: Buffer, mime: string): Promis
               type: 'text',
               text: 'Transcribe this audio verbatim in its original language. Output only the transcription text — no translation, no commentary, no quotes.',
             },
-            { type: 'file', data: new Uint8Array(bytes), mediaType: mime },
+            { type: 'file', data: new Uint8Array(mp3), mediaType: 'audio/mpeg' },
           ],
         },
       ],

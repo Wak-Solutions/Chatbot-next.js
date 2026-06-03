@@ -77,6 +77,7 @@ function VoiceNotePlayer({ message, isCustomer }: { message: Message; isCustomer
   useEffect(() => () => cancelAnimationFrame(animRef.current), []);
 
   const formatDur = (s: number) => {
+    if (!Number.isFinite(s) || s < 0) return "0:00";
     const m = Math.floor(s / 60);
     const sec = Math.floor(s % 60);
     return `${m}:${sec.toString().padStart(2, "0")}`;
@@ -102,7 +103,25 @@ function VoiceNotePlayer({ message, isCustomer }: { message: Message; isCustomer
           ref={audioRef}
           src={message.media_url}
           preload="metadata"
-          onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? 0)}
+          onLoadedMetadata={() => {
+            const a = audioRef.current;
+            if (!a) return;
+            if (Number.isFinite(a.duration) && a.duration > 0) {
+              setDuration(a.duration);
+            } else {
+              // OGG/Opus voice notes report duration=Infinity until the
+              // browser is forced to scan to the end. Seek far past the end
+              // to trigger that; the real value arrives via onDurationChange.
+              a.currentTime = 1e7;
+            }
+          }}
+          onDurationChange={() => {
+            const a = audioRef.current;
+            if (a && Number.isFinite(a.duration) && a.duration > 0) {
+              setDuration(a.duration);
+              if (!playing && a.currentTime > 0) a.currentTime = 0;
+            }
+          }}
           onEnded={() => { setPlaying(false); setProgress(0); }}
         />
       )}
@@ -134,7 +153,7 @@ function VoiceNotePlayer({ message, isCustomer }: { message: Message; isCustomer
           </div>
           <div className="flex items-center justify-between">
             <span className={cn("text-[11px]", isCustomer ? "text-brand-slate" : "text-white/70")}>
-              {duration > 0 ? formatDur(playing ? progress * duration : duration) : "0:00"}
+              {Number.isFinite(duration) && duration > 0 ? formatDur(playing ? progress * duration : duration) : "0:00"}
             </span>
             <Mic className={cn("w-3 h-3", accentMuted)} />
           </div>
