@@ -85,6 +85,15 @@ export default function Login() {
         setError(t("loginErrorCredentials"));
         return;
       }
+      // signIn() sets the next-auth cookie, but the cached /api/me probe
+      // still holds { authenticated: false } from page load (staleTime 5m,
+      // no refetch on focus). Without forcing a fresh read here, the
+      // dashboard guard sees the stale unauthenticated cache and bounces
+      // straight back to /login — which is why login only "worked" after a
+      // manual refresh. refetchQueries (default type: 'all') refetches the
+      // inactive query and we await it so the cache is authenticated before
+      // we navigate.
+      await queryClient.refetchQueries({ queryKey: [api.auth.me.path] });
       setLocation('/dashboard');
     } catch {
       setError(t("loginErrorCredentials"));
