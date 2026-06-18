@@ -50,6 +50,13 @@
       "when": 1800000240000,
       "tag": "0006_add_ai_message_logs",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1781797431587,
+      "tag": "0007_add_subscription_access",
+      "breakpoints": true
     }
   ]
 }

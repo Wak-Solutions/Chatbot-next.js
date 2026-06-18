@@ -78,6 +78,22 @@ export function withAdmin<TCtx extends RouteCtx = RouteCtx>(handler: AuthedHandl
   };
 }
 
+/** Company 1 (WAK Solutions) is the platform owner — see the demo-booking /
+ * meetings routes that hardcode company_id = 1. Its admins are the only ones
+ * allowed to manage other tenants' subscriptions. */
+export const PLATFORM_OWNER_COMPANY_ID = 1;
+
+export function withPlatformAdmin<TCtx extends RouteCtx = RouteCtx>(handler: AuthedHandler<TCtx>) {
+  return async (req: NextRequest, ctx: TCtx): Promise<Response> => {
+    const result = await resolveAuth();
+    if (result instanceof NextResponse) return result;
+    if (result.role !== 'admin' || result.companyId !== PLATFORM_OWNER_COMPANY_ID) {
+      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
+    return handler(req, result, ctx);
+  };
+}
+
 /**
  * CSRF guard backed by Auth.js v5's own csrf-token cookie. Auth.js
  * issues the cookie at first visit (HttpOnly, signed `<token>|<hmac>`

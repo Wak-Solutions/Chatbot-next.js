@@ -23,7 +23,13 @@ export interface TrialStatus {
   expiresAt: string | null;
   expired: boolean;
   daysRemaining: number;
+  /** true when the company has unlimited_access — never expires. */
+  unlimited: boolean;
 }
+
+// Sentinel daysRemaining for unlimited companies. Avoids Infinity (which
+// JSON-serialises to null) while still rendering as "lots of days left".
+const UNLIMITED_DAYS = 36500;
 
 const TRIAL_EXEMPT_PATHS = new Set<string>([
   '/api/logout',
@@ -57,32 +63,41 @@ export async function getTrialDays(): Promise<number> {
 
 export async function getCompanyTrialStatus(companyId: number): Promise<TrialStatus> {
   const trialDays = await getTrialDays();
+  // Effective access window: an explicit subscription_ends_at overrides the
+  // computed trial (created_at + trial_days). unlimited_access short-circuits
+  // expiry entirely. Admin "extend" and the future payment webhook write
+  // subscription_ends_at; only the platform owner carries unlimited_access.
   const r = await getPool().query<{
     created_at: Date | null;
     expires_at: Date | null;
     expired: boolean | null;
     days_remaining: number | null;
+    unlimited: boolean | null;
   }>(
     `SELECT created_at,
-            (created_at + ($1 || ' days')::INTERVAL) AS expires_at,
-            NOW() > (created_at + ($1 || ' days')::INTERVAL) AS expired,
+            unlimited_access AS unlimited,
+            COALESCE(subscription_ends_at, created_at + ($1 || ' days')::INTERVAL) AS expires_at,
+            (NOT unlimited_access)
+              AND NOW() > COALESCE(subscription_ends_at, created_at + ($1 || ' days')::INTERVAL) AS expired,
             GREATEST(
               0,
-              CEIL(EXTRACT(EPOCH FROM ((created_at + ($1 || ' days')::INTERVAL) - NOW())) / 86400)
+              CEIL(EXTRACT(EPOCH FROM (COALESCE(subscription_ends_at, created_at + ($1 || ' days')::INTERVAL) - NOW())) / 86400)
             )::int AS days_remaining
      FROM companies WHERE id = $2`,
     [String(trialDays), companyId],
   );
   const row = r.rows[0];
   if (!row) {
-    return { trialDays, createdAt: null, expiresAt: null, expired: true, daysRemaining: 0 };
+    return { trialDays, createdAt: null, expiresAt: null, expired: true, daysRemaining: 0, unlimited: false };
   }
+  const unlimited = Boolean(row.unlimited);
   return {
     trialDays,
     createdAt: row.created_at ? new Date(row.created_at).toISOString() : null,
-    expiresAt: row.expires_at ? new Date(row.expires_at).toISOString() : null,
+    expiresAt: unlimited ? null : (row.expires_at ? new Date(row.expires_at).toISOString() : null),
     expired: Boolean(row.expired),
-    daysRemaining: Number(row.days_remaining ?? 0),
+    daysRemaining: unlimited ? UNLIMITED_DAYS : Number(row.days_remaining ?? 0),
+    unlimited,
   };
 }
 
@@ -101,4 +116,49 @@ export async function checkTrial(companyId: number | null | undefined): Promise<
   if (await isCompanyTrialExpired(companyId)) {
     throw new Error('Trial expired. Please contact support.');
   }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUTATIONS — extend / grant access. Called by the admin API today and by the
+// payment webhook later. All return the company's refreshed TrialStatus.
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Push a company's access out by `days`, measured from whichever is later:
+ * now, or its current effective expiry (so extending an active subscription
+ * adds time rather than truncating it). Does not touch unlimited_access.
+ */
+export async function extendSubscriptionDays(companyId: number, days: number): Promise<TrialStatus> {
+  const trialDays = await getTrialDays();
+  await getPool().query(
+    `UPDATE companies
+     SET subscription_ends_at =
+           GREATEST(NOW(), COALESCE(subscription_ends_at, created_at + ($1 || ' days')::INTERVAL))
+           + ($2 || ' days')::INTERVAL
+     WHERE id = $3`,
+    [String(trialDays), String(days), companyId],
+  );
+  return getCompanyTrialStatus(companyId);
+}
+
+/**
+ * Set an explicit access-until date (or NULL to revert to the trial window).
+ * This is the entry point a payment webhook would use after a successful
+ * charge — set subscription_ends_at to the end of the paid period.
+ */
+export async function setSubscriptionUntil(companyId: number, until: Date | null): Promise<TrialStatus> {
+  await getPool().query(
+    `UPDATE companies SET subscription_ends_at = $1 WHERE id = $2`,
+    [until, companyId],
+  );
+  return getCompanyTrialStatus(companyId);
+}
+
+/** Toggle never-expires access (platform owner / comped accounts). */
+export async function setUnlimitedAccess(companyId: number, unlimited: boolean): Promise<TrialStatus> {
+  await getPool().query(
+    `UPDATE companies SET unlimited_access = $1 WHERE id = $2`,
+    [unlimited, companyId],
+  );
+  return getCompanyTrialStatus(companyId);
 }

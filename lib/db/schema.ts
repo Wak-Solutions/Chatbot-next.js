@@ -144,6 +144,16 @@ export const companies = pgTable('companies', {
   onboarding_step: integer('onboarding_step').default(1),
   onboarding_complete: boolean('onboarding_complete').default(false),
   is_active: boolean('is_active').default(true),
+  // Subscription/trial access control. The trial gate (lib/auth/trial.ts)
+  // reads these:
+  //   unlimited_access    → never expires (set for company 1, the platform
+  //                         owner / demo-booking account).
+  //   subscription_ends_at→ explicit access-until override. NULL falls back
+  //                         to the trial window (created_at + trial_days).
+  //                         Admin "extend" and the future payment webhook
+  //                         both just set this date.
+  subscription_ends_at: timestamp('subscription_ends_at', { withTimezone: true }),
+  unlimited_access: boolean('unlimited_access').notNull().default(false),
   // JSONB shape documented at top of file.
   work_hours: jsonb('work_hours'),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),

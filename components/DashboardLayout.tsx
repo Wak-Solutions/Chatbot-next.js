@@ -3,7 +3,7 @@ import { useLocation, Link } from "@/lib/router";
 import {
   Inbox, Users, BookUser, ContactRound, BarChart3, Video, Bot,
   ClipboardList, BookOpen, LogOut, Globe, Menu, X,
-  Bell, Share, Headphones, Settings, CalendarCheck, Infinity,
+  Bell, Share, Headphones, Settings, CalendarCheck, Infinity, CreditCard,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth, useLogout } from "@/hooks/use-auth";
@@ -18,6 +18,7 @@ interface TrialStatus {
   expiresAt: string | null;
   expired: boolean;
   daysRemaining: number;
+  unlimited: boolean;
 }
 
 interface NavItem {
@@ -25,6 +26,7 @@ interface NavItem {
   icon: React.ReactNode;
   label: string;
   adminOnly?: boolean;
+  platformOnly?: boolean;
 }
 
 /**
@@ -43,7 +45,10 @@ export default function DashboardLayout({
   noPadding?: boolean;
 }) {
   const [location, setLocation] = useLocation();
-  const { isAuthenticated, isLoading: isAuthLoading, isAdmin, agentName } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, isAdmin, agentName, companyId } = useAuth();
+  // Platform owner = WAK Solutions (company 1). Only its admins manage other
+  // tenants' subscriptions. Mirrors withPlatformAdmin on the server.
+  const isPlatformOwner = isAdmin && companyId === 1;
   const { mutate: logout } = useLogout();
   const { lang, toggleLang, t } = useLanguage();
   const isRtl = lang === "ar";
@@ -62,7 +67,7 @@ export default function DashboardLayout({
   });
   const trialDays = trial?.trialDays ?? 0;
   const daysRemaining = trial?.daysRemaining ?? 0;
-  const showUnlimited = !trial || trialDays <= 0;
+  const showUnlimited = trial?.unlimited || !trial || trialDays <= 0;
 
   useEffect(() => {
     const handleOnline  = () => setIsOnline(true);
@@ -105,13 +110,14 @@ export default function DashboardLayout({
     { href: "/surveys",       icon: <ClipboardList className="w-[18px] h-[18px]" />,label: t("surveys") },
     { href: "/guide",         icon: <BookOpen className="w-[18px] h-[18px]" />,     label: t("guide") },
     { href: "/settings",      icon: <Settings className="w-[18px] h-[18px]" />,     label: t("settings"), adminOnly: true },
+    { href: "/admin/subscriptions", icon: <CreditCard className="w-[18px] h-[18px]" />, label: t("subscriptions"), platformOnly: true },
   ];
 
-  const visibleNav = navItems.filter(n => !n.adminOnly || isAdmin);
+  const visibleNav = navItems.filter(n => (!n.adminOnly || isAdmin) && (!n.platformOnly || isPlatformOwner));
 
   /* Split nav into main items and admin-only items for section divider */
-  const mainNav = visibleNav.filter(n => !n.adminOnly);
-  const adminNav = visibleNav.filter(n => n.adminOnly);
+  const mainNav = visibleNav.filter(n => !n.adminOnly && !n.platformOnly);
+  const adminNav = visibleNav.filter(n => n.adminOnly || n.platformOnly);
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return location === "/dashboard" || location === "/";
