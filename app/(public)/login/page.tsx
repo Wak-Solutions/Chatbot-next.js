@@ -82,7 +82,12 @@ export default function Login() {
         redirect: false,
       });
       if (result?.error) {
-        setError(t("loginErrorCredentials"));
+        // next-auth carries the real reason in result.code (set by the
+        // CredentialsSignin subclasses in auth.ts). Map the known codes to
+        // their message; anything else is treated as bad credentials.
+        if (result.code === "trial_expired") setError(t("loginErrorTrialExpired"));
+        else if (result.code === "account_deactivated") setError(t("loginErrorDeactivated"));
+        else setError(t("loginErrorCredentials"));
         return;
       }
       // signIn() sets the next-auth cookie, but the cached /api/me probe

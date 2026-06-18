@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { getDb } from '@/lib/db/client';
@@ -7,6 +7,19 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import { checkTrial } from '@/lib/auth/trial';
 import { recheckIsActive } from '@/lib/auth/isActive';
+
+// Auth.js surfaces a CredentialsSignin subclass's `code` to the client via
+// the `?code=` redirect param (read back as result.code by signIn with
+// redirect:false). This lets the login page show the *real* reason instead
+// of collapsing every failure into "Invalid credentials". Plain Errors
+// thrown from authorize() become an opaque CallbackRouteError with no code,
+// so the distinct reasons MUST extend CredentialsSignin.
+class TrialExpiredError extends CredentialsSignin {
+  code = 'trial_expired';
+}
+class AccountDeactivatedError extends CredentialsSignin {
+  code = 'account_deactivated';
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // Custom table map per manager directive. The `as any` on the second
@@ -37,10 +50,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const agent = await db.query.agents.findFirst({
           where: eq(agents.email, String(email)),
         });
+        // Wrong email / password → return null, which Auth.js maps to the
+        // generic CredentialsSignin error (code "credentials"). We do NOT
+        // distinguish "no such account" from "wrong password" — that would
+        // leak account existence.
         if (!agent?.password_hash) return null;
         const valid = await bcrypt.compare(String(password), agent.password_hash);
         if (!valid) return null;
-        await checkTrial(agent.company_id);
+        // Credentials are valid past this point — surface the specific reason
+        // a valid user is still blocked, instead of "Invalid credentials".
+        if (agent.is_active === false) throw new AccountDeactivatedError();
+        try {
+          await checkTrial(agent.company_id);
+        } catch (err) {
+          // Only an actual expiry maps to the trial message; a DB error in
+          // the trial gate falls through to the generic error rather than
+          // wrongly telling an active user their trial expired.
+          if (err instanceof Error && err.message.startsWith('Trial expired')) {
+            throw new TrialExpiredError();
+          }
+          throw err;
+        }
         return {
           id:        String(agent.id),
           email:     agent.email ?? '',
