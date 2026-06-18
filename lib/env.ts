@@ -23,8 +23,11 @@ const logLevelSchema = z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal
 const baseEnvSchema = z.object({
   DATABASE_URL: z.string().min(1),
   // All LLM calls (chat, dashboard helpers, voice transcription) route
-  // through OpenRouter. No direct OpenAI dependency.
-  OPENROUTER_API_KEY: z.string().min(1),
+  // through OpenRouter. No direct OpenAI dependency. Optional so a
+  // dashboard-only deployment (no chatbot) still boots — the call sites
+  // (lib/llm/provider.ts, app/api/statistics/summary) already degrade to a
+  // 503/runtime error when the key is absent rather than crashing startup.
+  OPENROUTER_API_KEY: z.string().min(1).optional(),
   // Chat model (OpenRouter-namespaced). Transcription uses a separate
   // audio-capable model — see OPENROUTER_TRANSCRIBE_MODEL / lib/llm/provider.ts.
   OPENROUTER_MODEL: z.string().min(1).default('openai/gpt-4o-mini'),
