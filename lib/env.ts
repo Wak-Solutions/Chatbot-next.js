@@ -73,6 +73,11 @@ export const appEnvSchema = baseEnvSchema.extend({
   // First-deploy admin seed. No effect once any row exists in agents.
   SEED_ADMIN_EMAIL: z.string().email().optional(),
   DASHBOARD_PASSWORD: z.string().min(1).optional(),
+
+  // Bread Crumbs "Custom AI" inbound webhook shared secret (x-api-key header).
+  // Optional so its absence never blocks boot; the route returns 401 when it
+  // is unset or the header doesn't match.
+  BCRUMBS_API_KEY: z.string().min(1).optional(),
 });
 
 export const workerEnvSchema = baseEnvSchema.extend({

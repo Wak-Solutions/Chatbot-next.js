@@ -154,6 +154,11 @@ export const companies = pgTable('companies', {
   //                         both just set this date.
   subscription_ends_at: timestamp('subscription_ends_at', { withTimezone: true }),
   unlimited_access: boolean('unlimited_access').notNull().default(false),
+  // Bread Crumbs "Custom AI" tenant mapping. Their POST carries
+  // workspaceId/integrationId; we resolve the company by integration first,
+  // then workspace. Nullable — only set for tenants connected via Bread Crumbs.
+  bcrumbs_workspace_id: text('bcrumbs_workspace_id'),
+  bcrumbs_integration_id: text('bcrumbs_integration_id'),
   // JSONB shape documented at top of file.
   work_hours: jsonb('work_hours'),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
