@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
-import { MessageSquare, Eye, EyeOff, Check, AlertCircle, Lock, Building2 } from "lucide-react";
+import { MessageSquare, Eye, EyeOff, Check, AlertCircle, Lock, Building2, Puzzle } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useLanguage } from "@/lib/language-context";
 import { csrfFetch } from "@/lib/queryClient";
@@ -369,7 +369,7 @@ function BrandingPanel({ t }: { t: (k: string) => string }) {
    Settings Sections (left nav)
 ───────────────────────────────────────────────────────────────────────────── */
 
-type SectionId = "whatsapp" | "branding" | "password";
+type SectionId = "whatsapp" | "bcrumbs" | "branding" | "password";
 
 interface Section {
   id: SectionId;
@@ -379,9 +379,109 @@ interface Section {
 
 const SECTIONS: Section[] = [
   { id: "whatsapp", icon: <MessageSquare className="w-4 h-4" />, labelKey: "settingsWhatsApp" },
+  { id: "bcrumbs", icon: <Puzzle className="w-4 h-4" />, labelKey: "settingsBcrumbs" },
   { id: "branding", icon: <Building2 className="w-4 h-4" />, labelKey: "settingsBranding" },
   { id: "password", icon: <Lock className="w-4 h-4" />, labelKey: "settingsChangePassword" },
 ];
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Bread Crumbs Panel
+───────────────────────────────────────────────────────────────────────────── */
+
+function BcrumbsPanel({ t }: { t: (k: string) => string }) {
+  const [workspaceId, setWorkspaceId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/settings/bcrumbs", { credentials: "include" })
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then((data: { workspaceId: string }) => setWorkspaceId(data.workspaceId ?? ""))
+      .catch(() => setLoadError(t("settingsLoadError")))
+      .finally(() => setLoading(false));
+  }, [t]);
+
+  const handleSave = async () => {
+    setStatus("saving");
+    setError("");
+    try {
+      const resp = await csrfFetch("/api/settings/bcrumbs", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ workspaceId: workspaceId.trim() }),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        setStatus("error");
+        setError(data.message || t("settingsSaveError"));
+        return;
+      }
+      setStatus("saved");
+    } catch {
+      setStatus("error");
+      setError(t("settingsSaveError"));
+    }
+  };
+
+  if (loading) return null;
+  if (loadError) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-100 rounded-xl p-4">
+        <AlertCircle className="w-4 h-4 shrink-0" />
+        {loadError}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-brand-navy rounded-2xl border border-white/[0.08] overflow-hidden">
+      <div className="px-6 py-5 border-b border-white/[0.06]">
+        <h2 className="text-base font-semibold text-white">{t("settingsBcrumbs")}</h2>
+        <p className="text-sm text-brand-slate mt-1">{t("settingsBcrumbsDesc")}</p>
+      </div>
+
+      <div className="px-6 py-6 space-y-5 max-w-lg">
+        <div>
+          <label className="block text-sm font-medium text-white/90 mb-1.5">
+            {t("settingsWorkspaceId")}
+            <span className="text-xs text-brand-slate/70 font-normal ms-1.5">({t("settingsWorkspaceIdHint")})</span>
+          </label>
+          <input
+            className={inputClass}
+            value={workspaceId}
+            onChange={e => { setWorkspaceId(e.target.value); setStatus("idle"); setError(""); }}
+            placeholder="e.g. a1b2c3d4-e5f6-7890"
+          />
+        </div>
+
+        {error && (
+          <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-3 py-2">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>{error}</span>
+          </div>
+        )}
+        {status === "saved" && (
+          <div className="flex items-center gap-2 bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald text-sm rounded-lg px-3 py-2">
+            <Check className="w-4 h-4 shrink-0" />
+            <span>{t("settingsSaved")}</span>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={!workspaceId.trim() || status === "saving"}
+          className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-cyan disabled:opacity-50 transition-colors"
+        >
+          {status === "saving" ? t("settingsSaving") : t("settingsSave")}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Change Password Panel
@@ -581,6 +681,7 @@ export default function SettingsPage() {
           {/* Right panel */}
           <div className="flex-1 min-w-0">
             {activeSection === "whatsapp" && <WhatsAppPanel t={t} />}
+            {activeSection === "bcrumbs" && <BcrumbsPanel t={t} />}
             {activeSection === "branding" && <BrandingPanel t={t} />}
             {activeSection === "password" && <ChangePasswordPanel t={t} />}
           </div>

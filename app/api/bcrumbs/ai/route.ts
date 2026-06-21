@@ -96,14 +96,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ text: FALLBACK_TEXT });
     }
 
-    // Tenant mapping: integration first, then workspace. Single-tenant
-    // testing shortcut: BCRUMBS_DEFAULT_COMPANY_ID routes everything to one
-    // company when nothing is mapped (so you don't need the SQL to test).
-    let companyId = await resolveCompanyId(integrationId, workspaceId);
-    if (companyId === null) {
-      const fallback = Number(process.env.BCRUMBS_DEFAULT_COMPANY_ID);
-      if (Number.isInteger(fallback) && fallback > 0) companyId = fallback;
-    }
+    // Tenant mapping: integration first, then workspace. Each company is a
+    // separate Bread Crumbs workspace, mapped via companies.bcrumbs_workspace_id
+    // (set in dashboard Settings → Bread Crumbs). An unmapped workspace 404s
+    // rather than silently routing to the wrong tenant.
+    const companyId = await resolveCompanyId(integrationId, workspaceId);
     if (companyId === null) {
       logger.error(
         { workspaceId, integrationId, conversationId },
