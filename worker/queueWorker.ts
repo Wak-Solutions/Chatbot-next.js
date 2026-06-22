@@ -28,6 +28,7 @@ import { getConnection } from '@/lib/queue/connection';
 import { processText, type ProcessTextInput } from '@/worker/tasks/processText';
 import { processAudio, type ProcessAudioInput } from '@/worker/tasks/processAudio';
 import { meetingReminderTask } from '@/worker/tasks/meetingReminder';
+import { recurringBillingTask } from '@/worker/tasks/recurringBilling';
 import { logger } from '@/lib/logger';
 
 const BOT_CONCURRENCY = 8;
@@ -63,6 +64,10 @@ export function startQueueWorker(): QueueWorkers {
     async (job: Job) => {
       if (job.name === 'meeting-reminder') {
         await meetingReminderTask();
+        return;
+      }
+      if (job.name === 'recurring-billing') {
+        await recurringBillingTask();
         return;
       }
       logger.warn({ jobName: job.name }, 'Unknown cron job');

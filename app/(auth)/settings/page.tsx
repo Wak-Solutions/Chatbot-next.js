@@ -3,10 +3,12 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
-import { MessageSquare, Eye, EyeOff, Check, AlertCircle, Lock, Building2, Puzzle } from "lucide-react";
+import { MessageSquare, Eye, EyeOff, Check, AlertCircle, Lock, Building2, Puzzle, CreditCard } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import PlanCards from "@/components/PlanCards";
 import { useLanguage } from "@/lib/language-context";
 import { csrfFetch } from "@/lib/queryClient";
+import { fetchBilling, cancelBilling, type BillingData } from "@/lib/payments/client";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Types
@@ -369,7 +371,7 @@ function BrandingPanel({ t }: { t: (k: string) => string }) {
    Settings Sections (left nav)
 ───────────────────────────────────────────────────────────────────────────── */
 
-type SectionId = "whatsapp" | "bcrumbs" | "branding" | "password";
+type SectionId = "whatsapp" | "bcrumbs" | "billing" | "branding" | "password";
 
 interface Section {
   id: SectionId;
@@ -380,6 +382,7 @@ interface Section {
 const SECTIONS: Section[] = [
   { id: "whatsapp", icon: <MessageSquare className="w-4 h-4" />, labelKey: "settingsWhatsApp" },
   { id: "bcrumbs", icon: <Puzzle className="w-4 h-4" />, labelKey: "settingsBcrumbs" },
+  { id: "billing", icon: <CreditCard className="w-4 h-4" />, labelKey: "settingsBilling" },
   { id: "branding", icon: <Building2 className="w-4 h-4" />, labelKey: "settingsBranding" },
   { id: "password", icon: <Lock className="w-4 h-4" />, labelKey: "settingsChangePassword" },
 ];
@@ -478,6 +481,138 @@ function BcrumbsPanel({ t }: { t: (k: string) => string }) {
         >
           {status === "saving" ? t("settingsSaving") : t("settingsSave")}
         </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Billing Panel
+───────────────────────────────────────────────────────────────────────────── */
+
+function UsageBar({ label, used, limit }: { label: string; used: number; limit: number }) {
+  const pct = limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
+  const color = pct >= 100 ? "bg-red-500" : pct >= 80 ? "bg-brand-amber" : "bg-brand-blue";
+  return (
+    <div>
+      <div className="flex justify-between text-xs text-brand-slate mb-1">
+        <span>{label}</span>
+        <span>{used.toLocaleString()} / {limit.toLocaleString()}</span>
+      </div>
+      <div className="h-2 rounded-full bg-white/[0.08] overflow-hidden">
+        <div className={`h-full ${color}`} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function BillingPanel({ t }: { t: (k: string) => string }) {
+  const [data, setData] = useState<BillingData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [canceling, setCanceling] = useState(false);
+
+  const load = () => {
+    setLoading(true);
+    fetchBilling()
+      .then(setData)
+      .catch(() => setLoadError(t("settingsLoadError")))
+      .finally(() => setLoading(false));
+  };
+  useEffect(load, []);
+
+  const handleCancel = async () => {
+    setCanceling(true);
+    try {
+      await cancelBilling();
+      load();
+    } catch {
+      /* surfaced on next load */
+    } finally {
+      setCanceling(false);
+    }
+  };
+
+  if (loading) return null;
+  if (loadError || !data) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-100 rounded-xl p-4">
+        <AlertCircle className="w-4 h-4 shrink-0" />
+        {loadError || t("settingsLoadError")}
+      </div>
+    );
+  }
+
+  const sub = data.subscription;
+  const statusKey =
+    sub?.status === "active"
+      ? "billingStatusActive"
+      : sub?.status === "past_due"
+        ? "billingStatusPastDue"
+        : "billingStatusCanceled";
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-brand-navy rounded-2xl border border-white/[0.08] overflow-hidden">
+        <div className="px-6 py-5 border-b border-white/[0.06]">
+          <h2 className="text-base font-semibold text-white">{t("settingsBilling")}</h2>
+          <p className="text-sm text-brand-slate mt-1">{t("settingsBillingDesc")}</p>
+        </div>
+
+        <div className="px-6 py-6 space-y-5">
+          {sub ? (
+            <>
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <span className="text-white font-medium">
+                  {data.plans.find((p) => p.id === sub.plan)?.name ?? sub.plan}
+                </span>
+                <span
+                  className={`px-2 py-0.5 rounded-full text-xs ${
+                    sub.status === "active"
+                      ? "bg-brand-emerald/15 text-brand-emerald"
+                      : sub.status === "past_due"
+                        ? "bg-brand-amber/15 text-amber-400"
+                        : "bg-white/[0.08] text-brand-slate"
+                  }`}
+                >
+                  {t(statusKey)}
+                </span>
+                {sub.nextChargeAt && sub.status !== "canceled" && (
+                  <span className="text-brand-slate">
+                    {t("billingRenews")} {new Date(sub.nextChargeAt).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+
+              {data.limits && (
+                <div className="space-y-3 max-w-md">
+                  <UsageBar label={t("billingChats")} used={data.usage.chats} limit={data.limits.chats} />
+                  <UsageBar label={t("billingMessages")} used={data.usage.messages} limit={data.limits.messages} />
+                </div>
+              )}
+
+              {sub.status !== "canceled" && (
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  disabled={canceling}
+                  className="text-sm font-medium text-red-400 hover:text-red-300 disabled:opacity-50"
+                >
+                  {canceling ? t("settingsSaving") : t("billingCancel")}
+                </button>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-brand-slate">{t("billingNoPlan")}</p>
+          )}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-semibold text-white mb-3">
+          {sub ? t("billingChangePlan") : t("billingChoosePlan")}
+        </h3>
+        <PlanCards plans={data.plans} currentPlan={sub?.plan ?? null} />
       </div>
     </div>
   );
@@ -682,6 +817,7 @@ export default function SettingsPage() {
           <div className="flex-1 min-w-0">
             {activeSection === "whatsapp" && <WhatsAppPanel t={t} />}
             {activeSection === "bcrumbs" && <BcrumbsPanel t={t} />}
+            {activeSection === "billing" && <BillingPanel t={t} />}
             {activeSection === "branding" && <BrandingPanel t={t} />}
             {activeSection === "password" && <ChangePasswordPanel t={t} />}
           </div>

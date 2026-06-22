@@ -33,4 +33,15 @@ export async function registerScheduledJobs(): Promise<void> {
       jobId: 'meeting-reminder',
     },
   );
+
+  // Daily subscription renewals (03:15). Tap has no auto-biller, so the worker
+  // charges due subscriptions itself. Daily cadence keeps retries gentle.
+  await cronQueue.add(
+    'recurring-billing',
+    {},
+    {
+      repeat: { pattern: '15 3 * * *' },
+      jobId: 'recurring-billing',
+    },
+  );
 }

@@ -18,6 +18,7 @@ export default function Login() {
   const [, setLocation] = useLocation();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [trialExpired, setTrialExpired] = useState(false);
   const queryClient = useQueryClient();
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
@@ -85,6 +86,7 @@ export default function Login() {
         // next-auth carries the real reason in result.code (set by the
         // CredentialsSignin subclasses in auth.ts). Map the known codes to
         // their message; anything else is treated as bad credentials.
+        setTrialExpired(result.code === "trial_expired");
         if (result.code === "trial_expired") setError(t("loginErrorTrialExpired"));
         else if (result.code === "account_deactivated") setError(t("loginErrorDeactivated"));
         else setError(t("loginErrorCredentials"));
@@ -263,6 +265,14 @@ export default function Login() {
                 <p data-testid="text-error" className="text-sm text-red-400 pt-1">
                   {error || t("loginErrorCredentials")}
                 </p>
+              )}
+              {trialExpired && (
+                <a
+                  href="/renew"
+                  className="inline-block mt-1 text-sm font-semibold text-brand-blue hover:text-brand-cyan"
+                >
+                  {t("renew")} →
+                </a>
               )}
               <div className="flex justify-end pt-1">
                 <button

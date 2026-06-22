@@ -22,6 +22,7 @@ import { sendWhatsAppTextWithCreds } from '@/lib/messaging/whatsapp';
 import { saveMessage } from '@/lib/messaging/memory';
 import { claimOutbound } from '@/lib/messaging/outboundGuard';
 import { getReply } from '@/worker/orchestrator/getReply';
+import { shouldBlockReply } from '@/lib/payments/enforcement';
 
 const logger = createLogger('process-text');
 
@@ -38,6 +39,13 @@ export async function processText(input: ProcessTextInput, jobId = ''): Promise<
 
   try {
     logger.info({ phone: maskPhone(customerPhone) }, 'Processing text message');
+
+    // Usage cap (no-op unless USAGE_HARD_CAP=true). On an exhausted paid plan
+    // we stop replying rather than rack up unbilled usage.
+    if (await shouldBlockReply(companyId)) {
+      logger.warn({ phone: maskPhone(customerPhone) }, 'Reply skipped — plan quota reached');
+      return;
+    }
 
     const [reply, meetingMessage] = await getReply({
       customerPhone,

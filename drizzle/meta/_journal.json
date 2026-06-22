@@ -64,6 +64,13 @@
       "when": 1800000360000,
       "tag": "0008_add_bcrumbs_tenant_map",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1800000420000,
+      "tag": "0009_add_payment_subscriptions",
+      "breakpoints": true
     }
   ]
 }

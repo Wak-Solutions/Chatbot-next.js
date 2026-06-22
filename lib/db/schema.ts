@@ -97,6 +97,7 @@ import {
   integer,
   json,
   jsonb,
+  numeric,
   pgTable,
   primaryKey,
   serial,
@@ -175,6 +176,33 @@ export const subscriptions = pgTable('subscriptions', {
   trial_ends_at: timestamp('trial_ends_at', { withTimezone: true }),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
+
+// Paid-subscription billing engine (lib/payments). Provider-agnostic: column
+// names are generic (provider_*) so switching gateways is an adapter swap, not
+// a schema change. companies.subscription_ends_at stays the access source of
+// truth; this table tracks plan, vaulted-card refs, and the renewal schedule.
+export const payment_subscriptions = pgTable('payment_subscriptions', {
+  id: serial('id').primaryKey(),
+  company_id: integer('company_id').notNull().references(() => companies.id),
+  provider: text('provider').notNull().default('tap'),
+  plan: text('plan').notNull(),
+  status: text('status').notNull().default('active'),
+  amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
+  currency: text('currency').notNull().default('SAR'),
+  provider_customer_id: text('provider_customer_id'),
+  provider_card_id: text('provider_card_id'),
+  provider_agreement_id: text('provider_agreement_id'),
+  current_period_start: timestamp('current_period_start', { withTimezone: true }),
+  current_period_end: timestamp('current_period_end', { withTimezone: true }),
+  next_charge_at: timestamp('next_charge_at', { withTimezone: true }),
+  last_charge_id: text('last_charge_id'),
+  failed_attempts: integer('failed_attempts').notNull().default(0),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+}, (table) => [
+  uniqueIndex('payment_subscriptions_company_idx').on(table.company_id),
+  index('payment_subscriptions_next_charge_idx').on(table.next_charge_at),
+]);
 
 // CREATE at server/agents.ts:11. ALTERs add: terms_accepted_at,
 // company_id (FK→companies), phone. ALTER ... DROP NOT NULL on email.
