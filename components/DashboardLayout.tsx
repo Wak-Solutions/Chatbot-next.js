@@ -137,7 +137,7 @@ export default function DashboardLayout({
           </Link>
           <span
             className={`w-2.5 h-2.5 rounded-full animate-pulse shrink-0 ${isOnline ? "bg-brand-emerald" : "bg-brand-amber"}`}
-            title={isOnline ? "Online" : "Reconnecting..."}
+            title={isOnline ? "Connected" : "Reconnecting..."}
           />
         </div>
 
@@ -214,7 +214,7 @@ export default function DashboardLayout({
           <span className="text-white/90 font-semibold text-sm">WAK Solutions</span>
           <span
             className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${isOnline ? "bg-brand-emerald" : "bg-brand-amber"}`}
-            title={isOnline ? "Online" : "Reconnecting..."}
+            title={isOnline ? "Connected" : "Reconnecting..."}
           />
         </Link>
         <div className="flex items-center gap-2">

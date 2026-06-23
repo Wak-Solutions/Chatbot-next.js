@@ -28,6 +28,7 @@ export const GET = withAuth(async (_request, auth) => {
       `
       SELECT
         m.customer_phone,
+        c.name               AS customer_name,
         (SELECT message_text FROM messages WHERE customer_phone = m.customer_phone AND company_id = $1 ORDER BY created_at DESC LIMIT 1) AS last_message,
         (SELECT created_at  FROM messages WHERE customer_phone = m.customer_phone AND company_id = $1 ORDER BY created_at DESC LIMIT 1) AS last_message_at,
         e.status             AS escalation_status,
@@ -44,6 +45,7 @@ export const GET = withAuth(async (_request, auth) => {
         LIMIT 1
       ) e ON true
       LEFT JOIN agents a ON a.id = e.assigned_agent_id
+      LEFT JOIN contacts c ON c.phone_number = m.customer_phone
       WHERE 1=1
         AND ($2 OR e.assigned_agent_id = $3 OR e.assigned_agent_id IS NULL)
       ORDER BY last_message_at DESC NULLS LAST

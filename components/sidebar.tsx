@@ -39,6 +39,7 @@ export function Sidebar({ conversations, selectedPhone, onSelect }: SidebarProps
   const visible = searchQuery.trim()
     ? filteredByStatus.filter(c =>
         c.customer_phone.includes(searchQuery) ||
+        (c.customer_name && c.customer_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (c.last_message && c.last_message.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     : filteredByStatus;
@@ -145,7 +146,7 @@ function ConversationItem({
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
           <span className="text-[14px] font-semibold text-white truncate">
-            {phone}
+            {conversation.customer_name || phone}
           </span>
           <span className={cn(
             "text-[11px] shrink-0 ms-2",
@@ -158,11 +159,6 @@ function ConversationItem({
           <span className="text-[13px] text-brand-slate truncate pe-2">
             {conversation.last_message || ""}
           </span>
-          {isOpen && !isSelected && (
-            <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-brand-cyan flex items-center justify-center shrink-0">
-              <span className="text-[10px] font-bold text-brand-ink leading-none">1</span>
-            </span>
-          )}
         </div>
       </div>
     </button>

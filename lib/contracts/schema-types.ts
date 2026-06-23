@@ -34,6 +34,8 @@ export type InsertEscalation = z.infer<typeof insertEscalationSchema>;
  */
 export interface Conversation {
   customer_phone: string;
+  /** Saved contact name for this phone, when one exists; else null. */
+  customer_name: string | null;
   last_message: string;
   last_message_at: string | null;
   escalation_status: string | null;
