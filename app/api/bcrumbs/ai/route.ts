@@ -19,6 +19,7 @@ import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
 import { getReply } from '@/worker/orchestrator/getReply';
 import { saveMessage } from '@/lib/messaging/memory';
+import { transcribeAudioUrl } from '@/lib/messaging/voice';
 
 const logger = createLogger('bcrumbs-ai');
 
@@ -33,6 +34,23 @@ function safeEqual(a: string, b: string): boolean {
   const bb = Buffer.from(b);
   if (ab.length !== bb.length) return false;
   return timingSafeEqual(ab, bb);
+}
+
+/**
+ * True when the message body is a bare URL on Bread Crumbs' media storage
+ * (Azure blob). Restricting to that host keeps us from fetching arbitrary
+ * URLs a customer might send (SSRF). Voice notes are delivered this way.
+ */
+function isBcrumbsMediaUrl(s: string): boolean {
+  try {
+    const u = new URL(s.trim());
+    return (
+      (u.protocol === 'https:' || u.protocol === 'http:') &&
+      u.hostname.endsWith('.blob.core.windows.net')
+    );
+  } catch {
+    return false;
+  }
 }
 
 interface BcrumbsMessage {
@@ -122,6 +140,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (!newMessage) {
       logger.warn({ companyId, conversationId }, 'bcrumbs: no user message in payload');
       return NextResponse.json({ text: FALLBACK_TEXT });
+    }
+
+    // Voice notes arrive as a hosted audio URL (Bread Crumbs blob storage),
+    // not text — so the AI was being handed a bare link and had nothing to
+    // reply to. Transcribe it and feed the words through instead. Host is
+    // restricted to Azure blob storage to avoid SSRF from arbitrary content.
+    if (isBcrumbsMediaUrl(newMessage)) {
+      const transcript = await transcribeAudioUrl(newMessage.trim());
+      if (transcript) {
+        logger.info({ conversationId }, 'bcrumbs: voice note transcribed');
+        newMessage = transcript;
+      } else {
+        logger.warn({ conversationId }, 'bcrumbs: media URL could not be transcribed');
+      }
     }
 
     // customerPhone = externalClientId (stable per-user history key).

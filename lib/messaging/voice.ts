@@ -214,6 +214,39 @@ export async function transcribeWithWhisper(bytes: Buffer, mime: string): Promis
   }
 }
 
+/**
+ * Download an audio file from a URL and transcribe it. Used by the Bread
+ * Crumbs path, where a voice note arrives as a hosted audio URL (their blob
+ * storage) instead of a Meta media id. Returns null when the URL isn't audio,
+ * is too large, or transcription fails — the caller then falls back to the
+ * original content. The caller is responsible for restricting which hosts may
+ * be fetched (SSRF).
+ */
+export async function transcribeAudioUrl(url: string): Promise<string | null> {
+  try {
+    const resp = await fetch(url, { signal: AbortSignal.timeout(20_000) });
+    if (!resp.ok) {
+      logger.warn({ status: resp.status }, 'transcribeAudioUrl — fetch failed');
+      return null;
+    }
+    const mime = (resp.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase();
+    if (!mime.startsWith('audio/')) {
+      logger.info({ mime }, 'transcribeAudioUrl — not audio, skipping');
+      return null;
+    }
+    const bytes = Buffer.from(await resp.arrayBuffer());
+    if (bytes.length > MAX_AUDIO_BYTES) {
+      logger.warn({ sizeBytes: bytes.length, limit: MAX_AUDIO_BYTES }, 'transcribeAudioUrl — too large');
+      return null;
+    }
+    const text = await transcribeWithWhisper(bytes, mime);
+    return text || null;
+  } catch (err) {
+    logger.error({ err: (err as Error)?.message }, 'transcribeAudioUrl — failed');
+    return null;
+  }
+}
+
 export async function storeVoiceNote(
   bytes: Buffer,
   mime: string,
