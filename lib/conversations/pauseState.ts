@@ -35,3 +35,34 @@ export function isPauseActive(row: PauseStateRow | null, nowMs: number = Date.no
   const age = nowMs - new Date(row.paused_at).getTime();
   return age >= 0 && age < PAUSE_TTL_MS;
 }
+
+/**
+ * Set the AI pause flag for a conversation. Shared by the pause toggle, the
+ * claim flow (auto-pause when an agent takes over), and resolve (resume).
+ */
+export async function setAiPaused(
+  customerPhone: string,
+  companyId: number,
+  agentId: number | null,
+  paused: boolean,
+): Promise<void> {
+  if (paused) {
+    await getPool().query(
+      `INSERT INTO conversation_ai_state
+         (customer_phone, company_id, ai_paused, paused_at, paused_by_agent_id, updated_at)
+       VALUES ($1, $2, true, NOW(), $3, NOW())
+       ON CONFLICT (customer_phone, company_id) DO UPDATE
+         SET ai_paused = true, paused_at = NOW(), paused_by_agent_id = $3, updated_at = NOW()`,
+      [customerPhone, companyId, agentId],
+    );
+  } else {
+    await getPool().query(
+      `INSERT INTO conversation_ai_state
+         (customer_phone, company_id, ai_paused, paused_at, paused_by_agent_id, updated_at)
+       VALUES ($1, $2, false, NULL, NULL, NOW())
+       ON CONFLICT (customer_phone, company_id) DO UPDATE
+         SET ai_paused = false, paused_at = NULL, paused_by_agent_id = NULL, updated_at = NOW()`,
+      [customerPhone, companyId],
+    );
+  }
+}

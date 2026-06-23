@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { isToday, isYesterday, format } from "date-fns";
-import { MessageSquare, Search } from "lucide-react";
+import { MessageSquare, Search, User, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/language-context";
+import { useAuth } from "@/hooks/use-auth";
 import { avatarColor } from "@/lib/avatar-color";
+import NewChatModal from "@/components/NewChatModal";
 import type { Conversation } from "@/lib/contracts/schema-types";
+
+function agentInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  return (parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "");
+}
 
 type FilterType = "all" | "open" | "closed";
 
@@ -31,18 +38,29 @@ function getInitials(phone: string): string {
 export function Sidebar({ conversations, selectedPhone, onSelect }: SidebarProps) {
   const [filter, setFilter] = useState<FilterType>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [myOnly, setMyOnly] = useState(false);
+  const [showNewChat, setShowNewChat] = useState(false);
   const { t } = useLanguage();
+  const { agentId } = useAuth();
 
-  // ESCALATION — hidden for now
-  const filteredByStatus = conversations;
+  const filteredByStatus =
+    filter === "open"
+      ? conversations.filter(c => c.escalation_status !== "closed")
+      : filter === "closed"
+        ? conversations.filter(c => c.escalation_status === "closed")
+        : conversations;
+
+  const filteredByOwner = myOnly
+    ? filteredByStatus.filter(c => c.assigned_agent_id === agentId)
+    : filteredByStatus;
 
   const visible = searchQuery.trim()
-    ? filteredByStatus.filter(c =>
+    ? filteredByOwner.filter(c =>
         c.customer_phone.includes(searchQuery) ||
         (c.customer_name && c.customer_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (c.last_message && c.last_message.toLowerCase().includes(searchQuery.toLowerCase()))
       )
-    : filteredByStatus;
+    : filteredByOwner;
 
   const tabs: { key: FilterType; label: string }[] = [
     { key: "all", label: t("sidebarFilterAll") },
@@ -55,6 +73,30 @@ export function Sidebar({ conversations, selectedPhone, onSelect }: SidebarProps
       {/* Header */}
       <div className="px-4 py-3 flex items-center justify-between shrink-0">
         <span className="text-[15px] font-semibold text-white tracking-tight">{t("sidebarInbox")}</span>
+        <button
+          onClick={() => setMyOnly(v => !v)}
+          className={cn(
+            "flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition-colors",
+            myOnly
+              ? "bg-brand-cyan/15 text-brand-cyan"
+              : "text-brand-slate hover:text-white hover:bg-white/[0.05]"
+          )}
+          title={t("sidebarMyChats")}
+        >
+          <User className="w-3.5 h-3.5" />
+          {t("sidebarMyChats")}
+        </button>
+      </div>
+
+      {/* New chat */}
+      <div className="px-3 pb-2">
+        <button
+          onClick={() => setShowNewChat(true)}
+          className="w-full flex items-center justify-center gap-2 bg-brand-blue text-white rounded-xl py-2 text-[13px] font-semibold hover:bg-brand-cyan transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          {t("newChat")}
+        </button>
       </div>
 
       {/* Search bar */}
@@ -102,11 +144,19 @@ export function Sidebar({ conversations, selectedPhone, onSelect }: SidebarProps
               key={conv.customer_phone}
               conversation={conv}
               isSelected={selectedPhone === conv.customer_phone}
+              currentAgentId={agentId}
               onClick={() => onSelect(conv.customer_phone)}
             />
           ))
         )}
       </div>
+
+      {showNewChat && (
+        <NewChatModal
+          onClose={() => setShowNewChat(false)}
+          onStarted={(phone) => onSelect(phone)}
+        />
+      )}
     </div>
   );
 }
@@ -114,18 +164,22 @@ export function Sidebar({ conversations, selectedPhone, onSelect }: SidebarProps
 function ConversationItem({
   conversation,
   isSelected,
+  currentAgentId,
   onClick,
 }: {
   conversation: Conversation;
   isSelected: boolean;
+  currentAgentId: number | null;
   onClick: () => void;
 }) {
-  // ESCALATION — hidden for now
-  const isOpen = true;
   const phone = conversation.customer_phone;
   const initials = getInitials(phone);
   const tone = avatarColor(phone);
   const timeLabel = formatConversationTime(conversation.last_message_at);
+  const mine =
+    conversation.assigned_agent_id != null && conversation.assigned_agent_id === currentAgentId;
+  const otherAgent =
+    conversation.assigned_agent_id != null && !mine ? conversation.assigned_agent_name : null;
 
   return (
     <button
@@ -134,7 +188,9 @@ function ConversationItem({
         "w-full text-start flex items-center gap-3 px-3 py-3 rounded-lg transition-colors relative",
         isSelected
           ? "bg-brand-blue/15 before:absolute before:start-0 before:top-1 before:bottom-1 before:w-[2px] before:bg-brand-cyan before:rounded-full"
-          : "hover:bg-white/[0.03]"
+          : mine
+            ? "bg-brand-cyan/[0.06] hover:bg-brand-cyan/[0.1] before:absolute before:start-0 before:top-1 before:bottom-1 before:w-[2px] before:bg-brand-cyan/60 before:rounded-full"
+            : "hover:bg-white/[0.03]"
       )}
     >
       {/* Avatar circle */}
@@ -150,15 +206,25 @@ function ConversationItem({
           </span>
           <span className={cn(
             "text-[11px] shrink-0 ms-2",
-            isOpen && !isSelected ? "text-brand-cyan font-medium" : "text-brand-slate"
+            mine && !isSelected ? "text-brand-cyan font-medium" : "text-brand-slate"
           )}>
             {timeLabel}
           </span>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-[13px] text-brand-slate truncate pe-2">
             {conversation.last_message || ""}
           </span>
+          {otherAgent && (
+            <span
+              title={otherAgent}
+              className="shrink-0 w-[18px] h-[18px] rounded-full bg-white/[0.08] flex items-center justify-center"
+            >
+              <span className="text-[9px] font-bold text-brand-slate uppercase leading-none">
+                {agentInitials(otherAgent)}
+              </span>
+            </span>
+          )}
         </div>
       </div>
     </button>

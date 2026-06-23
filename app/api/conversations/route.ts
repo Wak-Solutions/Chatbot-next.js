@@ -21,8 +21,10 @@ const logger = createLogger('inbox');
 export const dynamic = 'force-dynamic';
 
 export const GET = withAuth(async (_request, auth) => {
-  const { companyId, agentId, role } = auth;
-  const isAdmin = role === 'admin';
+  // Every agent sees every conversation (the inbox "Shared" tab + the Chats
+  // list show all company chats). Ownership is surfaced via assigned_agent_id
+  // and filtered client-side ("my chats"), not hidden here.
+  const { companyId, agentId } = auth;
   try {
     const result = await getPool().query(
       `
@@ -50,10 +52,9 @@ export const GET = withAuth(async (_request, auth) => {
       LEFT JOIN contacts c
         ON regexp_replace(c.phone_number, '\\D', '', 'g') = regexp_replace(m.customer_phone, '\\D', '', 'g')
       WHERE 1=1
-        AND ($2 OR e.assigned_agent_id = $3 OR e.assigned_agent_id IS NULL)
       ORDER BY last_message_at DESC NULLS LAST
       `,
-      [companyId, isAdmin, agentId],
+      [companyId],
     );
     return NextResponse.json(result.rows);
   } catch (err) {
