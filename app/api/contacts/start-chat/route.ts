@@ -19,7 +19,7 @@ import { z } from 'zod';
 import { NextResponse } from 'next/server';
 import { withAuth, withCsrf } from '@/lib/http/handlers';
 import { createLogger } from '@/lib/logger';
-import { sanitizePhone } from '@/lib/phone';
+import { toMetaPhone } from '@/lib/phone';
 import { sendWhatsAppTemplate } from '@/lib/messaging/whatsapp';
 import { saveMessage } from '@/lib/messaging/memory';
 
@@ -41,9 +41,17 @@ export const POST = withCsrf(
       if (!parsed.success) {
         return NextResponse.json({ message: 'A phone number is required.' }, { status: 400 });
       }
-      const phone = sanitizePhone(parsed.data.phone);
+      const phone = toMetaPhone(parsed.data.phone);
       if (!phone) {
-        return NextResponse.json({ message: 'Invalid phone number.' }, { status: 400 });
+        return NextResponse.json(
+          {
+            message:
+              'Enter the number in full international format with country code, ' +
+              'exactly as WhatsApp delivers it (e.g. 966501234567). Local formats ' +
+              'like 0501234567 are not accepted.',
+          },
+          { status: 400 },
+        );
       }
 
       // The gate: no configured template → we cannot initiate. This is the

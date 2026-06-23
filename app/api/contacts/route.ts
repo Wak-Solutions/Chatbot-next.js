@@ -14,7 +14,12 @@ import { NextResponse } from 'next/server';
 import { withAdmin, withCsrf } from '@/lib/http/handlers';
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
-import { maskPhone } from '@/lib/phone';
+import { maskPhone, toMetaPhone } from '@/lib/phone';
+
+const INTL_PHONE_HINT =
+  'Enter the number in full international format with country code, exactly as ' +
+  'WhatsApp delivers it (e.g. 966501234567 or +966501234567). Local formats ' +
+  'like 0501234567 are not accepted.';
 
 const logger = createLogger('contacts');
 
@@ -46,9 +51,9 @@ export const POST = withCsrf(
     if (!body.phone_number) {
       return NextResponse.json({ message: 'Phone number is required' }, { status: 400 });
     }
-    const phone = String(body.phone_number).trim().replace(/[\s\-().]/g, '');
-    if (!/^\+?\d{7,15}$/.test(phone)) {
-      return NextResponse.json({ message: 'invalid_phone' }, { status: 400 });
+    const phone = toMetaPhone(body.phone_number);
+    if (!phone) {
+      return NextResponse.json({ message: INTL_PHONE_HINT }, { status: 400 });
     }
 
     const client = await getPool().connect();

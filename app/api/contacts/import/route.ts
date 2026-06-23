@@ -16,6 +16,7 @@ import { NextResponse } from 'next/server';
 import { withAdmin, withCsrf } from '@/lib/http/handlers';
 import { getPool } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
+import { toMetaPhone } from '@/lib/phone';
 
 const logger = createLogger('contacts');
 
@@ -48,14 +49,14 @@ export const POST = withCsrf(
       await client.query('BEGIN');
       for (const rawRow of rows) {
         const row = (rawRow ?? {}) as { phone?: unknown; name?: unknown };
-        const phone = String(row.phone || '').trim().replace(/[\s\-().]/g, '');
+        const phone = toMetaPhone(String(row.phone ?? ''));
         const rawName = String(row.name || '').trim();
         if (rawName.length > 255) {
           invalid++;
           continue;
         }
         const name = rawName.length > 0 ? rawName : null;
-        if (!/^\+?\d{7,15}$/.test(phone)) {
+        if (!phone) {
           invalid++;
           continue;
         }
