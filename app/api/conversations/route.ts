@@ -45,7 +45,10 @@ export const GET = withAuth(async (_request, auth) => {
         LIMIT 1
       ) e ON true
       LEFT JOIN agents a ON a.id = e.assigned_agent_id
-      LEFT JOIN contacts c ON c.phone_number = m.customer_phone
+      -- Match on digits-only so a contact saved as "+966 50…" still lines up
+      -- with a message phone stored as "96650…" (sanitizePhone format).
+      LEFT JOIN contacts c
+        ON regexp_replace(c.phone_number, '\\D', '', 'g') = regexp_replace(m.customer_phone, '\\D', '', 'g')
       WHERE 1=1
         AND ($2 OR e.assigned_agent_id = $3 OR e.assigned_agent_id IS NULL)
       ORDER BY last_message_at DESC NULLS LAST
