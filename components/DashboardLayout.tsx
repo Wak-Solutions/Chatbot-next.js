@@ -10,6 +10,7 @@ import { useAuth, useLogout } from "@/hooks/use-auth";
 import { useLanguage } from "@/lib/language-context";
 import { usePushNotifications } from "@/hooks/use-push";
 import { csrfFetch } from "@/lib/queryClient";
+import AvailabilityToggle from "@/components/AvailabilityToggle";
 import { Logo } from "@/components/ui/Logo";
 
 interface TrialStatus {
@@ -177,15 +178,20 @@ export default function DashboardLayout({
           )}
         </nav>
 
-        {/* Agent name */}
+        {/* Agent name + availability */}
         {agentName && (
-          <div className="px-5 py-3 border-t border-white/10 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-brand-navy/20 flex items-center justify-center shrink-0">
-              <span className="text-white text-[11px] font-bold leading-none">
-                {agentName.split(" ").map((w: string) => w[0]).slice(0, 2).join("").toUpperCase()}
-              </span>
+          <div className="px-5 py-3 border-t border-white/10">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-full bg-brand-navy/20 flex items-center justify-center shrink-0">
+                <span className="text-white text-[11px] font-bold leading-none">
+                  {agentName.split(" ").map((w: string) => w[0]).slice(0, 2).join("").toUpperCase()}
+                </span>
+              </div>
+              <span className="text-white/80 text-[13px] font-medium truncate">{agentName}</span>
             </div>
-            <span className="text-white/80 text-[13px] font-medium truncate">{agentName}</span>
+            <div className="mt-1.5 -ms-2">
+              <AvailabilityToggle />
+            </div>
           </div>
         )}
 

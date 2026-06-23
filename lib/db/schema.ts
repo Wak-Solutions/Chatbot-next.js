@@ -159,6 +159,9 @@ export const companies = pgTable('companies', {
   // then workspace. Nullable — only set for tenants connected via Bread Crumbs.
   bcrumbs_workspace_id: text('bcrumbs_workspace_id'),
   bcrumbs_integration_id: text('bcrumbs_integration_id'),
+  // When true, a handed-off chat is auto-assigned to the least-busy available
+  // agent instead of waiting in the Unclaimed inbox for someone to claim it.
+  auto_assign: boolean('auto_assign').default(false),
   // JSONB shape documented at top of file.
   work_hours: jsonb('work_hours'),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
@@ -186,6 +189,9 @@ export const agents = pgTable('agents', {
   password_hash: text('password_hash').notNull(),
   role: text('role').notNull().default('agent'),
   is_active: boolean('is_active').default(true),
+  // Manual presence flag: the agent's own Available/Away toggle. Used to show
+  // who's present and (later) to scope auto-assignment to available agents.
+  is_available: boolean('is_available').default(false),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
   last_login: timestamp('last_login', { withTimezone: true }),
   // webauthn_credential column was vestigial and never materialised in

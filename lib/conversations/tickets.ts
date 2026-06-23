@@ -13,6 +13,7 @@
  */
 
 import { getPool } from '@/lib/db/client';
+import { setAiPaused } from './pauseState';
 
 /**
  * Create an unclaimed ticket for a conversation if it doesn't already have an
@@ -64,6 +65,46 @@ export async function claimTicket(
       [customerPhone, companyId, agentId],
     );
   }
+}
+
+/**
+ * If the company is on auto-assign, hand a just-created ticket to the
+ * available agent with the fewest OPEN chats (open = the customer messaged
+ * within the last 24h; older chats are past Meta's window and don't count),
+ * and pause the AI. No-op when auto-assign is off or no agent is available —
+ * the chat then stays in the Unclaimed inbox.
+ */
+export async function maybeAutoAssign(customerPhone: string, companyId: number): Promise<void> {
+  const pool = getPool();
+  const cfg = await pool.query<{ auto_assign: boolean | null }>(
+    'SELECT auto_assign FROM companies WHERE id = $1',
+    [companyId],
+  );
+  if (!cfg.rows[0]?.auto_assign) return;
+
+  const pick = await pool.query<{ id: number }>(
+    `SELECT a.id
+       FROM agents a
+       LEFT JOIN escalations e
+         ON e.assigned_agent_id = a.id AND e.company_id = $1
+      WHERE a.company_id = $1 AND a.is_active = true AND a.is_available = true
+      GROUP BY a.id
+      ORDER BY COUNT(e.id) FILTER (
+        WHERE e.status = 'in_progress'
+          AND EXISTS (
+            SELECT 1 FROM messages m
+            WHERE m.customer_phone = e.customer_phone AND m.company_id = $1
+              AND m.direction = 'inbound' AND m.created_at > NOW() - INTERVAL '24 hours'
+          )
+      ) ASC, a.id ASC
+      LIMIT 1`,
+    [companyId],
+  );
+  const agentId = pick.rows[0]?.id;
+  if (!agentId) return; // nobody available → leave it in Unclaimed
+
+  await claimTicket(customerPhone, companyId, agentId);
+  await setAiPaused(customerPhone, companyId, agentId, true);
 }
 
 /** Resolve a conversation — close every active ticket it has. */

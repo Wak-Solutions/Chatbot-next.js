@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
-import { MessageSquare, Eye, EyeOff, Check, AlertCircle, Lock, Building2, Puzzle } from "lucide-react";
+import { MessageSquare, Eye, EyeOff, Check, AlertCircle, Lock, Building2, Puzzle, Users } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useLanguage } from "@/lib/language-context";
 import { csrfFetch } from "@/lib/queryClient";
@@ -366,10 +366,84 @@ function BrandingPanel({ t }: { t: (k: string) => string }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   Assignment Panel
+───────────────────────────────────────────────────────────────────────────── */
+
+function AssignmentPanel({ t }: { t: (k: string) => string }) {
+  const [autoAssign, setAutoAssign] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/settings/assignment", { credentials: "include" })
+      .then(r => r.ok ? r.json() : { autoAssign: false })
+      .then(d => setAutoAssign(Boolean(d.autoAssign)))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const update = async (next: boolean) => {
+    if (next === autoAssign) return;
+    setSaving(true);
+    setAutoAssign(next); // optimistic
+    try {
+      const r = await csrfFetch("/api/settings/assignment", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ autoAssign: next }),
+      });
+      if (!r.ok) setAutoAssign(!next);
+    } catch {
+      setAutoAssign(!next);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return null;
+
+  const Option = ({ value, title, desc }: { value: boolean; title: string; desc: string }) => {
+    const selected = autoAssign === value;
+    return (
+      <button
+        type="button"
+        onClick={() => update(value)}
+        disabled={saving}
+        className={`w-full text-start rounded-xl border p-4 transition-colors disabled:opacity-60 ${
+          selected ? "border-brand-blue bg-brand-blue/[0.07]" : "border-white/[0.08] hover:border-white/20"
+        }`}
+      >
+        <div className="flex items-center gap-2">
+          <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${selected ? "border-brand-blue" : "border-white/30"}`}>
+            {selected && <span className="w-2 h-2 rounded-full bg-brand-blue" />}
+          </span>
+          <span className="text-sm font-semibold text-white">{title}</span>
+        </div>
+        <p className="text-[13px] text-brand-slate mt-1 ms-6">{desc}</p>
+      </button>
+    );
+  };
+
+  return (
+    <div className="bg-brand-navy rounded-2xl border border-white/[0.08] overflow-hidden">
+      <div className="px-6 py-5 border-b border-white/[0.06]">
+        <h2 className="text-base font-semibold text-white">{t("settingsAssignment")}</h2>
+        <p className="text-sm text-brand-slate mt-1">{t("settingsAssignmentDesc")}</p>
+      </div>
+      <div className="px-6 py-6 space-y-3 max-w-lg">
+        <Option value={false} title={t("settingsAssignmentManual")} desc={t("settingsAssignmentManualDesc")} />
+        <Option value={true} title={t("settingsAssignmentAuto")} desc={t("settingsAssignmentAutoDesc")} />
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    Settings Sections (left nav)
 ───────────────────────────────────────────────────────────────────────────── */
 
-type SectionId = "whatsapp" | "bcrumbs" | "branding" | "password";
+type SectionId = "whatsapp" | "bcrumbs" | "assignment" | "branding" | "password";
 
 interface Section {
   id: SectionId;
@@ -380,6 +454,7 @@ interface Section {
 const SECTIONS: Section[] = [
   { id: "whatsapp", icon: <MessageSquare className="w-4 h-4" />, labelKey: "settingsWhatsApp" },
   { id: "bcrumbs", icon: <Puzzle className="w-4 h-4" />, labelKey: "settingsBcrumbs" },
+  { id: "assignment", icon: <Users className="w-4 h-4" />, labelKey: "settingsAssignment" },
   { id: "branding", icon: <Building2 className="w-4 h-4" />, labelKey: "settingsBranding" },
   { id: "password", icon: <Lock className="w-4 h-4" />, labelKey: "settingsChangePassword" },
 ];
@@ -682,6 +757,7 @@ export default function SettingsPage() {
           <div className="flex-1 min-w-0">
             {activeSection === "whatsapp" && <WhatsAppPanel t={t} />}
             {activeSection === "bcrumbs" && <BcrumbsPanel t={t} />}
+            {activeSection === "assignment" && <AssignmentPanel t={t} />}
             {activeSection === "branding" && <BrandingPanel t={t} />}
             {activeSection === "password" && <ChangePasswordPanel t={t} />}
           </div>

@@ -56,7 +56,7 @@ export const GET = withAdmin(async (request, auth) => {
         GROUP BY sr.agent_id
       )
       SELECT
-        a.id, a.name, a.email, a.role, a.is_active, a.last_login,
+        a.id, a.name, a.email, a.role, a.is_active, a.is_available, a.last_login,
         COUNT(e.customer_phone) FILTER (
           WHERE e.status = 'closed' AND e.company_id = $1 ${dateFilter}
         )::int AS resolved_chats,

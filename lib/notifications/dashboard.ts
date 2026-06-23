@@ -24,7 +24,7 @@ import { createLogger } from '@/lib/logger';
 import { maskPhone } from '@/lib/phone';
 import { getPool } from '@/lib/db/client';
 import { addNotified, hasNotified, notifyAll } from './push';
-import { ensureUnclaimedTicket } from '@/lib/conversations/tickets';
+import { ensureUnclaimedTicket, maybeAutoAssign } from '@/lib/conversations/tickets';
 
 const logger = createLogger('notify-dashboard');
 
@@ -86,6 +86,9 @@ export async function notifyDashboard(input: NotifyDashboardInput): Promise<void
       // Create an unclaimed ticket so the chat surfaces in the Unclaimed inbox
       // for an agent to claim. No-op if it already has an active ticket.
       await ensureUnclaimedTicket(customerPhone, companyId, 'customer_requested_agent');
+      // If the company is on auto-assign, hand it straight to the least-busy
+      // available agent (otherwise it waits in Unclaimed for a manual claim).
+      await maybeAutoAssign(customerPhone, companyId);
       await notifyAll(
         {
           title: 'Human Requested',

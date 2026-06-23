@@ -19,6 +19,7 @@ interface Agent {
   email: string;
   role: "admin" | "agent";
   is_active: boolean;
+  is_available: boolean;
   last_login: string | null;
   resolved_chats: number;
   meetings_completed: number;
@@ -297,8 +298,14 @@ export default function AgentsTab() {
                       <tr key={agent.id} className="hover:bg-white/[0.03]/50 transition-colors">
                         {/* Agent: name always, email on md+ */}
                         <td className="px-3 py-3">
-                          <p className="font-medium text-white truncate">{agent.name}</p>
-                          <p className="hidden md:block text-xs text-brand-slate font-mono truncate">{agent.email}</p>
+                          <p className="font-medium text-white truncate flex items-center gap-2">
+                            <span
+                              title={agent.is_available ? t("presenceAvailable") : t("presenceAway")}
+                              className={`w-2 h-2 rounded-full shrink-0 ${agent.is_available ? "bg-brand-emerald" : "bg-brand-slate/40"}`}
+                            />
+                            {agent.name}
+                          </p>
+                          <p className="hidden md:block text-xs text-brand-slate font-mono truncate ms-4">{agent.email}</p>
                         </td>
                         {/* Role + Status stacked */}
                         <td className="px-2 py-3">
