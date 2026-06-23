@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect, useCallback, useRef } from "react";
 import { nameError } from "@/lib/validate-name";
 import { useLocation } from "@/lib/router";
-import { Plus, Upload, Trash2, Edit2, Search, BookUser, X } from "lucide-react";
+import { Plus, Upload, Trash2, Edit2, Search, BookUser, X, MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/lib/language-context";
 import { format } from "date-fns";
@@ -105,6 +105,10 @@ export default function ContactsPage() {
   const [editName, setEditName] = useState("");
   const [editSaving, setEditSaving] = useState(false);
   const [editError, setEditError] = useState("");
+
+  // Start-chat (agent-initiated first message via template)
+  const [startingId, setStartingId] = useState<number | null>(null);
+  const [startNotice, setStartNotice] = useState<{ type: "error" | "success"; text: string } | null>(null);
 
   // CSV import modal
   const [showImport, setShowImport] = useState(false);
@@ -209,6 +213,29 @@ export default function ContactsPage() {
       setEditError("Network error");
     } finally {
       setEditSaving(false);
+    }
+  };
+
+  const handleStartChat = async (contact: Contact) => {
+    setStartingId(contact.id);
+    setStartNotice(null);
+    try {
+      const res = await csrfFetch("/api/contacts/start-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ phone: contact.phone_number }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setStartNotice({ type: "error", text: data.message || "Couldn’t start the chat." });
+        return;
+      }
+      setStartNotice({ type: "success", text: "Opening message sent — it’ll appear in your inbox." });
+    } catch {
+      setStartNotice({ type: "error", text: "Network error. Please try again." });
+    } finally {
+      setStartingId(null);
     }
   };
 
@@ -391,6 +418,14 @@ export default function ContactsPage() {
                         </td>
                         <td className="px-3 py-3">
                           <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => handleStartChat(contact)}
+                              disabled={startingId === contact.id}
+                              className="p-1.5 rounded-lg text-brand-slate hover:text-brand-cyan hover:bg-brand-cyan/10 transition-colors disabled:opacity-50"
+                              title="Start chat"
+                            >
+                              <MessageSquare className="w-3.5 h-3.5" />
+                            </button>
                             <button
                               onClick={() => { setEditContact(contact); setEditName(contact.name ?? ""); setEditError(""); }}
                               className="p-1.5 rounded-lg text-brand-slate hover:text-white hover:bg-white/[0.05] transition-colors"
@@ -624,6 +659,22 @@ export default function ContactsPage() {
             )}
           </div>
         </Modal>
+      )}
+
+      {/* Start-chat result toast */}
+      {startNotice && (
+        <div
+          className={`fixed bottom-4 end-4 z-50 max-w-sm rounded-xl px-4 py-3 text-sm shadow-lg border flex items-start gap-2 ${
+            startNotice.type === "error"
+              ? "bg-red-500/10 border-red-500/30 text-red-300"
+              : "bg-brand-emerald/10 border-brand-emerald/30 text-brand-emerald"
+          }`}
+        >
+          <span className="flex-1">{startNotice.text}</span>
+          <button onClick={() => setStartNotice(null)} className="shrink-0 opacity-70 hover:opacity-100">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
       )}
     </DashboardLayout>
   );

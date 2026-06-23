@@ -263,7 +263,7 @@ function ActiveChat({ conversation, onClose }: { conversation: Conversation; onC
             <span className={cn("text-sm font-semibold", tone.text)}>{avatarInitials}</span>
           </div>
           <div>
-            <div className="text-[15px] font-semibold text-white leading-tight">{conversation.customer_phone}</div>
+            <div className="text-[15px] font-semibold text-white leading-tight">{conversation.customer_name || conversation.customer_phone}</div>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className={cn(
                 "w-2 h-2 rounded-full",
