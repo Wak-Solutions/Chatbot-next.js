@@ -11,6 +11,7 @@ import { useLanguage } from "@/lib/language-context";
 import { usePushNotifications } from "@/hooks/use-push";
 import { csrfFetch } from "@/lib/queryClient";
 import AvailabilityToggle from "@/components/AvailabilityToggle";
+import TeamPresence from "@/components/TeamPresence";
 import { Logo } from "@/components/ui/Logo";
 
 interface TrialStatus {
@@ -194,6 +195,9 @@ export default function DashboardLayout({
             </div>
           </div>
         )}
+
+        {/* Who's online (visible to all agents) */}
+        <TeamPresence />
 
         {/* Bottom actions */}
         <div className="px-3.5 pb-5 pt-3 border-t border-white/10 space-y-0.5">
