@@ -14,7 +14,7 @@ import { csrfFetch } from "@/lib/queryClient";
 import { api } from "@/lib/contracts/routes";
 import type { Conversation } from "@/lib/contracts/schema-types";
 
-type Tab = "shared" | "unclaimed" | "mine" | "claimed" | "resolved";
+type Tab = "shared" | "unclaimed" | "mine" | "resolved";
 
 function initials(name: string | null, phone: string): string {
   if (name && name.trim()) {
@@ -49,7 +49,6 @@ export default function InboxPage() {
       shared: conversations,
       unclaimed: conversations.filter((c) => c.escalation_status === "open" && c.assigned_agent_id == null),
       mine: conversations.filter((c) => c.assigned_agent_id === agentId && active(c)),
-      claimed: conversations.filter((c) => c.assigned_agent_id != null && active(c)),
       resolved: conversations.filter((c) => c.escalation_status === "closed"),
     } as Record<Tab, Conversation[]>;
   }, [conversations, agentId]);
@@ -71,7 +70,6 @@ export default function InboxPage() {
     { key: "shared", label: t("inboxTabShared"), count: buckets.shared.length },
     { key: "unclaimed", label: t("inboxTabUnclaimed"), count: buckets.unclaimed.length },
     { key: "mine", label: t("inboxTabMy"), count: buckets.mine.length },
-    { key: "claimed", label: t("inboxTabClaimed"), count: buckets.claimed.length },
     { key: "resolved", label: t("inboxTabResolved"), count: buckets.resolved.length },
   ];
   const items = buckets[tab];
