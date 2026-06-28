@@ -24,6 +24,7 @@ import { makeHealthHandler } from './health';
 import { makeWebhookVerifyHandler } from './webhookVerify';
 import { makeWebhookReceiveHandler } from './webhookReceive';
 import { makeGupshupReceiveHandler } from './gupshupReceive';
+import { makeGupshupV3Handler } from './gupshupV3Receive';
 
 export interface WorkerHttpServer {
   listen(port: number, host: string): Promise<void>;
@@ -56,6 +57,9 @@ export async function createWorkerServer({
   // Gupshup posts JSON and does not sign payloads, so no rawBody needed —
   // Fastify's default JSON parser populates req.body.
   app.post('/gupshup', makeGupshupReceiveHandler(logger));
+  // OBSERVE-ONLY debug endpoint (additive, temporary): logs full Gupshup v3
+  // (Meta-format) coexistence + delivery payloads, returns 200, nothing else.
+  app.post('/gupshup-v3', { config: { rawBody: true } }, makeGupshupV3Handler(logger));
 
   return {
     async listen(port: number, host: string): Promise<void> {
