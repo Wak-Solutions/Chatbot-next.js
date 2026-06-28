@@ -72,15 +72,28 @@ export async function sendGupshupText(input: {
       body: form.toString(),
       signal: AbortSignal.timeout(GUPSHUP_TIMEOUT_MS),
     });
+    // Read the body once regardless of res.ok (res.text() is single-use) so we
+    // can log Gupshup's actual response (status + messageId) on success too —
+    // needed to debug "accepted but not delivered to the customer".
+    const rawBody = await res.text().catch(() => '');
+    let parsedBody: unknown;
+    try {
+      parsedBody = JSON.parse(rawBody);
+    } catch {
+      parsedBody = rawBody;
+    }
+
     if (!res.ok) {
-      const errBody = await res.text().catch(() => '');
       logger.error(
-        { phone: maskPhone(to), status: res.status, body: errBody.slice(0, 200) },
+        { phone: maskPhone(to), status: res.status, body: rawBody.slice(0, 200) },
         'Gupshup send failed',
       );
       return false;
     }
-    logger.info({ phone: maskPhone(to) }, 'WhatsApp sent (gupshup)');
+    logger.info(
+      { phone: maskPhone(to), status: res.status, gupshupResponse: parsedBody },
+      'WhatsApp sent (gupshup)',
+    );
     return true;
   } catch (err) {
     logger.error(
