@@ -3,8 +3,10 @@
  *
  *   botWorker  ('bot-turns', concurrency 8)
  *     Handles WhatsApp message processing. Dispatched on job.name:
- *       'process-text'  → worker/tasks/processText.processText
- *       'process-audio' → worker/tasks/processAudio.processAudio
+ *       'process-text'  → worker/tasks/processText.processText (Meta)
+ *       'process-audio' → worker/tasks/processAudio.processAudio (Meta CDN)
+ *       'gupshup-text'  → worker/tasks/processGupshupText (Gupshup)
+ *       'gupshup-audio' → worker/tasks/processGupshupAudio (Gupshup media URL)
  *     Concurrency 8 matches the legacy Semaphore.DEFAULT_MAX so the
  *     per-process load profile on Postgres + OpenAI doesn't change.
  *
@@ -27,6 +29,14 @@ import { Worker, type Job } from 'bullmq';
 import { getConnection } from '@/lib/queue/connection';
 import { processText, type ProcessTextInput } from '@/worker/tasks/processText';
 import { processAudio, type ProcessAudioInput } from '@/worker/tasks/processAudio';
+import {
+  processGupshupAudio,
+  type ProcessGupshupAudioInput,
+} from '@/worker/tasks/processGupshupAudio';
+import {
+  processGupshupText,
+  type ProcessGupshupTextInput,
+} from '@/worker/tasks/processGupshupText';
 import { meetingReminderTask } from '@/worker/tasks/meetingReminder';
 import { logger } from '@/lib/logger';
 
@@ -48,6 +58,14 @@ export function startQueueWorker(): QueueWorkers {
       }
       if (job.name === 'process-audio') {
         await processAudio(job.data as ProcessAudioInput, job.id ?? '');
+        return;
+      }
+      if (job.name === 'gupshup-text') {
+        await processGupshupText(job.data as ProcessGupshupTextInput, job.id ?? '');
+        return;
+      }
+      if (job.name === 'gupshup-audio') {
+        await processGupshupAudio(job.data as ProcessGupshupAudioInput, job.id ?? '');
         return;
       }
       throw new Error(`Unknown bot job name: ${job.name}`);

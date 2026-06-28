@@ -34,6 +34,45 @@ export interface WhatsappCreds {
   appSecret: string | null;
 }
 
+export interface GupshupCreds {
+  apiKey: string;
+  appName: string;
+  /** Sending WhatsApp business number. */
+  source: string;
+}
+
+/**
+ * Per-company Gupshup send credentials. Same no-cache rationale as
+ * getWhatsappCreds — read from the DB on every call so a rotated key never
+ * lingers. Returns null when the company isn't configured for Gupshup.
+ */
+export async function getGupshupCreds(companyId: number): Promise<GupshupCreds | null> {
+  if (!Number.isInteger(companyId) || companyId <= 0) return null;
+  try {
+    const r = await getPool().query<{
+      gupshup_api_key: string | null;
+      gupshup_app_name: string | null;
+      gupshup_source_number: string | null;
+    }>(
+      'SELECT gupshup_api_key, gupshup_app_name, gupshup_source_number FROM companies WHERE id = $1',
+      [companyId],
+    );
+    const row = r.rows[0];
+    if (!row || !row.gupshup_api_key || !row.gupshup_app_name || !row.gupshup_source_number) {
+      logger.error({ companyId }, 'Company has no Gupshup credentials configured');
+      return null;
+    }
+    return {
+      apiKey: row.gupshup_api_key,
+      appName: row.gupshup_app_name,
+      source: row.gupshup_source_number,
+    };
+  } catch (err) {
+    logger.error({ companyId, err: (err as Error)?.message }, 'getGupshupCreds failed');
+    return null;
+  }
+}
+
 /**
  * No-op retained for caller compatibility. The cache it used to invalidate
  * was removed — see the file header for why. Safe to call; safe to remove

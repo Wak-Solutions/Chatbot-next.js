@@ -159,6 +159,13 @@ export const companies = pgTable('companies', {
   // then workspace. Nullable — only set for tenants connected via Bread Crumbs.
   bcrumbs_workspace_id: text('bcrumbs_workspace_id'),
   bcrumbs_integration_id: text('bcrumbs_integration_id'),
+  // Gupshup WhatsApp BSP integration. Inbound webhooks identify the tenant
+  // by the Gupshup app name (companies.gupshup_app_name); the send API uses
+  // the per-company apikey + business source number. Nullable — only set for
+  // tenants connected via Gupshup.
+  gupshup_app_name: text('gupshup_app_name'),
+  gupshup_api_key: text('gupshup_api_key'),
+  gupshup_source_number: text('gupshup_source_number'),
   // When true, a handed-off chat is auto-assigned to the least-busy available
   // agent instead of waiting in the Unclaimed inbox for someone to claim it.
   auto_assign: boolean('auto_assign').default(false),

@@ -5,6 +5,7 @@
  *   GET  /health   — DB-probed health check.
  *   GET  /webhook  — Meta verify-token handshake.
  *   POST /webhook  — Meta inbound-message receive path.
+ *   POST /gupshup  — Gupshup inbound-message receive path (JSON, no HMAC).
  *
  * Raw body access: `fastify-raw-body` plugin with `encoding: false` keeps
  * a raw Buffer on req.rawBody for each route that opts in via
@@ -22,6 +23,7 @@ import type { Logger } from '@/lib/logger';
 import { makeHealthHandler } from './health';
 import { makeWebhookVerifyHandler } from './webhookVerify';
 import { makeWebhookReceiveHandler } from './webhookReceive';
+import { makeGupshupReceiveHandler } from './gupshupReceive';
 
 export interface WorkerHttpServer {
   listen(port: number, host: string): Promise<void>;
@@ -51,6 +53,9 @@ export async function createWorkerServer({
     { config: { rawBody: true } },
     makeWebhookReceiveHandler(logger),
   );
+  // Gupshup posts JSON and does not sign payloads, so no rawBody needed —
+  // Fastify's default JSON parser populates req.body.
+  app.post('/gupshup', makeGupshupReceiveHandler(logger));
 
   return {
     async listen(port: number, host: string): Promise<void> {
