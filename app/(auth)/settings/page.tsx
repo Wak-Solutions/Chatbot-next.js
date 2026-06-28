@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
-import { MessageSquare, Eye, EyeOff, Check, AlertCircle, Lock, Building2, Puzzle, Users } from "lucide-react";
+import { MessageSquare, Eye, EyeOff, Check, AlertCircle, Lock, Building2, Puzzle, Users, Zap } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useLanguage } from "@/lib/language-context";
 import { csrfFetch } from "@/lib/queryClient";
@@ -269,6 +269,162 @@ function WhatsAppPanel({ t }: { t: (k: string) => string }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   Gupshup Panel
+───────────────────────────────────────────────────────────────────────────── */
+
+interface GupshupCredentials {
+  appName: string;
+  sourceNumber: string;
+  apiKey: string;
+}
+
+function GupshupPanel({ t }: { t: (k: string) => string }) {
+  const [creds, setCreds] = useState<GupshupCredentials>({ appName: "", sourceNumber: "", apiKey: "" });
+  const [revealKey, setRevealKey] = useState(false);
+  const [loadError, setLoadError] = useState("");
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [saveError, setSaveError] = useState("");
+
+  const updateCreds = (patch: Partial<GupshupCredentials>) => {
+    setCreds(prev => ({ ...prev, ...patch }));
+    setSaveStatus("idle");
+  };
+
+  useEffect(() => {
+    fetch("/api/settings/gupshup", { credentials: "include" })
+      .then(r => r.ok ? r.json() : Promise.reject(r))
+      .then((data: GupshupCredentials) => setCreds(data))
+      .catch(() => setLoadError(t("settingsLoadError")));
+  }, []);
+
+  const canSave = !!(creds.appName && creds.sourceNumber);
+
+  const handleSave = async () => {
+    setSaveStatus("saving");
+    setSaveError("");
+    try {
+      const resp = await csrfFetch("/api/settings/gupshup", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(creds),
+      });
+      if (!resp.ok) {
+        const d = await resp.json().catch(() => ({}));
+        throw new Error(d.message || t("settingsSaveError"));
+      }
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+    } catch (err: any) {
+      setSaveStatus("error");
+      setSaveError(err.message || t("settingsSaveError"));
+    }
+  };
+
+  if (loadError) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-100 rounded-xl p-4">
+        <AlertCircle className="w-4 h-4 shrink-0" />
+        {loadError}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-brand-navy rounded-2xl border border-white/[0.08] overflow-hidden">
+      <div className="px-6 py-5 border-b border-white/[0.06]">
+        <h2 className="text-base font-semibold text-white">{t("settingsGupshup")}</h2>
+        <p className="text-sm text-brand-slate mt-1">{t("settingsGupshupDesc")}</p>
+      </div>
+
+      <div className="px-6 py-6 space-y-5 max-w-lg">
+        {/* App Name */}
+        <div>
+          <label className="block text-sm font-medium text-white/90 mb-1.5">
+            {t("settingsGupshupAppName")}
+            <span className="text-xs text-brand-slate/70 font-normal ms-1.5">({t("settingsGupshupAppNameHint")})</span>
+          </label>
+          <input
+            className={inputClass}
+            value={creds.appName}
+            onChange={e => updateCreds({ appName: e.target.value })}
+            placeholder="e.g. MyCompanyBot"
+          />
+        </div>
+
+        {/* Source Number */}
+        <div>
+          <label className="block text-sm font-medium text-white/90 mb-1.5">
+            {t("settingsGupshupSource")}
+            <span className="text-xs text-brand-slate/70 font-normal ms-1.5">({t("settingsGupshupSourceHint")})</span>
+          </label>
+          <input
+            className={inputClass}
+            value={creds.sourceNumber}
+            onChange={e => updateCreds({ sourceNumber: e.target.value })}
+            placeholder="e.g. 919876543210"
+          />
+        </div>
+
+        {/* API Key */}
+        <div>
+          <label className="block text-sm font-medium text-white/90 mb-1.5">
+            {t("settingsGupshupApiKey")}
+            <span className="text-xs text-brand-slate/70 font-normal ms-1.5">({t("settingsGupshupApiKeyHint")})</span>
+          </label>
+          <div className="relative">
+            <input
+              type={revealKey ? "text" : "password"}
+              className={inputClass + " pe-24"}
+              value={creds.apiKey}
+              onChange={e => updateCreds({ apiKey: e.target.value })}
+              placeholder={creds.apiKey ? maskToken(creds.apiKey) : "sk_..."}
+            />
+            {creds.apiKey && (
+              <button
+                type="button"
+                onClick={() => setRevealKey(v => !v)}
+                className="absolute end-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-brand-slate hover:text-white/90 font-medium transition-colors"
+              >
+                {revealKey
+                  ? <><EyeOff className="w-3.5 h-3.5" />{t("settingsHide")}</>
+                  : <><Eye className="w-3.5 h-3.5" />{t("settingsReveal")}</>
+                }
+              </button>
+            )}
+          </div>
+          <p className="text-xs text-brand-amber mt-1.5">{t("settingsGupshupApiKeyWarn")}</p>
+        </div>
+
+        {/* Save row */}
+        <div className="flex items-center gap-3 pt-1">
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={!canSave || saveStatus === "saving"}
+            className="inline-flex items-center gap-2 bg-brand-blue text-white px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-brand-cyan transition-colors"
+          >
+            {saveStatus === "saving" ? (
+              <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t("settingsSaving")}</>
+            ) : (
+              t("settingsSave")
+            )}
+          </button>
+          {saveStatus === "saved" && (
+            <span className="text-sm text-brand-emerald font-medium inline-flex items-center gap-1">
+              <Check className="w-4 h-4" />{t("settingsSaved")}
+            </span>
+          )}
+          {saveStatus === "error" && saveError && (
+            <span className="text-sm text-red-400">{saveError}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    Branding Panel
 ───────────────────────────────────────────────────────────────────────────── */
 
@@ -443,7 +599,7 @@ function AssignmentPanel({ t }: { t: (k: string) => string }) {
    Settings Sections (left nav)
 ───────────────────────────────────────────────────────────────────────────── */
 
-type SectionId = "whatsapp" | "bcrumbs" | "assignment" | "branding" | "password";
+type SectionId = "whatsapp" | "gupshup" | "bcrumbs" | "assignment" | "branding" | "password";
 
 interface Section {
   id: SectionId;
@@ -453,6 +609,7 @@ interface Section {
 
 const SECTIONS: Section[] = [
   { id: "whatsapp", icon: <MessageSquare className="w-4 h-4" />, labelKey: "settingsWhatsApp" },
+  { id: "gupshup", icon: <Zap className="w-4 h-4" />, labelKey: "settingsGupshup" },
   { id: "bcrumbs", icon: <Puzzle className="w-4 h-4" />, labelKey: "settingsBcrumbs" },
   { id: "assignment", icon: <Users className="w-4 h-4" />, labelKey: "settingsAssignment" },
   { id: "branding", icon: <Building2 className="w-4 h-4" />, labelKey: "settingsBranding" },
@@ -756,6 +913,7 @@ export default function SettingsPage() {
           {/* Right panel */}
           <div className="flex-1 min-w-0">
             {activeSection === "whatsapp" && <WhatsAppPanel t={t} />}
+            {activeSection === "gupshup" && <GupshupPanel t={t} />}
             {activeSection === "bcrumbs" && <BcrumbsPanel t={t} />}
             {activeSection === "assignment" && <AssignmentPanel t={t} />}
             {activeSection === "branding" && <BrandingPanel t={t} />}
